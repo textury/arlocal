@@ -1,3 +1,5 @@
+import { Utils } from "./utils";
+
 export interface NetworkInterface {
   network: string;
   version: number;
@@ -18,12 +20,14 @@ export class Network {
   readonly peers: number = 0;
 
   height: number = 0;
-  current: string = 'Yd57RvI7xESN-T_lHlaZpZhrzUiWp0_7UHPXXaZH8Absnu_1VKW5bp1gXaIKqiSr';
-  private _blocks: number = 0;
+  current: string = Utils.randomID(64);
+  blocks: number = 0;
   node_state_latency: number = 0;
 
-  get blocks(): number {
-    return this._blocks;
+  increment(qty: number) {
+    this.height += qty;
+    this.blocks += qty;
+    this.current = Utils.randomID(64);
   }
 
   toJSON(): NetworkInterface {

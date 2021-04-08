@@ -9,9 +9,11 @@
     "start": "node ./dist",
     "build": "tsc",
     "dev": "tsc-watch --onSuccess \"node dist\"",
+    "test": "tsc-watch --onSuccess \"node dist/test.js\"",
     "nodemon": "nodemon dist"
   },
   "dependencies": {
+    "graphql": "^15.5.0",
     "koa": "^2.13.1",
     "koa-body": "^4.2.0",
     "koa-bodyparser": "^4.3.0",
@@ -30,6 +32,7 @@
     "@types/koa-router": "^7.4.1",
     "@types/nedb": "^1.8.11",
     "@types/node": "^14.14.37",
+    "ardb": "^1.0.5",
     "arweave": "^1.10.13",
     "jest": "^26.6.3",
     "ts-jest": "^26.5.4",
