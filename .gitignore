@@ -106,3 +106,4 @@ dist
 # Temporary databases
 .txsdb
 .blocksdb
+.DS_Store
