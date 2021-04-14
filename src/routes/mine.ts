@@ -5,7 +5,7 @@ import Router from 'koa-router';
 const blockDB = new BlockDB();
 
 export async function mineRoute(ctx: Router.RouterContext) {
-  const inc = ctx.params?.qty || 1;
+  const inc = +(ctx.params?.qty || 1);
 
   // @ts-ignore
   ctx.network.current = await blockDB.mine(ctx.network.height, ctx.network.current, ctx.transactions);
