@@ -40,7 +40,7 @@ async function start() {
   router.get('/mine/:qty?', mineRoute);
   
   router.get('/tx_anchor', txAnchorRoute);
-  router.get('/price/:price', async ctx => ctx.body = ctx.params.price * 1965132);
+  router.get('/price/:price/:addy?', async ctx => ctx.body = ctx.params.price * 1965132);
 
   router.get('/tx/:txid', txRoute);
   router.post('/tx', txPostRoute);
