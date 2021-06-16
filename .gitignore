@@ -108,3 +108,4 @@ db
 .blocksdb
 db.sqlite
 .DS_Store
+bin
