@@ -2,7 +2,7 @@
   "name": "@textury/arlocal",
   "version": "1.0.2",
   "main": "dist/index.js",
-  "bin": "dist/cli.js",
+  "bin": "./dist/cli.js",
   "repository": "https://github.com/textury/arlocal.git",
   "author": "Cedrik <cedrik.git@tryninja.io>",
   "license": "MIT",
