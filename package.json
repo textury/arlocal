@@ -1,11 +1,13 @@
 {
   "name": "@textury/arlocal",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "main": "./bin/index.js",
   "repository": "https://github.com/textury/arlocal.git",
   "author": "Cedrik <cedrik.git@tryninja.io>",
   "license": "MIT",
-  "files": ["bin/**/*"],
+  "files": [
+    "bin/**/*"
+  ],
   "bin": {
     "arlocal": "./bin/index.js"
   },
