@@ -70,9 +70,7 @@ export async function generateQuery(params: QueryParams): Promise<knex.QueryBuil
       const tagAlias = `${i}_${i}`;
       let indexed = false;
 
-      for (let ii = 0; ii < indices.length; ii++) {
-        const index = indices[ii];
-
+      for (const index of indices) {
         if (tag.name === index) {
           indexed = true;
 

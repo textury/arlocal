@@ -23,7 +23,7 @@ export class Base64DUrlecode extends Transform {
     this.bytesProcessed = 0;
   }
 
-  _transform(chunk: Buffer, encoding: any, cb: Function) {
+  _transform(chunk: Buffer, encoding: any, cb: () => void) {
     const conbinedChunk =
       this.extra +
       chunk
@@ -43,7 +43,7 @@ export class Base64DUrlecode extends Transform {
     cb();
   }
 
-  _flush(cb: Function) {
+  _flush(cb: () => void) {
     if (this.extra.length) {
       this.push(Buffer.from(this.extra, 'base64'));
     }
@@ -59,7 +59,7 @@ export function b64UrlToBuffer(b64UrlString: string): Uint8Array {
 export function b64UrlDecode(b64UrlString: string): string {
   b64UrlString = b64UrlString.replace(/\-/g, '+').replace(/\_/g, '/');
   let padding;
-  b64UrlString.length % 4 == 0 ? (padding = 0) : (padding = 4 - (b64UrlString.length % 4));
+  b64UrlString.length % 4 === 0 ? (padding = 0) : (padding = 4 - (b64UrlString.length % 4));
   return b64UrlString.concat('='.repeat(padding));
 }
 

@@ -27,7 +27,7 @@ export async function txRoute(ctx: Router.RouterContext) {
 
   ctx.status = 200;
   ctx.headers['accept-ranges'] = 'bytes';
-  ctx.headers['content-length'] = metadata['data_size'];
+  ctx.headers['content-length'] = metadata.data_size;
   ctx.body = metadata;
 }
 
@@ -45,7 +45,7 @@ export async function txPostRoute(ctx: Router.RouterContext) {
   await connection.insert(tx).into('transactions');
 
   let index = 0;
-  for (let tag of data.tags) {
+  for (const tag of data.tags) {
     const name = Utils.atob(tag.name);
     const value = Utils.atob(tag.value);
 

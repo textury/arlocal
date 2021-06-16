@@ -42,8 +42,7 @@ export const transactionFields = [
 export function formatTransaction(transaction: TransactionType) {
   const indexFields: any = {};
 
-  for (let i = 0; i < indices.length; i++) {
-    const index = indices[i];
+  for (const index of indices) {
     const value = Utils.tagValue(transaction.tags, index);
 
     if (value) {
@@ -68,8 +67,7 @@ export function formatTransaction(transaction: TransactionType) {
 export function formatAnsTransaction(ansTransaction: DataItemJson) {
   const indexFields: any = {};
 
-  for (let i = 0; i < indices.length; i++) {
-    const index = indices[i];
+  for (const index of indices) {
     const value = Utils.tagValue(ansTransaction.tags, index);
 
     if (value) {

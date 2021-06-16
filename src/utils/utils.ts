@@ -3,6 +3,7 @@ import { fromB64Url } from './encoding';
 
 export class Utils {
   static randomID(len: number = 43): string {
+    // tslint:disable-next-line: no-bitwise
     return [...Array(43)].map((i) => (~~(Math.random() * 36)).toString(36)).join('');
   }
 
@@ -14,9 +15,8 @@ export class Utils {
     return Buffer.from(b).toString('base64');
   }
 
-  static tagValue(tags: Array<Tag>, name: string): string {
-    for (let i = 0; i < tags.length; i++) {
-      const tag = tags[i];
+  static tagValue(tags: Tag[], name: string): string {
+    for (const tag of tags) {
       if (fromB64Url(tag.name).toString().toLowerCase() === name.toLowerCase()) {
         return fromB64Url(tag.value).toString();
       }

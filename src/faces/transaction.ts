@@ -7,12 +7,12 @@ export interface TransactionType {
   height?: number;
   last_tx: string;
   owner: string;
-  tags: Array<Tag>;
+  tags: Tag[];
   target: string;
   quantity: WinstonString;
   data: Base64UrlEncodedString;
   data_size: string;
-  data_tree: Array<string>;
+  data_tree: string[];
   data_root: string;
   reward: string;
   signature: string;

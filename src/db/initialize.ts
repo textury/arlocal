@@ -28,8 +28,7 @@ export async function up(knex: Knex) {
       table.string('parent', 64);
       table.timestamp('created_at').defaultTo(knex.fn.now());
 
-      for (let i = 0; i < indices.length; i++) {
-        const index = indices[i];
+      for (const index of indices) {
         table.string(index, 64);
         table.index(index, `index_${index}_transactions`, 'HASH');
       }

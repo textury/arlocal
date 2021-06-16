@@ -19,7 +19,7 @@ export async function dataHeadRoute(ctx: Router.RouterContext) {
 
   ctx.status = 200;
   ctx.headers['accept-ranges'] = 'bytes';
-  ctx.headers['content-length'] = metadata['data_size'];
+  ctx.headers['content-length'] = metadata.data_size;
 }
 
 export async function dataRoute(ctx: Router.RouterContext) {
@@ -28,7 +28,7 @@ export async function dataRoute(ctx: Router.RouterContext) {
 
   const metadata = await transactionDB.getById(transaction);
 
-  const contentType = Utils.tagValue(metadata['tags'], 'Content-Type');
+  const contentType = Utils.tagValue(metadata.tags, 'Content-Type');
 
   ctx.type = contentType;
 

@@ -1,4 +1,4 @@
-export const indices = JSON.parse(process.env.INDICES || '[]') as Array<string>;
+export const indices = JSON.parse(process.env.INDICES || '[]') as string[];
 export const blockOrder = ['id', 'previous_block', 'mined_at', 'height', 'txs', 'extended'];
 export const transactionOrder = [
   'format',

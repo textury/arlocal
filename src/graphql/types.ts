@@ -27,11 +27,11 @@ export type QueryTransactionArgs = {
 };
 
 export type QueryTransactionsArgs = {
-  ids?: Maybe<Array<Scalars['ID']>>;
-  owners?: Maybe<Array<Scalars['String']>>;
-  recipients?: Maybe<Array<Scalars['String']>>;
-  tags?: Maybe<Array<TagFilter>>;
-  bundledIn?: Maybe<Array<Scalars['ID']>>;
+  ids?: Maybe<Scalars['ID'][]>;
+  owners?: Maybe<Scalars['String'][]>;
+  recipients?: Maybe<Scalars['String'][]>;
+  tags?: Maybe<TagFilter[]>;
+  bundledIn?: Maybe<Scalars['ID'][]>;
   block?: Maybe<BlockFilter>;
   first?: Maybe<Scalars['Int']>;
   after?: Maybe<Scalars['String']>;
@@ -43,7 +43,7 @@ export type QueryBlockArgs = {
 };
 
 export type QueryBlocksArgs = {
-  ids?: Maybe<Array<Scalars['ID']>>;
+  ids?: Maybe<Scalars['ID'][]>;
   height?: Maybe<BlockFilter>;
   first?: Maybe<Scalars['Int']>;
   after?: Maybe<Scalars['String']>;
@@ -75,7 +75,7 @@ export type TagFilter = {
    *
    * Returns all transactions where the \`app-name\` tag has a value of either \`app-1\` _or_ \`app-2\` _or_ \`app-3\`.
    */
-  values: Array<Scalars['String']>;
+  values: Scalars['String'][];
   /** The operator to apply to to the tag filter. Defaults to EQ (equal). */
   op?: Maybe<TagOperator>;
 };
@@ -95,7 +95,7 @@ export type BlockFilter = {
 export type BlockConnection = {
   __typename?: 'BlockConnection';
   pageInfo: PageInfo;
-  edges: Array<BlockEdge>;
+  edges: BlockEdge[];
 };
 
 /** Paginated result set using the GraphQL cursor spec. */
@@ -118,7 +118,7 @@ export type BlockEdge = {
 export type TransactionConnection = {
   __typename?: 'TransactionConnection';
   pageInfo: PageInfo;
-  edges: Array<TransactionEdge>;
+  edges: TransactionEdge[];
 };
 
 /** Paginated result set using the GraphQL cursor spec. */
@@ -150,7 +150,7 @@ export type Transaction = {
   fee: Amount;
   quantity: Amount;
   data: MetaData;
-  tags: Array<Tag>;
+  tags: Tag[];
   /** Transactions with a null block are recent and unconfirmed, if they aren't mined into a block within 60 minutes they will be removed from results. */
   block?: Maybe<Block>;
   /**
@@ -394,7 +394,7 @@ export type BlockConnectionResolvers<
   ParentType extends ResolversParentTypes['BlockConnection'] = ResolversParentTypes['BlockConnection'],
 > = {
   pageInfo?: Resolver<ResolversTypes['PageInfo'], ParentType, ContextType>;
-  edges?: Resolver<Array<ResolversTypes['BlockEdge']>, ParentType, ContextType>;
+  edges?: Resolver<ResolversTypes['BlockEdge'][], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType>;
 };
 
@@ -412,7 +412,7 @@ export type TransactionConnectionResolvers<
   ParentType extends ResolversParentTypes['TransactionConnection'] = ResolversParentTypes['TransactionConnection'],
 > = {
   pageInfo?: Resolver<ResolversTypes['PageInfo'], ParentType, ContextType>;
-  edges?: Resolver<Array<ResolversTypes['TransactionEdge']>, ParentType, ContextType>;
+  edges?: Resolver<ResolversTypes['TransactionEdge'][], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType>;
 };
 
@@ -445,7 +445,7 @@ export type TransactionResolvers<
   fee?: Resolver<ResolversTypes['Amount'], ParentType, ContextType>;
   quantity?: Resolver<ResolversTypes['Amount'], ParentType, ContextType>;
   data?: Resolver<ResolversTypes['MetaData'], ParentType, ContextType>;
-  tags?: Resolver<Array<ResolversTypes['Tag']>, ParentType, ContextType>;
+  tags?: Resolver<ResolversTypes['Tag'][], ParentType, ContextType>;
   block?: Resolver<Maybe<ResolversTypes['Block']>, ParentType, ContextType>;
   parent?: Resolver<Maybe<ResolversTypes['Parent']>, ParentType, ContextType>;
   bundledIn?: Resolver<Maybe<ResolversTypes['Bundle']>, ParentType, ContextType>;

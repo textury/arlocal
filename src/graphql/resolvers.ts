@@ -59,7 +59,7 @@ export const resolvers: Resolvers = {
 
       const params: QueryParams = {
         limit: pageSize + 1,
-        offset: offset,
+        offset,
         ids: queryParams.ids || undefined,
         to: queryParams.recipients || undefined,
         from: queryParams.owners || undefined,
@@ -109,7 +109,7 @@ export const resolvers: Resolvers = {
       const { timestamp, offset } = parseCursor(queryParams.after || newCursor());
       const pageSize = Math.min(queryParams.first || DEFAULT_PAGE_SIZE, MAX_PAGE_SIZE);
 
-      let ids: Array<string> = [];
+      let ids: string[] = [];
       let minHeight = 0;
       let maxHeight = MAX_PAGE_SIZE;
 
@@ -132,7 +132,7 @@ export const resolvers: Resolvers = {
         maxHeight,
         sortOrder: queryParams.sort || 'HEIGHT_ASC',
         limit: pageSize + 1,
-        offset: offset,
+        offset,
         before: timestamp,
       });
 
@@ -232,8 +232,8 @@ export interface Cursor {
 export const newCursor = (): string => encodeCursor({ timestamp: moment().toISOString(), offset: 0 });
 
 export const encodeCursor = ({ timestamp, offset }: Cursor): string => {
-  const string = JSON.stringify([timestamp, offset]);
-  return Buffer.from(string).toString('base64');
+  const str = JSON.stringify([timestamp, offset]);
+  return Buffer.from(str).toString('base64');
 };
 
 export const parseCursor = (cursor: string): Cursor => {
