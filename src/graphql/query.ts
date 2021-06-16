@@ -1,7 +1,7 @@
-import {knex} from 'knex';
-import {indices} from '../utils/order';
-import {ISO8601DateTimeString} from '../utils/encoding';
-import {TagFilter} from './types';
+import { knex } from 'knex';
+import { indices } from '../utils/order';
+import { ISO8601DateTimeString } from '../utils/encoding';
+import { TagFilter } from './types';
 import { connection } from '../db/connection';
 
 export type TxSortOrder = 'HEIGHT_ASC' | 'HEIGHT_DESC';
@@ -30,14 +30,14 @@ export interface QueryParams {
 }
 
 export async function generateQuery(params: QueryParams): Promise<knex.QueryBuilder> {
-  const {to, from, tags, id, ids, status = 'confirmed', select} = params;
-  const {limit = 10, blocks = false, sortOrder = 'HEIGHT_DESC'} = params;
-  const {offset = 0, minHeight = -1, maxHeight = -1} = params;
+  const { to, from, tags, id, ids, status = 'confirmed', select } = params;
+  const { limit = 10, blocks = false, sortOrder = 'HEIGHT_DESC' } = params;
+  const { offset = 0, minHeight = -1, maxHeight = -1 } = params;
 
   const query = connection
-      .queryBuilder()
-      .select(select || {id: 'transactions.id', height: 'transactions.height', tags: 'transactions.tags'})
-      .from('transactions');
+    .queryBuilder()
+    .select(select || { id: 'transactions.id', height: 'transactions.height', tags: 'transactions.tags' })
+    .from('transactions');
 
   if (id) {
     query.where('transactions.id', id);
@@ -141,7 +141,7 @@ export interface BlockQueryParams {
 }
 
 export async function generateBlockQuery(params: BlockQueryParams): Promise<knex.QueryBuilder> {
-  const {id, ids, limit, offset, select, before, sortOrder, minHeight, maxHeight} = params;
+  const { id, ids, limit, offset, select, before, sortOrder, minHeight, maxHeight } = params;
 
   const query = connection.queryBuilder().select(select).from('blocks');
 

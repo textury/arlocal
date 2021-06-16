@@ -5,7 +5,7 @@ const arweave = Arweave.init({
   host: 'localhost',
   protocol: 'http',
   port: 1984,
-  logging: true
+  logging: true,
 });
 
 const ardb = new Ardb(arweave);
@@ -20,9 +20,12 @@ const ardb = new Ardb(arweave);
 
 async function createTransaction(): Promise<string> {
   const wallet = await arweave.wallets.generate();
-  const tx = await arweave.createTransaction({
-    data: 'hello world'
-  }, wallet);
+  const tx = await arweave.createTransaction(
+    {
+      data: 'hello world',
+    },
+    wallet,
+  );
   tx.addTag('App-Name', 'Arweave');
   tx.addTag('Content-Type', 'text/plain');
 

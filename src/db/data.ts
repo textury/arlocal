@@ -8,13 +8,13 @@ export class DataDB {
   private started: boolean = false;
 
   constructor() {
-    this.db = new Nedb({filename: this.dbFile})
+    this.db = new Nedb({ filename: this.dbFile });
   }
 
   async init(): Promise<boolean> {
     return new Promise((resolve, reject) => {
-      this.db.loadDatabase(err => {
-        if(err) {
+      this.db.loadDatabase((err) => {
+        if (err) {
           return reject(err);
         }
 
@@ -24,14 +24,14 @@ export class DataDB {
     });
   }
 
-  async insert(obj: {txid: string, data: string}): Promise<{txid: string, data: string}> {
-    if(!this.started) {
+  async insert(obj: { txid: string; data: string }): Promise<{ txid: string; data: string }> {
+    if (!this.started) {
       await this.init();
     }
 
     return new Promise((resolve, reject) => {
       this.db.insert(obj, (err, doc) => {
-        if(err) {
+        if (err) {
           return reject(err);
         }
 
@@ -39,15 +39,15 @@ export class DataDB {
       });
     });
   }
-  
-  async findOne(txid: string): Promise<{txid: string, data: string}> {
-    if(!this.started) {
+
+  async findOne(txid: string): Promise<{ txid: string; data: string }> {
+    if (!this.started) {
       await this.init();
     }
-    
+
     return new Promise((resolve, reject) => {
-      this.db.findOne({txid}, (err, doc) => {
-        if(err) {
+      this.db.findOne({ txid }, (err, doc) => {
+        if (err) {
           return reject(err);
         }
 

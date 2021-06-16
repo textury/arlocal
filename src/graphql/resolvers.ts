@@ -1,9 +1,9 @@
 import moment from 'moment';
-import {IResolvers} from 'apollo-server-koa';
-import {QueryTransactionsArgs, QueryBlockArgs, QueryBlocksArgs} from './types';
-import {ISO8601DateTimeString, winstonToAr, utf8DecodeTag} from '../utils/encoding';
-import {TransactionHeader} from '../faces/arweave';
-import {QueryParams, generateQuery, generateBlockQuery} from './query';
+import { IResolvers } from 'apollo-server-koa';
+import { QueryTransactionsArgs, QueryBlockArgs, QueryBlocksArgs } from './types';
+import { ISO8601DateTimeString, winstonToAr, utf8DecodeTag } from '../utils/encoding';
+import { TransactionHeader } from '../faces/arweave';
+import { QueryParams, generateQuery, generateBlockQuery } from './query';
 
 type Resolvers = IResolvers;
 
@@ -39,7 +39,7 @@ const blockFieldMap = {
 
 export const resolvers: Resolvers = {
   Query: {
-    transaction: async (parent, queryParams, {req, connection}) => {
+    transaction: async (parent, queryParams, { req, connection }) => {
       req.log.info('[graphql/v2] transaction/request', queryParams);
 
       const params: QueryParams = {
@@ -51,10 +51,10 @@ export const resolvers: Resolvers = {
       // @ts-ignore
       const result = (await generateQuery(params)).first();
 
-      return await result as TransactionHeader;
+      return (await result) as TransactionHeader;
     },
-    transactions: async (parent, queryParams: QueryTransactionsArgs, {req, connection}, info) => {
-      const {timestamp, offset} = parseCursor(queryParams.after || newCursor());
+    transactions: async (parent, queryParams: QueryTransactionsArgs, { req, connection }, info) => {
+      const { timestamp, offset } = parseCursor(queryParams.after || newCursor());
       const pageSize = Math.min(queryParams.first || DEFAULT_PAGE_SIZE, MAX_PAGE_SIZE);
 
       const params: QueryParams = {
@@ -82,26 +82,28 @@ export const resolvers: Resolvers = {
         edges: async () => {
           return results.slice(0, pageSize).map((result: any, index) => {
             return {
-              cursor: encodeCursor({timestamp, offset: offset + index + 1}),
+              cursor: encodeCursor({ timestamp, offset: offset + index + 1 }),
               node: result,
             };
           });
         },
       };
     },
-    block: async (parent, queryParams: QueryBlockArgs, {req, connection}) => {
+    block: async (parent, queryParams: QueryBlockArgs, { req, connection }) => {
       if (queryParams.id) {
-        return (await generateBlockQuery({
-          select: blockFieldMap,
-          id: queryParams.id,
+        return (
+          await generateBlockQuery({
+            select: blockFieldMap,
+            id: queryParams.id,
+          })
           // @ts-ignore
-        })).first();
+        ).first();
       } else {
         return null;
       }
     },
-    blocks: async (parent, queryParams: QueryBlocksArgs, {req, connection}) => {
-      const {timestamp, offset} = parseCursor(queryParams.after || newCursor());
+    blocks: async (parent, queryParams: QueryBlocksArgs, { req, connection }) => {
+      const { timestamp, offset } = parseCursor(queryParams.after || newCursor());
       const pageSize = Math.min(queryParams.first || DEFAULT_PAGE_SIZE, MAX_PAGE_SIZE);
 
       let ids: Array<string> = [];
@@ -131,7 +133,7 @@ export const resolvers: Resolvers = {
         before: timestamp,
       });
 
-      const results = (await query);
+      const results = await query;
       // @ts-ignore
       const hasNextPage = results.length > pageSize;
 
@@ -143,7 +145,7 @@ export const resolvers: Resolvers = {
           // @ts-ignore
           return results.slice(0, pageSize).map((result: any, index: number) => {
             return {
-              cursor: encodeCursor({timestamp, offset: offset + index + 1}),
+              cursor: encodeCursor({ timestamp, offset: offset + index + 1 }),
               node: result,
             };
           });
@@ -153,7 +155,7 @@ export const resolvers: Resolvers = {
   },
   Transaction: {
     tags: (parent) => {
-      if(typeof parent.tags === 'string') parent.tags = JSON.parse(parent.tags);
+      if (typeof parent.tags === 'string') parent.tags = JSON.parse(parent.tags);
       return parent.tags.map(utf8DecodeTag);
     },
     recipient: (parent) => {
@@ -224,9 +226,9 @@ export interface Cursor {
   offset: number;
 }
 
-export const newCursor = (): string => encodeCursor({timestamp: moment().toISOString(), offset: 0});
+export const newCursor = (): string => encodeCursor({ timestamp: moment().toISOString(), offset: 0 });
 
-export const encodeCursor = ({timestamp, offset}: Cursor): string => {
+export const encodeCursor = ({ timestamp, offset }: Cursor): string => {
   const string = JSON.stringify([timestamp, offset]);
   return Buffer.from(string).toString('base64');
 };
@@ -234,7 +236,7 @@ export const encodeCursor = ({timestamp, offset}: Cursor): string => {
 export const parseCursor = (cursor: string): Cursor => {
   try {
     const [timestamp, offset] = JSON.parse(Buffer.from(cursor, 'base64').toString()) as [ISO8601DateTimeString, number];
-    return {timestamp, offset};
+    return { timestamp, offset };
   } catch (error) {
     throw new Error('invalid cursor');
   }

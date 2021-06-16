@@ -1,5 +1,5 @@
-import { Tag } from "../graphql/types";
-import { Base64UrlEncodedString, WinstonString } from "../utils/encoding";
+import { Tag } from '../graphql/types';
+import { Base64UrlEncodedString, WinstonString } from '../utils/encoding';
 
 export interface TransactionType {
   format: number;

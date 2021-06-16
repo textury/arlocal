@@ -1,7 +1,8 @@
 import { GraphQLResolveInfo } from 'graphql';
 export type Maybe<T> = T | null;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
-export type RequireFields<T, K extends keyof T> = { [X in Exclude<keyof T, K>]?: T[X] } & { [P in K]-?: NonNullable<T[P]> };
+export type RequireFields<T, K extends keyof T> = { [X in Exclude<keyof T, K>]?: T[X] } &
+  { [P in K]-?: NonNullable<T[P]> };
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
   ID: string;
@@ -21,11 +22,9 @@ export type Query = {
   blocks: BlockConnection;
 };
 
-
 export type QueryTransactionArgs = {
   id: Scalars['ID'];
 };
-
 
 export type QueryTransactionsArgs = {
   ids?: Maybe<Array<Scalars['ID']>>;
@@ -39,11 +38,9 @@ export type QueryTransactionsArgs = {
   sort?: Maybe<SortOrder>;
 };
 
-
 export type QueryBlockArgs = {
   id?: Maybe<Scalars['String']>;
 };
-
 
 export type QueryBlocksArgs = {
   ids?: Maybe<Array<Scalars['ID']>>;
@@ -58,7 +55,7 @@ export enum SortOrder {
   /** Results are sorted by the transaction block height in ascending order, with the oldest transactions appearing first, and the most recent and pending/unconfirmed appearing last. */
   HeightAsc = 'HEIGHT_ASC',
   /** Results are sorted by the transaction block height in descending order, with the most recent and unconfirmed/pending transactions appearing first. */
-  HeightDesc = 'HEIGHT_DESC'
+  HeightDesc = 'HEIGHT_DESC',
 }
 
 /** Find transactions with the folowing tag name and value */
@@ -67,15 +64,15 @@ export type TagFilter = {
   name: Scalars['String'];
   /**
    * An array of values to match against. If multiple values are passed then transactions with _any_ matching tag value from the set will be returned.
-   * 
+   *
    * e.g.
-   * 
+   *
    * \`{name: "app-name", values: ["app-1"]}\`
-   * 
+   *
    * Returns all transactions where the \`app-name\` tag has a value of \`app-1\`.
-   * 
+   *
    * \`{name: "app-name", values: ["app-1", "app-2", "app-3"]}\`
-   * 
+   *
    * Returns all transactions where the \`app-name\` tag has a value of either \`app-1\` _or_ \`app-2\` _or_ \`app-3\`.
    */
   values: Array<Scalars['String']>;
@@ -106,7 +103,7 @@ export type BlockEdge = {
   __typename?: 'BlockEdge';
   /**
    * The cursor value for fetching the next page.
-   * 
+   *
    * Pass this to the \`after\` parameter in \`blocks(after: $cursor)\`, the next page will start from the next item after this.
    */
   cursor: Scalars['String'];
@@ -129,7 +126,7 @@ export type TransactionEdge = {
   __typename?: 'TransactionEdge';
   /**
    * The cursor value for fetching the next page.
-   * 
+   *
    * Pass this to the \`after\` parameter in \`transactions(after: $cursor)\`, the next page will start from the next item after this.
    */
   cursor: Scalars['String'];
@@ -239,13 +236,10 @@ export enum TagOperator {
   /** Equal */
   Eq = 'EQ',
   /** Not equal */
-  Neq = 'NEQ'
+  Neq = 'NEQ',
 }
 
-
-
 export type ResolverTypeWrapper<T> = Promise<T> | T;
-
 
 export type LegacyStitchingResolver<TResult, TParent, TContext, TArgs> = {
   fragment: string;
@@ -256,7 +250,9 @@ export type NewStitchingResolver<TResult, TParent, TContext, TArgs> = {
   selectionSet: string;
   resolve: ResolverFn<TResult, TParent, TContext, TArgs>;
 };
-export type StitchingResolver<TResult, TParent, TContext, TArgs> = LegacyStitchingResolver<TResult, TParent, TContext, TArgs> | NewStitchingResolver<TResult, TParent, TContext, TArgs>;
+export type StitchingResolver<TResult, TParent, TContext, TArgs> =
+  | LegacyStitchingResolver<TResult, TParent, TContext, TArgs>
+  | NewStitchingResolver<TResult, TParent, TContext, TArgs>;
 export type Resolver<TResult, TParent = {}, TContext = {}, TArgs = {}> =
   | ResolverFn<TResult, TParent, TContext, TArgs>
   | StitchingResolver<TResult, TParent, TContext, TArgs>;
@@ -265,21 +261,21 @@ export type ResolverFn<TResult, TParent, TContext, TArgs> = (
   parent: TParent,
   args: TArgs,
   context: TContext,
-  info: GraphQLResolveInfo
+  info: GraphQLResolveInfo,
 ) => Promise<TResult> | TResult;
 
 export type SubscriptionSubscribeFn<TResult, TParent, TContext, TArgs> = (
   parent: TParent,
   args: TArgs,
   context: TContext,
-  info: GraphQLResolveInfo
+  info: GraphQLResolveInfo,
 ) => AsyncIterator<TResult> | Promise<AsyncIterator<TResult>>;
 
 export type SubscriptionResolveFn<TResult, TParent, TContext, TArgs> = (
   parent: TParent,
   args: TArgs,
   context: TContext,
-  info: GraphQLResolveInfo
+  info: GraphQLResolveInfo,
 ) => TResult | Promise<TResult>;
 
 export interface SubscriptionSubscriberObject<TResult, TKey extends string, TParent, TContext, TArgs> {
@@ -303,7 +299,7 @@ export type SubscriptionResolver<TResult, TKey extends string, TParent = {}, TCo
 export type TypeResolveFn<TTypes, TParent = {}, TContext = {}> = (
   parent: TParent,
   context: TContext,
-  info: GraphQLResolveInfo
+  info: GraphQLResolveInfo,
 ) => Maybe<TTypes> | Promise<Maybe<TTypes>>;
 
 export type IsTypeOfResolverFn<T = {}> = (obj: T, info: GraphQLResolveInfo) => boolean | Promise<boolean>;
@@ -315,7 +311,7 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
   parent: TParent,
   args: TArgs,
   context: TContext,
-  info: GraphQLResolveInfo
+  info: GraphQLResolveInfo,
 ) => TResult | Promise<TResult>;
 
 /** Mapping between all available schema types and the resolvers types */
@@ -368,43 +364,79 @@ export type ResolversParentTypes = {
   Tag: Tag;
 };
 
-export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
-  transaction?: Resolver<Maybe<ResolversTypes['Transaction']>, ParentType, ContextType, RequireFields<QueryTransactionArgs, 'id'>>;
-  transactions?: Resolver<ResolversTypes['TransactionConnection'], ParentType, ContextType, RequireFields<QueryTransactionsArgs, 'first' | 'sort'>>;
+export type QueryResolvers<
+  ContextType = any,
+  ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query'],
+> = {
+  transaction?: Resolver<
+    Maybe<ResolversTypes['Transaction']>,
+    ParentType,
+    ContextType,
+    RequireFields<QueryTransactionArgs, 'id'>
+  >;
+  transactions?: Resolver<
+    ResolversTypes['TransactionConnection'],
+    ParentType,
+    ContextType,
+    RequireFields<QueryTransactionsArgs, 'first' | 'sort'>
+  >;
   block?: Resolver<Maybe<ResolversTypes['Block']>, ParentType, ContextType, RequireFields<QueryBlockArgs, never>>;
-  blocks?: Resolver<ResolversTypes['BlockConnection'], ParentType, ContextType, RequireFields<QueryBlocksArgs, 'first' | 'sort'>>;
+  blocks?: Resolver<
+    ResolversTypes['BlockConnection'],
+    ParentType,
+    ContextType,
+    RequireFields<QueryBlocksArgs, 'first' | 'sort'>
+  >;
 };
 
-export type BlockConnectionResolvers<ContextType = any, ParentType extends ResolversParentTypes['BlockConnection'] = ResolversParentTypes['BlockConnection']> = {
+export type BlockConnectionResolvers<
+  ContextType = any,
+  ParentType extends ResolversParentTypes['BlockConnection'] = ResolversParentTypes['BlockConnection'],
+> = {
   pageInfo?: Resolver<ResolversTypes['PageInfo'], ParentType, ContextType>;
   edges?: Resolver<Array<ResolversTypes['BlockEdge']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType>;
 };
 
-export type BlockEdgeResolvers<ContextType = any, ParentType extends ResolversParentTypes['BlockEdge'] = ResolversParentTypes['BlockEdge']> = {
+export type BlockEdgeResolvers<
+  ContextType = any,
+  ParentType extends ResolversParentTypes['BlockEdge'] = ResolversParentTypes['BlockEdge'],
+> = {
   cursor?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   node?: Resolver<ResolversTypes['Block'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType>;
 };
 
-export type TransactionConnectionResolvers<ContextType = any, ParentType extends ResolversParentTypes['TransactionConnection'] = ResolversParentTypes['TransactionConnection']> = {
+export type TransactionConnectionResolvers<
+  ContextType = any,
+  ParentType extends ResolversParentTypes['TransactionConnection'] = ResolversParentTypes['TransactionConnection'],
+> = {
   pageInfo?: Resolver<ResolversTypes['PageInfo'], ParentType, ContextType>;
   edges?: Resolver<Array<ResolversTypes['TransactionEdge']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType>;
 };
 
-export type TransactionEdgeResolvers<ContextType = any, ParentType extends ResolversParentTypes['TransactionEdge'] = ResolversParentTypes['TransactionEdge']> = {
+export type TransactionEdgeResolvers<
+  ContextType = any,
+  ParentType extends ResolversParentTypes['TransactionEdge'] = ResolversParentTypes['TransactionEdge'],
+> = {
   cursor?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   node?: Resolver<ResolversTypes['Transaction'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType>;
 };
 
-export type PageInfoResolvers<ContextType = any, ParentType extends ResolversParentTypes['PageInfo'] = ResolversParentTypes['PageInfo']> = {
+export type PageInfoResolvers<
+  ContextType = any,
+  ParentType extends ResolversParentTypes['PageInfo'] = ResolversParentTypes['PageInfo'],
+> = {
   hasNextPage?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType>;
 };
 
-export type TransactionResolvers<ContextType = any, ParentType extends ResolversParentTypes['Transaction'] = ResolversParentTypes['Transaction']> = {
+export type TransactionResolvers<
+  ContextType = any,
+  ParentType extends ResolversParentTypes['Transaction'] = ResolversParentTypes['Transaction'],
+> = {
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   anchor?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   signature?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -420,17 +452,26 @@ export type TransactionResolvers<ContextType = any, ParentType extends Resolvers
   __isTypeOf?: IsTypeOfResolverFn<ParentType>;
 };
 
-export type ParentResolvers<ContextType = any, ParentType extends ResolversParentTypes['Parent'] = ResolversParentTypes['Parent']> = {
+export type ParentResolvers<
+  ContextType = any,
+  ParentType extends ResolversParentTypes['Parent'] = ResolversParentTypes['Parent'],
+> = {
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType>;
 };
 
-export type BundleResolvers<ContextType = any, ParentType extends ResolversParentTypes['Bundle'] = ResolversParentTypes['Bundle']> = {
+export type BundleResolvers<
+  ContextType = any,
+  ParentType extends ResolversParentTypes['Bundle'] = ResolversParentTypes['Bundle'],
+> = {
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType>;
 };
 
-export type BlockResolvers<ContextType = any, ParentType extends ResolversParentTypes['Block'] = ResolversParentTypes['Block']> = {
+export type BlockResolvers<
+  ContextType = any,
+  ParentType extends ResolversParentTypes['Block'] = ResolversParentTypes['Block'],
+> = {
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   timestamp?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   height?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
@@ -438,25 +479,37 @@ export type BlockResolvers<ContextType = any, ParentType extends ResolversParent
   __isTypeOf?: IsTypeOfResolverFn<ParentType>;
 };
 
-export type MetaDataResolvers<ContextType = any, ParentType extends ResolversParentTypes['MetaData'] = ResolversParentTypes['MetaData']> = {
+export type MetaDataResolvers<
+  ContextType = any,
+  ParentType extends ResolversParentTypes['MetaData'] = ResolversParentTypes['MetaData'],
+> = {
   size?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   type?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType>;
 };
 
-export type AmountResolvers<ContextType = any, ParentType extends ResolversParentTypes['Amount'] = ResolversParentTypes['Amount']> = {
+export type AmountResolvers<
+  ContextType = any,
+  ParentType extends ResolversParentTypes['Amount'] = ResolversParentTypes['Amount'],
+> = {
   winston?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   ar?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType>;
 };
 
-export type OwnerResolvers<ContextType = any, ParentType extends ResolversParentTypes['Owner'] = ResolversParentTypes['Owner']> = {
+export type OwnerResolvers<
+  ContextType = any,
+  ParentType extends ResolversParentTypes['Owner'] = ResolversParentTypes['Owner'],
+> = {
   address?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   key?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType>;
 };
 
-export type TagResolvers<ContextType = any, ParentType extends ResolversParentTypes['Tag'] = ResolversParentTypes['Tag']> = {
+export type TagResolvers<
+  ContextType = any,
+  ParentType extends ResolversParentTypes['Tag'] = ResolversParentTypes['Tag'],
+> = {
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   value?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType>;
@@ -478,7 +531,6 @@ export type Resolvers<ContextType = any> = {
   Owner?: OwnerResolvers<ContextType>;
   Tag?: TagResolvers<ContextType>;
 };
-
 
 /**
  * @deprecated

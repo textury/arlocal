@@ -12,8 +12,8 @@ const dataDB = new DataDB();
 
 export async function txAnchorRoute(ctx: Router.RouterContext) {
   const txs = await connection.select('id').from('transactions').limit(1);
-  if(txs.length) {
-    return ctx.body = txs[0].id;
+  if (txs.length) {
+    return (ctx.body = txs[0].id);
   }
   ctx.body = Utils.randomID();
 }
@@ -36,28 +36,30 @@ export async function txPostRoute(ctx: Router.RouterContext) {
 
   console.log('post', data);
 
-  await dataDB.insert({txid: data.id, data: data.data });
+  await dataDB.insert({ txid: data.id, data: data.data });
   const tx = formatTransaction(data);
 
   // @ts-ignore
   tx.height = ctx.network.height;
 
   await connection.insert(tx).into('transactions');
-  
+
   let index = 0;
-  for(let tag of data.tags) {
+  for (let tag of data.tags) {
     const name = Utils.atob(tag.name);
     const value = Utils.atob(tag.value);
 
     console.log(name, value);
 
-    await connection.insert({
-      // @ts-ignore
-      index,
-      "tx_id": tx.id, 
-      name,
-      value
-    }).into('tags');
+    await connection
+      .insert({
+        // @ts-ignore
+        index,
+        tx_id: tx.id,
+        name,
+        value,
+      })
+      .into('tags');
 
     index++;
   }

@@ -1,9 +1,9 @@
-import { Tag } from "../graphql/types";
-import { fromB64Url } from "./encoding";
+import { Tag } from '../graphql/types';
+import { fromB64Url } from './encoding';
 
 export class Utils {
   static randomID(len: number = 43): string {
-    return [...Array(43)].map(i => (~~(Math.random() * 36)).toString(36)).join('');
+    return [...Array(43)].map((i) => (~~(Math.random() * 36)).toString(36)).join('');
   }
 
   static atob(a: string) {

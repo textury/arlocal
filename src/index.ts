@@ -16,7 +16,7 @@ import { dataRouteRegex, dataHeadRoute, dataRoute } from './routes/data';
 import { txRoute, txPostRoute, txAnchorRoute } from './routes/transaction';
 
 const argv = process.argv.slice(2);
-const port = argv.length && !isNaN(+argv[0])? argv[0] : 1984;
+const port = argv.length && !isNaN(+argv[0]) ? argv[0] : 1984;
 
 const app = new Koa();
 const router = new Router();
@@ -41,9 +41,9 @@ async function start() {
   router.get('/', statusRoute);
   router.get('/info', statusRoute);
   router.get('/mine/:qty?', mineRoute);
-  
+
   router.get('/tx_anchor', txAnchorRoute);
-  router.get('/price/:price/:addy?', async ctx => ctx.body = ctx.params.price * 1965132);
+  router.get('/price/:price/:addy?', async (ctx) => (ctx.body = +ctx.params.price * 1965132));
 
   router.get('/tx/:txid', txRoute);
   router.post('/tx', txPostRoute);
@@ -71,7 +71,7 @@ async function startDB() {
   graphServer({
     introspection: true,
     playground: true,
-  }).applyMiddleware({app, path: '/graphql'});
+  }).applyMiddleware({ app, path: '/graphql' });
 
   await up(connection);
 }
@@ -85,7 +85,6 @@ async function cleanup() {
   } catch (e) {
     process.exit(1);
   }
-
 }
 
 process.on('SIGINT', cleanup);

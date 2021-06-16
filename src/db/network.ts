@@ -10,13 +10,13 @@ export class NetworkDB {
   private started = false;
 
   constructor() {
-    this.db = new Nedb({filename: this.dbFile});
+    this.db = new Nedb({ filename: this.dbFile });
   }
 
   async init(): Promise<boolean> {
     return new Promise((resolve, reject) => {
-      this.db.loadDatabase(async err => {
-        if(err) {
+      this.db.loadDatabase(async (err) => {
+        if (err) {
           return reject(err);
         }
 
@@ -33,20 +33,20 @@ export class NetworkDB {
           blocks: 0,
           node_state_latency: 0,
         });
-        
+
         resolve(true);
       });
     });
   }
 
   async insert(obj: NetworkInterface): Promise<NetworkInterface> {
-    if(!this.started) {
+    if (!this.started) {
       await this.init();
     }
 
     return new Promise((resolve, reject) => {
       this.db.insert(obj, (err, doc) => {
-        if(err) {
+        if (err) {
           return reject(err);
         }
 
@@ -54,15 +54,15 @@ export class NetworkDB {
       });
     });
   }
-  
+
   async findOne(): Promise<NetworkInterface> {
-    if(!this.started) {
+    if (!this.started) {
       await this.init();
     }
 
     return new Promise((resolve, reject) => {
       this.db.findOne({}, (err, doc) => {
-        if(err) {
+        if (err) {
           return reject(err);
         }
 
@@ -72,24 +72,29 @@ export class NetworkDB {
   }
 
   async increment(qty: number = 1): Promise<boolean> {
-    if(!this.started) {
+    if (!this.started) {
       await this.init();
     }
 
     return new Promise((resolve, reject) => {
-      this.db.update({}, {
-        $inc: { height: qty, blocks: qty },
-        $set: {current: Utils.randomID(64) },
-        }, {multi: true}, (err, numReplaced) => {
-        if(err) {
-          return reject(err);
-        }
-        if(numReplaced) {
-          return resolve(true);
-        }
+      this.db.update(
+        {},
+        {
+          $inc: { height: qty, blocks: qty },
+          $set: { current: Utils.randomID(64) },
+        },
+        { multi: true },
+        (err, numReplaced) => {
+          if (err) {
+            return reject(err);
+          }
+          if (numReplaced) {
+            return resolve(true);
+          }
 
-        resolve(false);
-      });
+          resolve(false);
+        },
+      );
     });
   }
 }

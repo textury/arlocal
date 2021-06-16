@@ -1,9 +1,9 @@
-import {pick} from 'lodash';
-import {DataItemJson} from 'arweave-bundles';
-import { TransactionType } from "../faces/transaction";
-import { Utils } from "../utils/utils";
-import { fromB64Url, sha256B64Url } from "../utils/encoding";
-import { indices } from "../utils/order";
+import { pick } from 'lodash';
+import { DataItemJson } from 'arweave-bundles';
+import { TransactionType } from '../faces/transaction';
+import { Utils } from '../utils/utils';
+import { fromB64Url, sha256B64Url } from '../utils/encoding';
+import { indices } from '../utils/order';
 import { connection } from './connection';
 import { DataDB } from './data';
 
@@ -16,10 +16,10 @@ export interface ANSTransaction {
 }
 
 export interface DatabaseTag {
-    tx_id: string;
-    index: number;
-    name: string | undefined;
-    value: string | undefined;
+  tx_id: string;
+  index: number;
+  name: string | undefined;
+  value: string | undefined;
 }
 
 export const transactionFields = [
@@ -52,16 +52,16 @@ export function formatTransaction(transaction: TransactionType) {
   }
 
   return pick(
-      {
-        ...transaction,
-        ...indexFields,
-        content_type: Utils.tagValue(transaction.tags, 'content-type'),
-        format: transaction.format || 0,
-        data_size: transaction.data_size || transaction.data ? fromB64Url(transaction.data).byteLength : undefined,
-        tags: JSON.stringify(transaction.tags),
-        owner_address: sha256B64Url(fromB64Url(transaction.owner)),
-      },
-      transactionFields.concat(indices),
+    {
+      ...transaction,
+      ...indexFields,
+      content_type: Utils.tagValue(transaction.tags, 'content-type'),
+      format: transaction.format || 0,
+      data_size: transaction.data_size || transaction.data ? fromB64Url(transaction.data).byteLength : undefined,
+      tags: JSON.stringify(transaction.tags),
+      owner_address: sha256B64Url(fromB64Url(transaction.owner)),
+    },
+    transactionFields.concat(indices),
   );
 }
 
@@ -78,15 +78,15 @@ export function formatAnsTransaction(ansTransaction: DataItemJson) {
   }
 
   return pick(
-      {
-        ...indexFields,
-        id: ansTransaction.id,
-        owner: ansTransaction.owner,
-        content_type: 'ANS-102',
-        target: ansTransaction.target,
-        tags: JSON.stringify(ansTransaction.tags),
-      },
-      transactionFields.concat(indices),
+    {
+      ...indexFields,
+      id: ansTransaction.id,
+      owner: ansTransaction.owner,
+      content_type: 'ANS-102',
+      target: ansTransaction.target,
+      tags: JSON.stringify(ansTransaction.tags),
+    },
+    transactionFields.concat(indices),
   );
 }
 
