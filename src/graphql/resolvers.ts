@@ -92,12 +92,15 @@ export const resolvers: Resolvers = {
     block: async (parent, queryParams: QueryBlockArgs, { req, connection }) => {
       if (queryParams.id) {
         return (
-          await generateBlockQuery({
-            select: blockFieldMap,
-            id: queryParams.id,
-          })
-          // @ts-ignore
-        ).first();
+          (
+            await generateBlockQuery({
+              select: blockFieldMap,
+              id: queryParams.id,
+            })
+          )
+            // @ts-ignore
+            .first()
+        );
       } else {
         return null;
       }
