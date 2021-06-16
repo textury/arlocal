@@ -28,7 +28,8 @@ You can also mine more than one block at a time by hitting `/mine/{blocks}`, thi
 - Extremely fast compared to other options out there.
 - Community built, open source and free.
 - No need of external resources, only NodeJS + NPM.
-- Test transactions, graphql requests, NFT deployment and more.
+- Test transactions, SmartWeave contracts, GraphQL requests, NFT deployment and more.
+- Works on Windows, Mac, Linux, Raspberry Pi, and pretty much everywhere as long as NodeJS is installed.
 
 ### TODO
 - Balances management, allow to create new wallets, set their balances and handle balances (fees, transfer, deposit, etc).
