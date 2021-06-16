@@ -1,20 +1,21 @@
 {
   "name": "@textury/arlocal",
   "version": "1.0.4",
-  "main": "dist/index.js",
-  "bin": {
-    "arlocal": "./dist/cli.js"
-  },
+  "main": "./bin/index.js",
   "repository": "https://github.com/textury/arlocal.git",
   "author": "Cedrik <cedrik.git@tryninja.io>",
   "license": "MIT",
+  "files": ["bin/**/*"],
+  "bin": {
+    "arlocal": "./bin/index.js"
+  },
   "scripts": {
-    "start": "node ./dist",
+    "start": "node ./bin",
     "build": "tsc",
-    "dev": "tsc-watch --onSuccess \"node dist\"",
-    "test": "tsc-watch --onSuccess \"node dist/test.js\"",
+    "dev": "tsc-watch --onSuccess \"node bin\"",
+    "test": "tsc-watch --onSuccess \"node bin/test.js\"",
     "format": "prettier --write \"src/**/*.ts\"",
-    "nodemon": "nodemon dist"
+    "nodemon": "nodemon bin"
   },
   "dependencies": {
     "@koa/cors": "^3.1.0",

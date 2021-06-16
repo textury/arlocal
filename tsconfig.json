@@ -3,7 +3,7 @@
     "sourceMap": true,
     "target": "es6",
     "module": "commonjs",
-    "outDir": "./dist",
+    "outDir": "./bin",
     "baseUrl": "./src",
     "esModuleInterop": true,
     "skipLibCheck": true
