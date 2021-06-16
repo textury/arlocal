@@ -15,6 +15,9 @@ import { mineRoute } from './routes/mine';
 import { dataRouteRegex, dataHeadRoute, dataRoute } from './routes/data';
 import { txRoute, txPostRoute, txAnchorRoute } from './routes/transaction';
 
+const argv = process.argv.slice(2);
+const port = argv.length && !isNaN(+argv[0])? argv[0] : 1984;
+
 const app = new Koa();
 const router = new Router();
 
@@ -54,8 +57,8 @@ async function start() {
   app.use(bodyParser());
   app.use(router.routes()).use(router.allowedMethods());
 
-  app.listen(1984, () => {
-    console.log('arlocal started on port 1984');
+  app.listen(port, () => {
+    console.log(`arlocal started on port ${port}`);
   });
 }
 
@@ -74,3 +77,16 @@ async function startDB() {
 }
 
 start();
+
+async function cleanup() {
+  try {
+    fs.rmdirSync('./db', { recursive: true });
+    process.exit();
+  } catch (e) {
+    process.exit(1);
+  }
+
+}
+
+process.on('SIGINT', cleanup);
+process.on('SIGTERM', cleanup);

@@ -1,8 +1,8 @@
 {
-  "name": "arlocal",
+  "name": "@textury/arlocal",
   "version": "1.0.0",
-  "main": "index.js",
-  "repository": "https://github.com/cedriking/arlocal.git",
+  "main": "dist/index.js",
+  "repository": "https://github.com/textury/arlocal.git",
   "author": "Cedrik <cedrik.git@tryninja.io>",
   "license": "MIT",
   "scripts": {
