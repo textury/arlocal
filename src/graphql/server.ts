@@ -1,5 +1,5 @@
 import { readFileSync } from 'fs';
-import {join} from 'path';
+import { join } from 'path';
 import { ApolloServer, Config, gql } from 'apollo-server-koa';
 import { connection } from '../db/connection';
 import { resolvers } from './resolvers';
