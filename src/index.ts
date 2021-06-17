@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
-import fs from 'fs';
+import { realpathSync, mkdirSync, rmdirSync } from 'fs';
+import path from 'path';
 import Koa from 'koa';
 import Router from 'koa-router';
 import logger from 'koa-logger';
@@ -22,6 +23,9 @@ const port = argv.length && !isNaN(+argv[0]) ? argv[0] : 1984;
 
 const app = new Koa();
 const router = new Router();
+
+path.basename(path.dirname(realpathSync(__filename)));
+const dbPath = 'db';
 
 app.context.network = {
   network: 'arlocal.N.1',
@@ -66,8 +70,8 @@ async function start() {
 
 async function startDB() {
   // Delete old database
-  fs.rmdirSync('./db', { recursive: true });
-  fs.mkdirSync('./db');
+  rmdirSync(dbPath, { recursive: true });
+  mkdirSync(dbPath);
 
   // sqlite
   graphServer({
@@ -82,7 +86,7 @@ start();
 
 async function cleanup() {
   try {
-    fs.rmdirSync('./db', { recursive: true });
+    rmdirSync(dbPath, { recursive: true });
     process.exit();
   } catch (e) {
     process.exit(1);
