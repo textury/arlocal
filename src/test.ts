@@ -16,6 +16,7 @@ const ardb = new Ardb(arweave);
   await getData(tx);
   await mine();
   await geTransactionWithTag('App-Name', 'Arweave');
+  await getTx('7U1g-kxNP0HQj7hjQEePABG7lpNKpUMf32yBfHTETD0'); // invalid tx
 })();
 
 async function createTransaction(): Promise<string> {

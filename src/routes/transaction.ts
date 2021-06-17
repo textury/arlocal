@@ -24,6 +24,11 @@ export async function txRoute(ctx: Router.RouterContext) {
   const metadata = await transactionDB.getById(transaction);
 
   console.log(metadata);
+  if (!metadata) {
+    ctx.status = 404;
+    ctx.body = { status: 404, error: 'Not Found' };
+    return;
+  }
 
   ctx.status = 200;
   ctx.headers['accept-ranges'] = 'bytes';

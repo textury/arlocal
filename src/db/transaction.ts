@@ -97,7 +97,10 @@ export class TransactionDB {
 
   async getById(txId: string) {
     const tx = (await connection.queryBuilder().select('*').from('transactions').where('id', '=', txId).limit(1))[0];
-    tx.tags = JSON.parse(tx.tags);
+
+    try {
+      tx.tags = JSON.parse(tx.tags);
+    } catch (e) {}
 
     return tx;
   }
