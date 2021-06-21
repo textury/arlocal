@@ -16,6 +16,7 @@ import { statusRoute } from './routes/status';
 import { mineRoute } from './routes/mine';
 import { dataRouteRegex, dataHeadRoute, dataRoute } from './routes/data';
 import { txRoute, txPostRoute, txAnchorRoute } from './routes/transaction';
+import { appData } from './utils/appdata';
 
 const argv = process.argv.slice(2);
 const port = argv.length && !isNaN(+argv[0]) ? argv[0] : 1984;
@@ -23,7 +24,11 @@ const port = argv.length && !isNaN(+argv[0]) ? argv[0] : 1984;
 const app = new Koa();
 const router = new Router();
 
-export const dbPath = './db';
+const folder = appData('arlocal', '.db');
+
+console.log(folder);
+
+export const dbPath = folder;
 
 app.context.network = {
   network: 'arlocal.N.1',
@@ -69,7 +74,7 @@ async function start() {
 async function startDB() {
   // Delete old database
   rmdirSync(dbPath, { recursive: true });
-  mkdirSync(dbPath);
+  mkdirSync(dbPath, { recursive: true });
 
   // sqlite
   graphServer({

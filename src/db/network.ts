@@ -1,7 +1,7 @@
 import { NetworkInterface } from 'faces/network';
 import fs from 'fs';
-import { dbPath } from 'index';
 import Nedb from 'nedb';
+import { dbPath } from '../index';
 import { Utils } from '../utils/utils';
 
 export class NetworkDB {

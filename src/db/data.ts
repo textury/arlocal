@@ -1,6 +1,6 @@
 import fs from 'fs';
-import { dbPath } from 'index';
 import Nedb from 'nedb';
+import { dbPath } from '../index';
 
 export class DataDB {
   // DB should be emptied on every run.
