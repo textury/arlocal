@@ -1,11 +1,12 @@
 import { NetworkInterface } from 'faces/network';
 import fs from 'fs';
+import { dbPath } from 'index';
 import Nedb from 'nedb';
 import { Utils } from '../utils/utils';
 
 export class NetworkDB {
   // DB should be emptied on every run.
-  private readonly dbFile = './db/network.db';
+  private readonly dbFile = `${dbPath}/network.db`;
   private db: Nedb;
   private started = false;
 

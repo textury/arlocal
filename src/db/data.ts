@@ -1,9 +1,10 @@
 import fs from 'fs';
+import { dbPath } from 'index';
 import Nedb from 'nedb';
 
 export class DataDB {
   // DB should be emptied on every run.
-  private readonly dbFile = './db/txs.db';
+  private readonly dbFile = `${dbPath}txs.db`;
   private db: Nedb;
   private started: boolean = false;
 

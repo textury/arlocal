@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 
-import { realpathSync, mkdirSync, rmdirSync } from 'fs';
-import path from 'path';
+import { mkdirSync, rmdirSync } from 'fs';
 import Koa from 'koa';
 import Router from 'koa-router';
 import logger from 'koa-logger';
@@ -24,8 +23,7 @@ const port = argv.length && !isNaN(+argv[0]) ? argv[0] : 1984;
 const app = new Koa();
 const router = new Router();
 
-path.basename(path.dirname(realpathSync(__filename)));
-const dbPath = 'db';
+export const dbPath = './db';
 
 app.context.network = {
   network: 'arlocal.N.1',
