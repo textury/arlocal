@@ -104,7 +104,10 @@ export default class ArLocal {
 
   private async startDB() {
     // Delete old database
-    rmSync(this.dbPath, { recursive: true });
+    try {
+      rmSync(this.dbPath, { recursive: true });
+    } catch (e) {}
+
     mkdirSync(this.dbPath, { recursive: true });
 
     // sqlite
@@ -124,8 +127,9 @@ export default class ArLocal {
   async stop() {
     this.server.close((err) => {
       if (err) {
-        console.log(err);
-        rmSync(this.dbPath, { recursive: true });
+        try {
+          rmSync(this.dbPath, { recursive: true });
+        } catch (err) {}
         return;
       }
 
@@ -139,15 +143,13 @@ export default class ArLocal {
                 .then(() => {
                   try {
                     rmSync(this.dbPath, { recursive: true });
-                  } catch (e) {
-                    console.log(e);
-                  }
+                  } catch (e) {}
                 })
-                .catch(console.log);
+                .catch(() => {});
             })
-            .catch(console.log);
+            .catch(() => {});
         })
-        .catch(console.log);
+        .catch(() => {});
     });
   }
 }
