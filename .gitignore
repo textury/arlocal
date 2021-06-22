@@ -104,7 +104,7 @@ dist
 .tern-port
 
 # Temporary databases
-db
+./db
 .blocksdb
 db.sqlite
 .DS_Store

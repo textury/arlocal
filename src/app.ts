@@ -1,5 +1,5 @@
 import { Server } from 'http';
-import { rmdirSync, mkdirSync } from 'fs';
+import { rmSync, mkdirSync } from 'fs';
 import path from 'path';
 import Koa, { BaseContext } from 'koa';
 import cors from '@koa/cors';
@@ -104,7 +104,7 @@ export default class ArLocal {
 
   private async startDB() {
     // Delete old database
-    rmdirSync(this.dbPath, { recursive: true });
+    rmSync(this.dbPath, { recursive: true });
     mkdirSync(this.dbPath, { recursive: true });
 
     // sqlite
@@ -125,7 +125,7 @@ export default class ArLocal {
     this.server.close((err) => {
       if (err) {
         console.log(err);
-        rmdirSync(this.dbPath, { recursive: true });
+        rmSync(this.dbPath, { recursive: true });
         return;
       }
 
@@ -138,7 +138,7 @@ export default class ArLocal {
                 .destroy()
                 .then(() => {
                   try {
-                    rmdirSync(this.dbPath, { recursive: true });
+                    rmSync(this.dbPath, { recursive: true });
                   } catch (e) {
                     console.log(e);
                   }
