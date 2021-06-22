@@ -1,100 +1,20 @@
 #!/usr/bin/env node
-
-import { mkdirSync, rmdirSync } from 'fs';
-import Koa from 'koa';
-import Router from 'koa-router';
-import logger from 'koa-logger';
-import json from 'koa-json';
-import bodyParser from 'koa-body';
-import cors from '@koa/cors';
-
-import { Utils } from './utils/utils';
-import { connection } from './db/connection';
-import { up } from './db/initialize';
-import { graphServer } from './graphql/server';
-import { statusRoute } from './routes/status';
-import { mineRoute } from './routes/mine';
-import { dataRouteRegex, dataHeadRoute, dataRoute } from './routes/data';
-import { txRoute, txPostRoute, txAnchorRoute } from './routes/transaction';
+import minimist from 'minimist';
+import ArLocal from './app';
 import { appData } from './utils/appdata';
 
-const argv = process.argv.slice(2);
-const port = argv.length && !isNaN(+argv[0]) ? argv[0] : 1984;
+const argv = minimist(process.argv.slice(2));
 
-const app = new Koa();
-const router = new Router();
+const port = argv._.length && !isNaN(+argv._[0]) ? argv._[0] : 1984;
+const showLogs = argv.hidelogs? false : true;
 
 const folder = appData('arlocal', '.db');
+const dbPath = folder;
 
-console.log(folder);
+(async () => {
+  const app = new ArLocal(+port, showLogs, dbPath);
+  await app.start();
 
-export const dbPath = folder;
-
-app.context.network = {
-  network: 'arlocal.N.1',
-  version: 1,
-  release: 1,
-  queue_length: 0,
-  peers: 0,
-  height: 0,
-  current: Utils.randomID(64),
-  blocks: 0,
-  node_state_latency: 0,
-};
-
-app.context.transactions = [];
-
-async function start() {
-  await startDB();
-
-  router.get('/', statusRoute);
-  router.get('/info', statusRoute);
-  router.get('/mine/:qty?', mineRoute);
-
-  router.get('/tx_anchor', txAnchorRoute);
-  router.get('/price/:price/:addy?', async (ctx) => (ctx.body = +ctx.params.price * 1965132));
-
-  router.get('/tx/:txid', txRoute);
-  router.post('/tx', txPostRoute);
-
-  router.head(dataRouteRegex, dataHeadRoute);
-  router.get(dataRouteRegex, dataRoute);
-
-  app.use(cors());
-  app.use(json());
-  app.use(logger());
-  app.use(bodyParser());
-  app.use(router.routes()).use(router.allowedMethods());
-
-  app.listen(port, () => {
-    console.log(`arlocal started on port ${port}`);
-  });
-}
-
-async function startDB() {
-  // Delete old database
-  rmdirSync(dbPath, { recursive: true });
-  mkdirSync(dbPath, { recursive: true });
-
-  // sqlite
-  graphServer({
-    introspection: true,
-    playground: true,
-  }).applyMiddleware({ app, path: '/graphql' });
-
-  await up(connection);
-}
-
-start();
-
-async function cleanup() {
-  try {
-    rmdirSync(dbPath, { recursive: true });
-    process.exit();
-  } catch (e) {
-    process.exit(1);
-  }
-}
-
-process.on('SIGINT', cleanup);
-process.on('SIGTERM', cleanup);
+  process.on('SIGINT', async () => await app.stop());
+  process.on('SIGTERM', async () => await app.stop());
+})();

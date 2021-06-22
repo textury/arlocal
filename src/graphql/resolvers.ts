@@ -72,7 +72,7 @@ export const resolvers: Resolvers = {
         sortOrder: queryParams.sort || undefined,
       };
 
-      const results = (await generateQuery(params)) as TransactionHeader[];
+      const results = (await generateQuery(params, connection)) as TransactionHeader[];
       const hasNextPage = results.length > pageSize;
 
       return {
@@ -96,7 +96,7 @@ export const resolvers: Resolvers = {
             await generateBlockQuery({
               select: blockFieldMap,
               id: queryParams.id,
-            })
+            }, connection)
           )
             // @ts-ignore
             .first()
@@ -134,7 +134,7 @@ export const resolvers: Resolvers = {
         limit: pageSize + 1,
         offset,
         before: timestamp,
-      });
+      }, connection);
 
       const results = await query;
       // @ts-ignore

@@ -1,20 +1,25 @@
-import { knex } from 'knex';
+import { Knex } from 'knex';
 import { Utils } from '../utils/utils';
-import { connection } from './connection';
 
 export class BlockDB {
+  private connection: Knex;
+
+  constructor(connection: Knex) {
+    this.connection = connection;
+  }
+
   async getOne() {
-    return connection.select('*').from('blocks');
+    return this.connection.select('*').from('blocks');
   }
 
   async mine(height: number, previous: string, txs: string[]) {
     const id = Utils.randomID(64);
 
-    await connection
+    await this.connection
       .insert({
         id,
         height,
-        mined_at: connection.fn.now(),
+        mined_at: this.connection.fn.now(),
         previous_block: previous,
         txs,
         extended: '',

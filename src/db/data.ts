@@ -1,15 +1,14 @@
-import fs from 'fs';
+import {join} from 'path';
 import Nedb from 'nedb';
-import { dbPath } from '../index';
 
 export class DataDB {
   // DB should be emptied on every run.
-  private readonly dbFile = `${dbPath}txs.db`;
+  private dbFile: string;
   private db: Nedb;
   private started: boolean = false;
 
-  constructor() {
-    this.db = new Nedb({ filename: this.dbFile });
+  constructor(dbPath: string) {
+    this.db = new Nedb({ filename: join(dbPath, 'txs.db') });
   }
 
   async init(): Promise<boolean> {

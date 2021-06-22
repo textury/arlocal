@@ -1,8 +1,7 @@
-import { knex } from 'knex';
+import { Knex, knex } from 'knex';
 import { indices } from '../utils/order';
 import { ISO8601DateTimeString } from '../utils/encoding';
 import { TagFilter } from './types';
-import { connection } from '../db/connection';
 
 export type TxSortOrder = 'HEIGHT_ASC' | 'HEIGHT_DESC';
 
@@ -29,7 +28,7 @@ export interface QueryParams {
   maxHeight?: number;
 }
 
-export async function generateQuery(params: QueryParams): Promise<knex.QueryBuilder> {
+export async function generateQuery(params: QueryParams, connection: Knex): Promise<knex.QueryBuilder> {
   const { to, from, tags, id, ids, status = 'confirmed', select } = params;
   const { limit = 10, blocks = false, sortOrder = 'HEIGHT_DESC' } = params;
   const { offset = 0, minHeight = -1, maxHeight = -1 } = params;
@@ -64,7 +63,6 @@ export async function generateQuery(params: QueryParams): Promise<knex.QueryBuil
   }
 
   if (tags) {
-    console.log(tags);
     for (let i = 0; i < tags.length; i++) {
       const tag = tags[i];
       const tagAlias = `${i}_${i}`;
@@ -138,7 +136,7 @@ export interface BlockQueryParams {
   maxHeight?: number;
 }
 
-export async function generateBlockQuery(params: BlockQueryParams): Promise<knex.QueryBuilder> {
+export async function generateBlockQuery(params: BlockQueryParams, connection: Knex): Promise<knex.QueryBuilder> {
   const { id, ids, limit, offset, select, before, sortOrder, minHeight, maxHeight } = params;
 
   const query = connection.queryBuilder().select(select).from('blocks');

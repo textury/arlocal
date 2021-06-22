@@ -4,8 +4,8 @@ import { TransactionType } from '../faces/transaction';
 import { Utils } from '../utils/utils';
 import { fromB64Url, sha256B64Url } from '../utils/encoding';
 import { indices } from '../utils/order';
-import { connection } from './connection';
 import { DataDB } from './data';
+import { Knex } from 'knex';
 
 export interface ANSTransaction {
   id: string;
@@ -89,14 +89,16 @@ export function formatAnsTransaction(ansTransaction: DataItemJson) {
 }
 
 export class TransactionDB {
+  private connection: Knex;
   private dataDB: DataDB;
 
-  constructor() {
-    this.dataDB = new DataDB();
+  constructor(dbPath: string, connection: Knex) {
+    this.connection = connection;
+    this.dataDB = new DataDB(dbPath);
   }
 
   async getById(txId: string) {
-    const tx = (await connection.queryBuilder().select('*').from('transactions').where('id', '=', txId).limit(1))[0];
+    const tx = (await this.connection.queryBuilder().select('*').from('transactions').where('id', '=', txId).limit(1))[0];
 
     try {
       tx.tags = JSON.parse(tx.tags);

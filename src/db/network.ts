@@ -1,17 +1,14 @@
 import { NetworkInterface } from 'faces/network';
-import fs from 'fs';
+import {join} from 'path';
 import Nedb from 'nedb';
-import { dbPath } from '../index';
 import { Utils } from '../utils/utils';
 
 export class NetworkDB {
-  // DB should be emptied on every run.
-  private readonly dbFile = `${dbPath}/network.db`;
   private db: Nedb;
   private started = false;
 
-  constructor() {
-    this.db = new Nedb({ filename: this.dbFile });
+  constructor(dbPath: string) {
+    this.db = new Nedb({ filename: join(dbPath, 'network.db') });
   }
 
   async init(): Promise<boolean> {
