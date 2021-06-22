@@ -2,7 +2,7 @@
 Run a local Arweave gateway-like server.
 
 ## Usage
-#### Init
+#### CLI Tool
 Make sure you already have NodeJS + NPM installed.
 To run `arlocal` it's as simple as doing an `npx` which means running the latest version available on `npmjs.com`.
 ```
@@ -16,6 +16,44 @@ It's as simple as doing:
 npx @textury/arlocal 8080
 ```
 This will start arlocal on port `8080`.
+
+Other options:
+```
+--hidelogs = This will hide the logs from ArLocal.
+```
+
+#### NodeJS library
+You can also use `arlocal` as a library on your own code. This is useful if you want to make sure everyone who tests your app has this instance installed.
+
+```
+yarn add @textury/arlocal -D
+```
+
+Then you can import it just like any other node module:
+```ts
+import ArLocal from '@textury/arlocal';
+
+(async () => {
+  const arLocal = new ArLocal();
+
+  // Start is a Promise, we need to start it inside an async function.
+  await arLocal.start();
+
+  // Your tests here...
+
+  // After we are done with our tests, let's close the connection.
+  await arLocal.stop();
+})();
+```
+
+The `ArLocal` class has a few options, all of them are optional.
+```
+ArLocal(port = 1984, showLogs = true, dbPath = '.db')
+
+port = What port to use for ArLocal.
+showLogs = Should we show logs.
+dbPath = folder where the db will be temporary stored.
+```
 
 #### Sending transactions
 Sending a new transaction is done just like with the default gateway, use ArweaveJS to create your transaction, sign and post it.
