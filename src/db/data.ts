@@ -1,4 +1,4 @@
-import {join} from 'path';
+import { join } from 'path';
 import Nedb from 'nedb';
 
 export class DataDB {

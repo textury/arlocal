@@ -18,16 +18,16 @@ export async function txAnchorRoute(ctx: Router.RouterContext) {
 }
 
 export async function txRoute(ctx: Router.RouterContext) {
-  if(!transactionDB) {
+  if (!transactionDB) {
     transactionDB = new TransactionDB(ctx.dbPath, ctx.connection);
   }
 
   const path = ctx.params.txid.match(pathRegex) || [];
   const transaction = path.length > 1 ? path[1] : '';
-  
+
   const metadata = await transactionDB.getById(transaction);
   ctx.logging.log(metadata);
-  
+
   if (!metadata) {
     ctx.status = 404;
     ctx.body = { status: 404, error: 'Not Found' };
@@ -41,7 +41,7 @@ export async function txRoute(ctx: Router.RouterContext) {
 }
 
 export async function txPostRoute(ctx: Router.RouterContext) {
-  if(!dataDB) {
+  if (!dataDB) {
     dataDB = new DataDB(ctx.dbPath);
   }
 
@@ -74,7 +74,7 @@ export async function txPostRoute(ctx: Router.RouterContext) {
 
     index++;
   }
-  
+
   ctx.transactions.push(data.id);
 
   ctx.body = data;

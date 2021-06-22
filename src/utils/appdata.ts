@@ -1,7 +1,7 @@
 import path from 'path';
 
 export function appData(...app: string[]) {
-  let dataFolder: string  = '';
+  let dataFolder: string = '';
 
   if (process.platform === 'win32') {
     dataFolder = path.join(process.env.APPDATA, ...app);

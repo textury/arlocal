@@ -1,22 +1,22 @@
-import { rmdirSync, mkdirSync } from "fs";
+import { rmdirSync, mkdirSync } from 'fs';
 import path from 'path';
 import Koa, { BaseContext } from 'koa';
-import cors from "@koa/cors";
-import bodyParser from "koa-bodyparser";
-import Router from "koa-router";
-import json from "koa-json";
+import cors from '@koa/cors';
+import bodyParser from 'koa-bodyparser';
+import Router from 'koa-router';
+import json from 'koa-json';
 import logger from 'koa-logger';
-import { Knex } from "knex";
-import { connect } from "./db/connect";
-import { down, up } from "./db/initialize";
-import { graphServer } from "./graphql/server";
-import { dataRouteRegex, dataHeadRoute, dataRoute } from "./routes/data";
-import { mineRoute } from "./routes/mine";
-import { statusRoute } from "./routes/status";
-import { txAnchorRoute, txRoute, txPostRoute } from "./routes/transaction";
-import { Utils } from "./utils/utils";
-import { NetworkInterface } from "./faces/network";
-import Logging from "./utils/logging";
+import { Knex } from 'knex';
+import { connect } from './db/connect';
+import { down, up } from './db/initialize';
+import { graphServer } from './graphql/server';
+import { dataRouteRegex, dataHeadRoute, dataRoute } from './routes/data';
+import { mineRoute } from './routes/mine';
+import { statusRoute } from './routes/status';
+import { txAnchorRoute, txRoute, txPostRoute } from './routes/transaction';
+import { Utils } from './utils/utils';
+import { NetworkInterface } from './faces/network';
+import Logging from './utils/logging';
 
 declare module 'Koa' {
   interface BaseContext {
@@ -83,9 +83,9 @@ export default class ArLocal {
       ctx.type = 'application/json';
       ctx.body = {
         status: 400,
-        error: "Request type not found."
+        error: 'Request type not found.',
       };
-    })
+    });
 
     this.app.use(cors());
     this.app.use(json());
@@ -104,10 +104,13 @@ export default class ArLocal {
     mkdirSync(this.dbPath, { recursive: true });
 
     // sqlite
-    graphServer({
-      introspection: true,
-      playground: true,
-    }, this.connection).applyMiddleware({ app: this.app, path: '/graphql' });
+    graphServer(
+      {
+        introspection: true,
+        playground: true,
+      },
+      this.connection,
+    ).applyMiddleware({ app: this.app, path: '/graphql' });
 
     await up(this.connection);
   }

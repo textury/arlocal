@@ -12,7 +12,7 @@ let dataDB: DataDB;
 const decoder = new TextDecoder();
 
 export async function dataHeadRoute(ctx: Router.RouterContext) {
-  if(!transactionDB) {
+  if (!transactionDB) {
     transactionDB = new TransactionDB(ctx.dbPath, ctx.connection);
   }
 
@@ -28,10 +28,10 @@ export async function dataHeadRoute(ctx: Router.RouterContext) {
 }
 
 export async function dataRoute(ctx: Router.RouterContext) {
-  if(!dataDB) {
+  if (!dataDB) {
     dataDB = new DataDB(ctx.dbPath);
   }
-  if(!transactionDB) {
+  if (!transactionDB) {
     transactionDB = new TransactionDB(ctx.dbPath, ctx.connection);
   }
 
@@ -49,7 +49,7 @@ export async function dataRoute(ctx: Router.RouterContext) {
   try {
     const contentType = Utils.tagValue(metadata.tags, 'Content-Type');
     ctx.type = contentType;
-  } catch(e) {
+  } catch (e) {
     ctx.type = 'text/plain';
   }
 

@@ -93,10 +93,13 @@ export const resolvers: Resolvers = {
       if (queryParams.id) {
         return (
           (
-            await generateBlockQuery({
-              select: blockFieldMap,
-              id: queryParams.id,
-            }, connection)
+            await generateBlockQuery(
+              {
+                select: blockFieldMap,
+                id: queryParams.id,
+              },
+              connection,
+            )
           )
             // @ts-ignore
             .first()
@@ -125,16 +128,19 @@ export const resolvers: Resolvers = {
         maxHeight = queryParams.height.max;
       }
 
-      const query = generateBlockQuery({
-        ids,
-        select: blockFieldMap,
-        minHeight,
-        maxHeight,
-        sortOrder: queryParams.sort || 'HEIGHT_ASC',
-        limit: pageSize + 1,
-        offset,
-        before: timestamp,
-      }, connection);
+      const query = generateBlockQuery(
+        {
+          ids,
+          select: blockFieldMap,
+          minHeight,
+          maxHeight,
+          sortOrder: queryParams.sort || 'HEIGHT_ASC',
+          limit: pageSize + 1,
+          offset,
+          before: timestamp,
+        },
+        connection,
+      );
 
       const results = await query;
       // @ts-ignore

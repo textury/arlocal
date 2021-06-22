@@ -23,7 +23,7 @@ export default class Logging {
 
   private show(type: 'log' | 'info' | 'warn' | 'error', ...args: any[]) {
     if (this._log) {
-      console[type](`[${(new Date()).toLocaleString()}]`, ...args);
+      console[type](`[${new Date().toLocaleString()}]`, ...args);
     }
   }
 }
