@@ -123,23 +123,31 @@ export default class ArLocal {
 
   async stop() {
     this.server.close((err) => {
-      if(err) {
+      if (err) {
         console.log(err);
         rmdirSync(this.dbPath, { recursive: true });
         return;
       }
 
-      down(this.connection).then(() => {
-        this.apollo.stop().then(() => {
-          this.connection.destroy().then(() => {
-            try {
-              rmdirSync(this.dbPath, { recursive: true });
-            } catch (e) {
-              console.log(e);
-            }
-          }).catch(console.log);
-        }).catch(console.log);
-      }).catch(console.log);
+      down(this.connection)
+        .then(() => {
+          this.apollo
+            .stop()
+            .then(() => {
+              this.connection
+                .destroy()
+                .then(() => {
+                  try {
+                    rmdirSync(this.dbPath, { recursive: true });
+                  } catch (e) {
+                    console.log(e);
+                  }
+                })
+                .catch(console.log);
+            })
+            .catch(console.log);
+        })
+        .catch(console.log);
     });
   }
 }
