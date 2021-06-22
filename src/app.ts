@@ -1,3 +1,4 @@
+import { Server } from 'http';
 import { rmdirSync, mkdirSync } from 'fs';
 import path from 'path';
 import Koa, { BaseContext } from 'koa';
@@ -6,6 +7,7 @@ import bodyParser from 'koa-bodyparser';
 import Router from 'koa-router';
 import json from 'koa-json';
 import logger from 'koa-logger';
+import { ApolloServer } from 'apollo-server-koa';
 import { Knex } from 'knex';
 import { connect } from './db/connect';
 import { down, up } from './db/initialize';
@@ -34,7 +36,9 @@ export default class ArLocal {
   private log: Logging;
 
   private connection: Knex;
+  private apollo: ApolloServer;
 
+  private server: Server;
   private app = new Koa();
   private router = new Router();
 
@@ -93,7 +97,7 @@ export default class ArLocal {
     this.app.use(bodyParser());
     this.app.use(this.router.routes()).use(this.router.allowedMethods());
 
-    this.app.listen(this.port, () => {
+    this.server = this.app.listen(this.port, () => {
       console.log(`arlocal started on port ${this.port}`);
     });
   }
@@ -104,24 +108,38 @@ export default class ArLocal {
     mkdirSync(this.dbPath, { recursive: true });
 
     // sqlite
-    graphServer(
+    this.apollo = graphServer(
       {
         introspection: true,
         playground: true,
       },
       this.connection,
-    ).applyMiddleware({ app: this.app, path: '/graphql' });
+    );
+
+    this.apollo.applyMiddleware({ app: this.app, path: '/graphql' });
 
     await up(this.connection);
   }
 
   async stop() {
-    try {
-      await down(this.connection);
-      rmdirSync(this.dbPath, { recursive: true });
-      process.exit();
-    } catch (e) {
-      process.exit(1);
-    }
+    this.server.close((err) => {
+      if(err) {
+        console.log(err);
+        rmdirSync(this.dbPath, { recursive: true });
+        return;
+      }
+
+      down(this.connection).then(() => {
+        this.apollo.stop().then(() => {
+          this.connection.destroy().then(() => {
+            try {
+              rmdirSync(this.dbPath, { recursive: true });
+            } catch (e) {
+              console.log(e);
+            }
+          }).catch(console.log);
+        }).catch(console.log);
+      }).catch(console.log);
+    });
   }
 }
