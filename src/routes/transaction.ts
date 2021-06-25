@@ -47,6 +47,24 @@ export async function txPostRoute(ctx: Router.RouterContext) {
 
   const data = ctx.request.body as unknown as TransactionType;
 
+  let items = [];
+  try {
+    const parsedData = JSON.parse(Utils.atob(data.data));
+
+    if ('items' in parsedData) items = parsedData['items'];
+  } catch {}
+
+  for (const item of items) {
+    await txPostRoute({
+      ...ctx,
+      connection: ctx.connection,
+      logging: ctx.logging,
+      network: ctx.network,
+      transactions: ctx.transactions,
+      request: { ...ctx.request, body: item },
+    });
+  }
+
   ctx.logging.log('post', data);
 
   await dataDB.insert({ txid: data.id, data: data.data });
