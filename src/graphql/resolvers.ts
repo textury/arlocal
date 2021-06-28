@@ -40,18 +40,15 @@ const blockFieldMap = {
 export const resolvers: Resolvers = {
   Query: {
     transaction: async (parent, queryParams, { req, connection }) => {
-      req.log.info('[graphql/v2] transaction/request', queryParams);
-
       const params: QueryParams = {
         id: queryParams.id,
         blocks: true,
         select: fieldMap,
       };
 
-      // @ts-ignore
-      const result = (await generateQuery(params)).first();
+      const result = await generateQuery(params, connection);
 
-      return (await result) as TransactionHeader;
+      return result[0] as TransactionHeader;
     },
     transactions: async (parent, queryParams: QueryTransactionsArgs, { req, connection }, info) => {
       const { timestamp, offset } = parseCursor(queryParams.after || newCursor());
