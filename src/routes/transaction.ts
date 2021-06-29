@@ -1,5 +1,5 @@
 import Router from 'koa-router';
-import { formatTransaction, TransactionDB } from '../db/transaction';
+import { formatTransaction, transactionFields, TransactionDB } from '../db/transaction';
 import { DataDB } from '../db/data';
 import { Utils } from '../utils/utils';
 import { TransactionType } from '../faces/transaction';
@@ -78,4 +78,29 @@ export async function txPostRoute(ctx: Router.RouterContext) {
   ctx.transactions.push(data.id);
 
   ctx.body = data;
+}
+
+export async function txFieldRoute(ctx: Router.RouterContext) {
+  if (!transactionDB) {
+    transactionDB = new TransactionDB(ctx.dbPath, ctx.connection);
+  }
+
+  if (!transactionFields.includes(ctx.params.field)) {
+    ctx.status = 400;
+    ctx.body = { status: 400, error: 'Invalid hash' };
+    return;
+  }
+
+  const path = ctx.params.txid.match(pathRegex) || [];
+  const transaction = path.length > 1 ? path[1] : '';
+
+  const metadata = await transactionDB.getById(transaction);
+
+  if (!metadata) {
+    ctx.status = 404;
+    ctx.body = { status: 404, error: 'Not Found' };
+    return;
+  }
+
+  ctx.body = metadata[ctx.params.field];
 }
