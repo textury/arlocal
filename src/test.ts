@@ -67,6 +67,6 @@ async function mine() {
 }
 
 async function getTxField(id: string, field: string) {
-  const res = await arweave.api.get(`/${id}/${field}`);
+  const res = await arweave.api.get(`${id}/${field}`);
   console.log(res.data);
 }
