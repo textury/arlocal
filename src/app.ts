@@ -15,12 +15,12 @@ import { graphServer } from './graphql/server';
 import { dataRouteRegex, dataHeadRoute, dataRoute } from './routes/data';
 import { mineRoute } from './routes/mine';
 import { statusRoute } from './routes/status';
-import { txAnchorRoute, txRoute, txPostRoute } from './routes/transaction';
+import { txAnchorRoute, txRoute, txPostRoute, txFieldRoute } from './routes/transaction';
 import { Utils } from './utils/utils';
 import { NetworkInterface } from './faces/network';
 import Logging from './utils/logging';
 
-declare module 'Koa' {
+declare module 'koa' {
   interface BaseContext {
     connection: Knex;
     network: NetworkInterface;
@@ -79,6 +79,7 @@ export default class ArLocal {
 
     this.router.get('/tx/:txid', txRoute);
     this.router.post('/tx', txPostRoute);
+    this.router.get('/tx/:txid/:field', txFieldRoute);
 
     this.router.head(dataRouteRegex, dataHeadRoute);
     this.router.get(dataRouteRegex, dataRoute);
