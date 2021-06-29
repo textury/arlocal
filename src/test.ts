@@ -18,6 +18,7 @@ const ardb = new Ardb(arweave);
   const tx = await createTransaction();
   await getTx(tx);
   await getData(tx);
+  await getTxField(tx, 'id');
   await mine();
   await geTransactionWithTag('App-Name', 'Arweave');
   await getTx('7U1g-kxNP0HQj7hjQEePABG7lpNKpUMf32yBfHTETD0'); // invalid tx
@@ -63,4 +64,9 @@ async function geTransactionWithTag(name: string, value: string) {
 
 async function mine() {
   await arweave.api.get('mine');
+}
+
+async function getTxField(id: string, field: string) {
+  const res = await arweave.api.get(`/${id}/${field}`);
+  console.log(res.data);
 }
