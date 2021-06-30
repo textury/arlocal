@@ -1,6 +1,6 @@
 import moment from 'moment';
 import { IResolvers } from 'apollo-server-koa';
-import { QueryTransactionsArgs, QueryBlockArgs, QueryBlocksArgs } from './types';
+import { QueryTransactionsArgs, QueryBlockArgs, QueryBlocksArgs, QueryTransactionFieldArgs } from './types';
 import { ISO8601DateTimeString, winstonToAr, utf8DecodeTag } from '../utils/encoding';
 import { TransactionHeader } from '../faces/arweave';
 import { QueryParams, generateQuery, generateBlockQuery } from './query';
@@ -85,6 +85,16 @@ export const resolvers: Resolvers = {
           });
         },
       };
+    },
+    transactionField: async (parent, queryParams: QueryTransactionFieldArgs, { connection }) => {
+      const params: QueryParams = {
+        id: queryParams.id,
+        select: {
+          [queryParams.field]: `transactions.${queryParams.field}`,
+        },
+      };
+      const [result] = (await generateQuery(params, connection)) as TransactionHeader[];
+      return result ? result[queryParams.field] : null;
     },
     block: async (parent, queryParams: QueryBlockArgs, { req, connection }) => {
       if (queryParams.id) {
