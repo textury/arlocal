@@ -18,12 +18,19 @@ export type Query = {
   transaction?: Maybe<Transaction>;
   /** Get a paginated set of matching transactions using filters. */
   transactions: TransactionConnection;
+  /** Get a single field from a transaction. */
+  transactionField?: Maybe<String>;
   block?: Maybe<Block>;
   blocks: BlockConnection;
 };
 
 export type QueryTransactionArgs = {
   id: Scalars['ID'];
+};
+
+export type QueryTransactionFieldArgs = {
+  id: Scalars['ID'];
+  field: Scalars['String'];
 };
 
 export type QueryTransactionsArgs = {

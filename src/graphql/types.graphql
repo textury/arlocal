@@ -45,6 +45,10 @@ type Query {
     """
     sort: SortOrder = HEIGHT_DESC
   ): TransactionConnection!
+  """
+  Get a single field from a transaction.
+  """
+  transactionField(id: ID!, field: String!): String
   block(id: String): Block
   blocks(
     """
