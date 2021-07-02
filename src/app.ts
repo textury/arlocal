@@ -125,7 +125,7 @@ export default class ArLocal {
   }
 
   async stop() {
-    if(!this.server) {
+    if (!this.server) {
       return;
     }
 
@@ -139,21 +139,21 @@ export default class ArLocal {
     });
 
     down(this.connection)
-        .then(() => {
-          this.apollo
-            .stop()
-            .then(() => {
-              this.connection
-                .destroy()
-                .then(() => {
-                  try {
-                    rmSync(this.dbPath, { recursive: true });
-                  } catch (e) {}
-                })
-                .catch(() => {});
-            })
-            .catch(() => {});
-        })
-        .catch(() => {});
+      .then(() => {
+        this.apollo
+          .stop()
+          .then(() => {
+            this.connection
+              .destroy()
+              .then(() => {
+                try {
+                  rmSync(this.dbPath, { recursive: true });
+                } catch (e) {}
+              })
+              .catch(() => {});
+          })
+          .catch(() => {});
+      })
+      .catch(() => {});
   }
 }

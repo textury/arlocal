@@ -21,9 +21,8 @@ let app: ArLocal;
   process.on('SIGTERM', stop);
 })();
 
-
 async function stop() {
   try {
-    await app.stop()
-  } catch(e) {}
+    await app.stop();
+  } catch (e) {}
 }
