@@ -1,6 +1,6 @@
 {
   "name": "@textury/arlocal",
-  "version": "1.0.16",
+  "version": "1.0.17",
   "main": "./bin/app.js",
   "repository": "https://github.com/textury/arlocal.git",
   "author": "Cedrik <cedrik.git@tryninja.io>",
