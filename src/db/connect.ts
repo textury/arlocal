@@ -1,5 +1,5 @@
 import { Knex } from 'knex';
-import {newDb} from 'pg-mem';
+import { newDb } from 'pg-mem';
 const db = newDb();
 
 export const connect = (dbPath: string): Knex => {
