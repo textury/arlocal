@@ -1,7 +1,7 @@
 import { Server } from 'http';
 import { rmSync, mkdirSync } from 'fs';
 import path from 'path';
-import Koa, { BaseContext } from 'koa';
+import Koa from 'koa';
 import cors from '@koa/cors';
 import bodyParser from 'koa-bodyparser';
 import Router from 'koa-router';
