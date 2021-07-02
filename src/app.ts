@@ -42,9 +42,9 @@ export default class ArLocal {
   private app = new Koa();
   private router = new Router();
 
-  constructor(port: number = 1984, showLogs: boolean = true, dbPath: string = path.join(__dirname, '.db')) {
+  constructor(port: number = 1984, showLogs: boolean = true, dbPath?: string) {
     this.port = port || this.port;
-    this.dbPath = dbPath;
+    this.dbPath = dbPath || path.join(__dirname, '.db', port.toString());
     this.log = new Logging(showLogs);
 
     this.connection = connect(dbPath);
@@ -125,18 +125,16 @@ export default class ArLocal {
   }
 
   async stop() {
-    if (!this.server) {
-      return;
+    if (this.server) {
+      this.server.close((err) => {
+        if (err) {
+          try {
+            rmSync(this.dbPath, { recursive: true });
+          } catch (err) {}
+          return;
+        }
+      });
     }
-
-    this.server.close((err) => {
-      if (err) {
-        try {
-          rmSync(this.dbPath, { recursive: true });
-        } catch (err) {}
-        return;
-      }
-    });
 
     down(this.connection)
       .then(() => {
