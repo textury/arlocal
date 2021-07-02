@@ -8,7 +8,7 @@ export class DataDB {
   private started: boolean = false;
 
   constructor(dbPath: string) {
-    this.db = new Nedb({ filename: join(dbPath, 'txs.db') });
+    this.db = new Nedb();
   }
 
   async init(): Promise<boolean> {
