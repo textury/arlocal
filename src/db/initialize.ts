@@ -10,7 +10,7 @@ export async function up(knex: Knex) {
     .dropTableIfExists('tags');
 
   return knex.schema
-    .createTable('transactions', (table) => {
+    .createTableIfNotExists('transactions', (table) => {
       table.string('id', 64).notNullable();
       table.text('owner');
       table.jsonb('tags');
@@ -38,7 +38,7 @@ export async function up(knex: Knex) {
       table.index(['owner_address'], 'transactions_owner_address', 'HASH');
       table.index(['target'], 'transactions_target', 'HASH');
     })
-    .createTable('blocks', (table) => {
+    .createTableIfNotExists('blocks', (table) => {
       table.string('id', 64).notNullable();
       table.integer('height', 4).notNullable();
       table.timestamp('mined_at').notNullable();
@@ -50,7 +50,7 @@ export async function up(knex: Knex) {
       table.primary(['id'], 'pkey_blocks');
       table.index(['height'], 'blocks_height', 'HASH');
     })
-    .createTable('tags', (table) => {
+    .createTableIfNotExists('tags', (table) => {
       table.string('tx_id', 64).notNullable();
       table.integer('index').notNullable();
       table.text('name');
