@@ -1,10 +1,8 @@
-import { join } from 'path';
-import { knex, Knex } from 'knex';
+import { Knex } from 'knex';
+import {newDb} from 'pg-mem';
+const db = newDb();
 
 export const connect = (dbPath: string): Knex => {
-  return knex({
-    client: 'sqlite3',
-    connection: ':memory:',
-    useNullAsDefault: true,
-  });
+  const knex = db.adapters.createKnex();
+  return knex;
 };

@@ -41,8 +41,8 @@
     "minimist": "^1.2.5",
     "moment": "^2.29.1",
     "nedb": "^1.8.0",
+    "pg-mem": "^1.9.9",
     "rfc4648": "^1.5.0",
-    "sqlite3": "^5.0.2",
     "tsc-watch": "^4.4.0"
   },
   "devDependencies": {
