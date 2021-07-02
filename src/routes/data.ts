@@ -12,6 +12,9 @@ let dataDB: DataDB;
 const decoder = new TextDecoder();
 
 export async function dataHeadRoute(ctx: Router.RouterContext) {
+  if (!dataDB) {
+    dataDB = new DataDB(ctx.dbPath);
+  }
   if (!transactionDB) {
     transactionDB = new TransactionDB(ctx.dbPath, ctx.connection);
   }

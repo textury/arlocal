@@ -44,7 +44,12 @@ export default class ArLocal {
 
   constructor(port: number = 1984, showLogs: boolean = true, dbPath?: string) {
     this.port = port || this.port;
-    this.dbPath = dbPath || path.join(__dirname, '.db', port.toString());
+    dbPath = dbPath || path.join(__dirname, '.db', port.toString());
+
+    this.dbPath = dbPath;
+
+    console.log(dbPath);
+
     this.log = new Logging(showLogs);
 
     this.connection = connect(dbPath);
