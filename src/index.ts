@@ -11,10 +11,19 @@ const showLogs = argv.hidelogs ? false : true;
 const folder = appData('arlocal', '.db');
 const dbPath = folder;
 
+let app: ArLocal;
+
 (async () => {
-  const app = new ArLocal(+port, showLogs, dbPath);
+  app = new ArLocal(+port, showLogs, dbPath);
   await app.start();
 
-  process.on('SIGINT', async () => await app.stop());
-  process.on('SIGTERM', async () => await app.stop());
+  process.on('SIGINT', stop);
+  process.on('SIGTERM', stop);
 })();
+
+
+async function stop() {
+  try {
+    await app.stop()
+  } catch(e) {}
+}

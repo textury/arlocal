@@ -125,6 +125,10 @@ export default class ArLocal {
   }
 
   async stop() {
+    if(!this.server) {
+      return;
+    }
+
     this.server.close((err) => {
       if (err) {
         try {
@@ -132,8 +136,9 @@ export default class ArLocal {
         } catch (err) {}
         return;
       }
+    });
 
-      down(this.connection)
+    down(this.connection)
         .then(() => {
           this.apollo
             .stop()
@@ -150,6 +155,5 @@ export default class ArLocal {
             .catch(() => {});
         })
         .catch(() => {});
-    });
   }
 }
