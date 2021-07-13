@@ -1,58 +1,22 @@
 import { join } from 'path';
-import Nedb from 'nedb';
+import { readFileSync, writeFileSync } from 'fs';
 
 export class DataDB {
   // DB should be emptied on every run.
-  private dbFile: string;
-  private db: Nedb;
+  private path: string;
   private started: boolean = false;
 
   constructor(dbPath: string) {
-    this.db = new Nedb({ filename: join(dbPath, 'txs.db') });
-  }
-
-  async init(): Promise<boolean> {
-    return new Promise((resolve, reject) => {
-      this.db.loadDatabase((err) => {
-        if (err) {
-          return reject(err);
-        }
-
-        this.started = true;
-        resolve(true);
-      });
-    });
+    this.path = join(dbPath, 'data-');
   }
 
   async insert(obj: { txid: string; data: string }): Promise<{ txid: string; data: string }> {
-    if (!this.started) {
-      await this.init();
-    }
-
-    return new Promise((resolve, reject) => {
-      this.db.insert(obj, (err, doc) => {
-        if (err) {
-          return reject(err);
-        }
-
-        resolve(doc);
-      });
-    });
+    writeFileSync(this.path + obj.txid, obj.data, 'utf8');
+    return obj;
   }
 
   async findOne(txid: string): Promise<{ txid: string; data: string }> {
-    if (!this.started) {
-      await this.init();
-    }
-
-    return new Promise((resolve, reject) => {
-      this.db.findOne({ txid }, (err, doc) => {
-        if (err) {
-          return reject(err);
-        }
-
-        resolve(doc);
-      });
-    });
+    const data = readFileSync(this.path + txid, 'utf8');
+    return { txid, data };
   }
 }

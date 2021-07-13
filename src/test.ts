@@ -15,11 +15,15 @@ const ardb = new Ardb(arweave);
   const arLocal = new ArLocal();
   await arLocal.start();
 
-  const tx = await createTransaction();
-  await getTx(tx);
-  await getData(tx);
-  await mine();
-  await geTransactionWithTag('App-Name', 'Arweave');
+  let i = 10;
+  while(i--) {
+    let tx = await createTransaction();
+    await getTx(tx);
+    await getData(tx);
+    await mine();
+    await geTransactionWithTag('App-Name', 'Arweave');
+  }
+
   await getTx('7U1g-kxNP0HQj7hjQEePABG7lpNKpUMf32yBfHTETD0'); // invalid tx
 
   await arLocal.stop();
