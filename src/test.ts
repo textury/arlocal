@@ -16,7 +16,7 @@ const ardb = new Ardb(arweave);
   await arLocal.start();
 
   let i = 10;
-  while(i--) {
+  while (i--) {
     const tx = await createTransaction();
     await getTx(tx);
     await getData(tx);
