@@ -17,7 +17,7 @@ const ardb = new Ardb(arweave);
 
   let i = 10;
   while(i--) {
-    let tx = await createTransaction();
+    const tx = await createTransaction();
     await getTx(tx);
     await getData(tx);
     await mine();
