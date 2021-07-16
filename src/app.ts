@@ -98,7 +98,11 @@ export default class ArLocal {
 
     this.app.use(cors());
     this.app.use(json());
-    this.app.use(logger());
+    this.app.use(logger({
+      transporter: (str) => {
+        this.log.log(str);
+      }
+    }));
     this.app.use(bodyParser());
     this.app.use(this.router.routes()).use(this.router.allowedMethods());
 
