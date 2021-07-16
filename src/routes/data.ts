@@ -58,7 +58,7 @@ export async function dataRoute(ctx: Router.RouterContext) {
 
   const data = await dataDB.findOne(transaction);
 
-  console.log(data);
+  ctx.logging.log(data);
 
   ctx.body = decoder.decode(b64UrlToBuffer(data.data));
 }

@@ -48,8 +48,6 @@ export default class ArLocal {
 
     this.dbPath = dbPath;
 
-    console.log(dbPath);
-
     this.log = new Logging(showLogs);
 
     this.connection = connect(dbPath);
