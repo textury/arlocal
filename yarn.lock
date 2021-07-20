@@ -2,6 +2,11 @@
 # yarn lockfile v1
 
 
+"@akiroz/size-chunker-stream@^0.0.1":
+  version "0.0.1"
+  resolved "https://registry.yarnpkg.com/@akiroz/size-chunker-stream/-/size-chunker-stream-0.0.1.tgz#07b0e6f4211df84416f5f26fcc80b18fca18463b"
+  integrity sha512-iDfwBsg8gdmuVXg0k7tHSEurodRhiIKgkLmNDCM2Zx0y/Vm+iqzb4GzVThAptgyTFUlDdW2fv+kcXX6KgEiIAg==
+
 "@apollo/protobufjs@1.2.2":
   version "1.2.2"
   resolved "https://registry.yarnpkg.com/@apollo/protobufjs/-/protobufjs-1.2.2.tgz#4bd92cd7701ccaef6d517cdb75af2755f049f87c"
@@ -681,6 +686,11 @@
     "@types/connect" "*"
     "@types/node" "*"
 
+"@types/browser-or-node@^1.3.0":
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/@types/browser-or-node/-/browser-or-node-1.3.0.tgz#896ec59bcb8109fc858d8e68d3c056c176a19622"
+  integrity sha512-MVetr65IR7RdJbUxVHsaPFaXAO8fi89zv1g8L/mHygh1Q7xnnK02XZLwfMh57FOpTO6gtnagoPMQ/UOFfctXRQ==
+
 "@types/connect@*":
   version "3.4.34"
   resolved "https://registry.yarnpkg.com/@types/connect/-/connect-3.4.34.tgz#170a40223a6d666006d93ca128af2beb1d9b1901"
@@ -997,6 +1007,17 @@ ajv@^6.12.3:
     json-schema-traverse "^0.4.1"
     uri-js "^4.2.2"
 
+ans104@joshbenaron/ans104:
+  version "0.1.2"
+  resolved "https://codeload.github.com/joshbenaron/ans104/tar.gz/9904bc704e59a9780023b15126bfb55eab15830c"
+  dependencies:
+    "@akiroz/size-chunker-stream" "^0.0.1"
+    "@types/browser-or-node" "^1.3.0"
+    arweave "^1.10.15"
+    avsc "^5.7.1"
+    base64url "^3.0.1"
+    stream-chunker "^1.2.8"
+
 ansi-escapes@^4.2.1:
   version "4.3.2"
   resolved "https://registry.yarnpkg.com/ansi-escapes/-/ansi-escapes-4.3.2.tgz#6b2291d1db7d98b6521d5f1efa42d0f3a9feb65e"
@@ -1252,6 +1273,17 @@ arweave@^1.10.11, arweave@^1.10.13, arweave@^1.10.14, arweave@^1.10.5:
     base64-js "^1.3.1"
     bignumber.js "^9.0.1"
 
+arweave@^1.10.15:
+  version "1.10.15"
+  resolved "https://registry.yarnpkg.com/arweave/-/arweave-1.10.15.tgz#c55d0c6f4eef60a4b89056976af411dcdffa83c8"
+  integrity sha512-dzct71xkkuGIqb3Cp0HI6X9V+5AvhpCLO70MGawPZ5sZ7n1QUrTKeGuOfWOGGMZx4r4vXRxQg33PUiJScDmNhA==
+  dependencies:
+    arconnect "^0.2.8"
+    asn1.js "^5.4.1"
+    axios "^0.21.1"
+    base64-js "^1.3.1"
+    bignumber.js "^9.0.1"
+
 asn1.js@^5.4.1:
   version "5.4.1"
   resolved "https://registry.yarnpkg.com/asn1.js/-/asn1.js-5.4.1.tgz#11a980b84ebb91781ce35b0fdc2ee294e3783f07"
@@ -1285,6 +1317,11 @@ asynckit@^0.4.0:
   version "0.4.0"
   resolved "https://registry.yarnpkg.com/asynckit/-/asynckit-0.4.0.tgz#c79ed97f7f34cb8f2ba1bc9790bcc366474b4b79"
   integrity sha1-x57Zf380y48robyXkLzDZkdLS3k=
+
+avsc@^5.7.1:
+  version "5.7.1"
+  resolved "https://registry.yarnpkg.com/avsc/-/avsc-5.7.1.tgz#66d38735f39f172cdbdfa757b4d61c345b5b620f"
+  integrity sha512-DGl7UMd1jmmRmVgEcZyf6H3VL74gkLleZguO42vpk2rTNmnFPJlTSYoO5bgcCY2oOHjNnGkSpb2/lrAZwTZ4Rg==
 
 aws-sign2@~0.7.0:
   version "0.7.0"
@@ -1378,6 +1415,11 @@ base64-js@^1.3.1:
   version "1.5.1"
   resolved "https://registry.yarnpkg.com/base64-js/-/base64-js-1.5.1.tgz#1b1b440160a5bf7ad40b650f095963481903930a"
   integrity sha512-AKpaYlHn8t4SVbOHCy+b5+KKgvR4vrsD8vbvrbiQJps7fKDTkjkDry6ji0rUJjC0kzbNePLwzxq8iypo41qeWA==
+
+base64url@^3.0.1:
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/base64url/-/base64url-3.0.1.tgz#6399d572e2bc3f90a9a8b22d5dbb0a32d33f788d"
+  integrity sha512-ir1UPr3dkwexU7FdV8qBBbNDRUhMmIekYMFZfi+C/sLNnRESKPl23nB9b2pltqfOQNnGzsDdId90AEtG5tCx4A==
 
 bcrypt-pbkdf@^1.0.0:
   version "1.0.2"
@@ -4224,6 +4266,13 @@ stack-utils@^2.0.3:
   resolved "https://registry.yarnpkg.com/statuses/-/statuses-1.5.0.tgz#161c7dac177659fd9811f43771fa99381478628c"
   integrity sha1-Fhx9rBd2Wf2YEfQ3cfqZOBR4Yow=
 
+stream-chunker@^1.2.8:
+  version "1.2.8"
+  resolved "https://registry.yarnpkg.com/stream-chunker/-/stream-chunker-1.2.8.tgz#eb3af2c8aee5256cde76f0a1fea86348336d04f7"
+  integrity sha1-6zryyK7lJWzedvCh/qhjSDNtBPc=
+  dependencies:
+    through2 "~2.0.0"
+
 stream-combiner@~0.0.4:
   version "0.0.4"
   resolved "https://registry.yarnpkg.com/stream-combiner/-/stream-combiner-0.0.4.tgz#4d5e433c185261dde623ca3f44c586bcf5c4ad14"
@@ -4446,7 +4495,7 @@ throat@^6.0.1:
   resolved "https://registry.yarnpkg.com/throat/-/throat-6.0.1.tgz#d514fedad95740c12c2d7fc70ea863eb51ade375"
   integrity sha512-8hmiGIJMDlwjg7dlJ4yKGLK8EsYqKgPWbG3b4wjJddKNwc7N7Dpn08Df4szr/sZdMVeOstrdYSsqzX6BYbcB+w==
 
-through2@^2.0.1:
+through2@^2.0.1, through2@~2.0.0:
   version "2.0.5"
   resolved "https://registry.yarnpkg.com/through2/-/through2-2.0.5.tgz#01c1e39eb31d07cb7d03a96a70823260b23132cd"
   integrity sha512-/mrRod8xqpA+IHSLyGCQ2s8SPHiCDEeQJSep1jqLYeEUClOFG2Qsh+4FU6G9VeqpZnGW/Su8LQGc4YKni5rYSQ==
