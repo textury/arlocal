@@ -3,6 +3,7 @@ import { formatTransaction, TransactionDB } from '../db/transaction';
 import { DataDB } from '../db/data';
 import { Utils } from '../utils/utils';
 import { TransactionType } from '../faces/transaction';
+import { unbundleData } from 'ans104';
 
 export const pathRegex = /^\/?([a-z0-9-_]{43})/i;
 
@@ -48,6 +49,41 @@ export async function txPostRoute(ctx: Router.RouterContext) {
   const data = ctx.request.body as unknown as TransactionType;
 
   ctx.logging.log('post', data);
+
+  let bundleFormat = '',
+    bundleVersion = '';
+  for (const tag of data.tags) {
+    const name = Utils.atob(tag.name);
+    const value = Utils.atob(tag.value);
+
+    if (name === 'Bundle-Format') bundleFormat = value;
+    if (name === 'Bundle-Version') bundleVersion = value;
+  }
+
+  if (bundleFormat === 'binary' && bundleVersion === '2.0.0') {
+    // ANS-104
+    const bundle = unbundleData(Buffer.from(data.data, 'base64'));
+    const items = bundle.getAll();
+
+    for (let i = 0; i < items.length; i++) {
+      const item = items[i];
+
+      await txPostRoute({
+        ...ctx,
+        connection: ctx.connection,
+        logging: ctx.logging,
+        network: ctx.network,
+        transactions: ctx.transactions,
+        request: {
+          ...ctx.request,
+          body: {
+            id: bundle.getIdBy(i),
+            ...item.toJSON(),
+          },
+        },
+      });
+    }
+  }
 
   await dataDB.insert({ txid: data.id, data: data.data });
   const tx = formatTransaction(data);
