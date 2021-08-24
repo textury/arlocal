@@ -1,7 +1,9 @@
 import { Knex, knex } from 'knex';
 import { indices } from '../utils/order';
-import { ISO8601DateTimeString } from '../utils/encoding';
+import { ISO8601DateTimeString, toB64url } from '../utils/encoding';
 import { TagFilter } from './types';
+import { tagToB64 } from '../query/transaction';
+
 
 export type TxSortOrder = 'HEIGHT_ASC' | 'HEIGHT_DESC';
 
@@ -10,6 +12,10 @@ export const orderByClauses = {
   HEIGHT_DESC: 'transactions.height DESC',
 };
 
+export const tagOrderByClauses = {
+  HEIGHT_ASC: 'tags.created_at ASC',
+  HEIGHT_DESC: 'tags.created_at DESC',
+};
 export interface QueryParams {
   to?: string[];
   from?: string[];
@@ -63,40 +69,52 @@ export async function generateQuery(params: QueryParams, connection: Knex): Prom
   }
 
   if (tags) {
-    for (let i = 0; i < tags.length; i++) {
-      const tag = tags[i];
-      const tagAlias = `${i}_${i}`;
+    const tagsConverted = tagToB64(tags);
+    const names: string[] = [];
+    const values: string[] = [];
+
+    const subQuery = connection
+      .queryBuilder()
+      .select('*')
+      .from('tags');
+
+    let runSubQuery = false;
+
+    for (const tag of tagsConverted) {
       let indexed = false;
 
-      for (const index of indices) {
+      for (const indice of indices) {
+        const index = toB64url(indice);
+
         if (tag.name === index) {
           indexed = true;
-
-          if (tag.op === 'EQ') {
-            query.whereIn(`transactions.${index}`, tag.values);
-          }
-
-          if (tag.op === 'NEQ') {
-            query.whereNotIn(`transactions.${index}`, tag.values);
-          }
+          query.whereIn(`transactions.${index}`, tag.values);
         }
       }
 
       if (indexed === false) {
-        query.join(`tags as ${tagAlias}`, (join) => {
-          join.on('transactions.id', `${tagAlias}.tx_id`);
+        names.push(tag.name);
+        values.push.apply(values, tag.values);
 
-          join.andOnIn(`${tagAlias}.name`, [tag.name]);
-
-          if (tag.op === 'EQ') {
-            join.andOnIn(`${tagAlias}.value`, tag.values);
-          }
-
-          if (tag.op === 'NEQ') {
-            join.andOnNotIn(`${tagAlias}.value`, tag.values);
-          }
-        });
+        runSubQuery = true;
       }
+    }
+    subQuery.whereIn('name', names);
+    subQuery.whereIn('value', values);
+
+    if (runSubQuery) {
+      const results = await subQuery
+        .limit(limit)
+        .offset(offset)
+        .orderByRaw(tagOrderByClauses[sortOrder]);
+
+      const txIds = [];
+
+      for (const result of results) {
+        txIds.push(result.tx_id);
+      }
+
+      query.whereIn('transactions.id', txIds);
     }
   }
 
@@ -112,6 +130,8 @@ export async function generateQuery(params: QueryParams, connection: Knex): Prom
 
   if (Object.keys(orderByClauses).includes(sortOrder)) {
     query.orderByRaw(orderByClauses[sortOrder]);
+  } else {
+    query.orderByRaw(`transactions.created_at DESC`);
   }
 
   return query;

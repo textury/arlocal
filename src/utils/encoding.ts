@@ -67,7 +67,7 @@ export function sha256(buffer: Buffer): Buffer {
   return createHash('sha256').update(buffer).digest();
 }
 
-export function toB64url(buffer: Buffer): Base64UrlEncodedString {
+export function toB64url(buffer: Buffer | string): Base64UrlEncodedString {
   return buffer.toString('base64').replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
 }
 
@@ -168,7 +168,7 @@ export function utf8DecodeTag(tag: Tag): { name: string | undefined; value: stri
     if (isValidUTF8(valueBuffer)) {
       value = valueBuffer.toString('utf8');
     }
-  } catch (error) {}
+  } catch (error) { }
   return {
     name,
     value,
