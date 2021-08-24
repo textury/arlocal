@@ -6,14 +6,14 @@ Run a local Arweave gateway-like server.
 Make sure you already have NodeJS + NPM installed.
 To run `arlocal` it's as simple as doing an `npx` which means running the latest version available on `npmjs.com`.
 ```
-npx @textury/arlocal
+npx arlocal
 ```
 That's it! You are running a local slim gateway on `http://localhost:1984`
 
 How about if I want to run it on another port?!
 It's as simple as doing:
 ```
-npx @textury/arlocal 8080
+npx arlocal 8080
 ```
 This will start arlocal on port `8080`.
 
@@ -26,12 +26,12 @@ Other options:
 You can also use `arlocal` as a library on your own code. This is useful if you want to make sure everyone who tests your app has this instance installed.
 
 ```
-yarn add @textury/arlocal -D
+yarn add arlocal -D
 ```
 
 Then you can import it just like any other node module:
 ```ts
-import ArLocal from '@textury/arlocal';
+import ArLocal from 'arlocal';
 
 (async () => {
   const arLocal = new ArLocal();

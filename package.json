@@ -1,5 +1,5 @@
 {
-  "name": "@textury/arlocal",
+  "name": "arlocal",
   "version": "1.0.27",
   "main": "./bin/app.js",
   "repository": "https://github.com/textury/arlocal.git",
