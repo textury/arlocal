@@ -50,8 +50,9 @@ export async function txPostRoute(ctx: Router.RouterContext) {
 
   ctx.logging.log('post', data);
 
-  let bundleFormat = '',
-    bundleVersion = '';
+  let bundleFormat = '';
+  let bundleVersion = '';
+
   for (const tag of data.tags) {
     const name = Utils.atob(tag.name);
     const value = Utils.atob(tag.value);
