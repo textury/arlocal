@@ -64,7 +64,7 @@ export async function txPostRoute(ctx: Router.RouterContext) {
   if (bundleFormat === 'binary' && bundleVersion === '2.0.0') {
     // ANS-104
     const bundle = unbundleData(Buffer.from(data.data, 'base64'));
-    const items = bundle.getAll();
+    const items = bundle.items;
 
     for (let i = 0; i < items.length; i++) {
       const item = items[i];
