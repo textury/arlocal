@@ -27,6 +27,7 @@
   },
   "dependencies": {
     "@koa/cors": "^3.1.0",
+    "ans104": "^0.5.4",
     "apollo-server-koa": "^2.25.1",
     "arweave-bundles": "^1.0.3",
     "graphql": "^15.5.0",
