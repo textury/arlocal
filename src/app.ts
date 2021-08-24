@@ -20,7 +20,7 @@ import { Utils } from './utils/utils';
 import { NetworkInterface } from './faces/network';
 import Logging from './utils/logging';
 
-declare module 'Koa' {
+declare module 'koa' {
   interface BaseContext {
     connection: Knex;
     network: NetworkInterface;
