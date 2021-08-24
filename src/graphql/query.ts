@@ -4,7 +4,6 @@ import { ISO8601DateTimeString, toB64url } from '../utils/encoding';
 import { TagFilter } from './types';
 import { tagToB64 } from '../query/transaction';
 
-
 export type TxSortOrder = 'HEIGHT_ASC' | 'HEIGHT_DESC';
 
 export const orderByClauses = {
@@ -73,10 +72,7 @@ export async function generateQuery(params: QueryParams, connection: Knex): Prom
     const names: string[] = [];
     const values: string[] = [];
 
-    const subQuery = connection
-      .queryBuilder()
-      .select('*')
-      .from('tags');
+    const subQuery = connection.queryBuilder().select('*').from('tags');
 
     let runSubQuery = false;
 
@@ -103,10 +99,7 @@ export async function generateQuery(params: QueryParams, connection: Knex): Prom
     subQuery.whereIn('value', values);
 
     if (runSubQuery) {
-      const results = await subQuery
-        .limit(limit)
-        .offset(offset)
-        .orderByRaw(tagOrderByClauses[sortOrder]);
+      const results = await subQuery.limit(limit).offset(offset).orderByRaw(tagOrderByClauses[sortOrder]);
 
       const txIds = [];
 

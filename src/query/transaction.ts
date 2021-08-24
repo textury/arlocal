@@ -24,13 +24,8 @@ export interface TransactionType {
 }
 
 export function toB64url(input: string): Base64UrlEncodedString {
-  return Buffer.from(input)
-    .toString('base64')
-    .replace(/\+/g, '-')
-    .replace(/\//g, '_')
-    .replace(/=/g, '');
+  return Buffer.from(input).toString('base64').replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
 }
-
 
 export function tagValue(tags: Tag[], name: string): string {
   for (const tag of tags) {

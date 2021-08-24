@@ -168,7 +168,7 @@ export function utf8DecodeTag(tag: Tag): { name: string | undefined; value: stri
     if (isValidUTF8(valueBuffer)) {
       value = valueBuffer.toString('utf8');
     }
-  } catch (error) { }
+  } catch (error) {}
   return {
     name,
     value,
