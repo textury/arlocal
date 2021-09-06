@@ -12,6 +12,18 @@ export class BlockDB {
     return this.connection.select('*').from('blocks');
   }
 
+  async getByIndepHash(indepHash: string) {
+    const block = (
+      await this.connection.queryBuilder()
+        .select('*')
+        .from('blocks')
+        .where('id', '=', indepHash)
+        .limit(1)
+    )[0];
+
+    return block;
+  }
+
   async mine(height: number, previous: string, txs: string[]) {
     const id = Utils.randomID(64);
 

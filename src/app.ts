@@ -19,6 +19,7 @@ import { txAnchorRoute, txRoute, txPostRoute } from './routes/transaction';
 import { Utils } from './utils/utils';
 import { NetworkInterface } from './faces/network';
 import Logging from './utils/logging';
+import { blocksRoute } from './routes/blocks';
 
 declare module 'koa' {
   interface BaseContext {
@@ -82,6 +83,8 @@ export default class ArLocal {
 
     this.router.get('/tx/:txid', txRoute);
     this.router.post('/tx', txPostRoute);
+
+    this.router.get('/block/hash/:indep_hash', blocksRoute);
 
     this.router.head(dataRouteRegex, dataHeadRoute);
     this.router.get(dataRouteRegex, dataRoute);
