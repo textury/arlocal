@@ -109,3 +109,4 @@ dist
 db.sqlite
 .DS_Store
 bin
+.idea

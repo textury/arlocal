@@ -68,7 +68,6 @@ export async function generateQuery(params: QueryParams, connection: Knex): Prom
   }
 
   if (tags) {
-    const tagsConverted = tagToB64(tags);
     const names: string[] = [];
     const values: string[] = [];
 
@@ -76,12 +75,10 @@ export async function generateQuery(params: QueryParams, connection: Knex): Prom
 
     let runSubQuery = false;
 
-    for (const tag of tagsConverted) {
+    for (const tag of tags) {
       let indexed = false;
 
-      for (const indice of indices) {
-        const index = toB64url(indice);
-
+      for (const index of indices) {
         if (tag.name === index) {
           indexed = true;
           query.whereIn(`transactions.${index}`, tag.values);
