@@ -14,11 +14,7 @@ export class BlockDB {
 
   async getByIndepHash(indepHash: string) {
     const block = (
-      await this.connection.queryBuilder()
-        .select('*')
-        .from('blocks')
-        .where('id', '=', indepHash)
-        .limit(1)
+      await this.connection.queryBuilder().select('*').from('blocks').where('id', '=', indepHash).limit(1)
     )[0];
 
     return block;
