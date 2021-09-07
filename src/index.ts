@@ -12,11 +12,9 @@ const folder = appData('arlocal', '.db', port.toString());
 const dbPath = folder;
 
 let app: ArLocal;
-
 (async () => {
   app = new ArLocal(+port, showLogs, dbPath);
   await app.start();
-
   process.on('SIGINT', stop);
   process.on('SIGTERM', stop);
 })();

@@ -1,5 +1,5 @@
-import { join } from 'path';
-import { readFileSync, writeFileSync } from 'fs';
+import { join, dirname } from 'path';
+import { mkdir, readFileSync, writeFileSync } from 'fs';
 
 export class DataDB {
   // DB should be emptied on every run.
@@ -11,8 +11,16 @@ export class DataDB {
   }
 
   async insert(obj: { txid: string; data: string }): Promise<{ txid: string; data: string }> {
-    writeFileSync(this.path + obj.txid, obj.data, 'utf8');
-    return obj;
+    try {
+      mkdir(dirname(this.path), { recursive: true }, (err) => {
+        if (err) throw err;
+        writeFileSync(this.path + obj.txid, obj.data, 'utf8');
+      });
+
+      return obj;
+    } catch (error) {
+      console.error({ error });
+    }
   }
 
   async findOne(txid: string): Promise<{ txid: string; data: string }> {
