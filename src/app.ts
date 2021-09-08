@@ -42,6 +42,7 @@ export default class ArLocal {
   private server: Server;
   private app = new Koa();
   private router = new Router();
+  private basePrice = 1965132;
 
   constructor(port: number = 1984, showLogs: boolean = true, dbPath?: string) {
     this.port = port || this.port;
@@ -52,7 +53,6 @@ export default class ArLocal {
     this.log = new Logging(showLogs);
 
     this.connection = connect(dbPath);
-
     this.app.context.network = {
       network: 'arlocal.N.1',
       version: 1,
@@ -79,7 +79,7 @@ export default class ArLocal {
     this.router.get('/mine/:qty?', mineRoute);
 
     this.router.get('/tx_anchor', txAnchorRoute);
-    this.router.get('/price/:price/:addy?', async (ctx) => (ctx.body = +ctx.params.price * 1965132));
+    this.router.get('/price/:price/:addy?', async (ctx) => (ctx.body = +ctx.params.price * this.basePrice));
 
     this.router.get('/tx/:txid', txRoute);
     this.router.post('/tx', txPostRoute);
@@ -165,5 +165,21 @@ export default class ArLocal {
           .catch(() => {});
       })
       .catch(() => {});
+  }
+
+  getServer(): Server {
+    return this.server;
+  }
+
+  getApp(): Koa<Koa.DefaultState, Koa.DefaultContext> {
+    return this.app;
+  }
+
+  getBasePrice(): number {
+    return this.basePrice;
+  }
+
+  getDbPath(): string {
+    return this.dbPath;
   }
 }

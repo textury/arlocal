@@ -98,13 +98,14 @@ export class TransactionDB {
   }
 
   async getById(txId: string) {
-    const tx = (
-      await this.connection.queryBuilder().select('*').from('transactions').where('id', '=', txId).limit(1)
-    )[0];
-
+    let tx;
     try {
+      tx = (await this.connection.queryBuilder().select('*').from('transactions').where('id', '=', txId).limit(1))[0];
+
       tx.tags = JSON.parse(tx.tags);
-    } catch (e) {}
+    } catch (error) {
+      console.error({ error });
+    }
 
     return tx;
   }
