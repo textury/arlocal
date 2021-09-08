@@ -147,7 +147,7 @@ export interface BlockQueryParams {
 }
 
 export async function generateBlockQuery(params: BlockQueryParams, connection: Knex): Promise<knex.QueryBuilder> {
-  const { id, ids, limit, offset, select, before, sortOrder, minHeight, maxHeight } = params;
+  const { id, ids, limit = 10, offset = 0, select, before, sortOrder, minHeight, maxHeight } = params;
 
   const query = connection.queryBuilder().select(select).from('blocks');
 
@@ -155,7 +155,7 @@ export async function generateBlockQuery(params: BlockQueryParams, connection: K
     query.where('blocks.id', id);
   }
 
-  if (ids) {
+  if (ids?.length) {
     query.whereIn('blocks.id', ids);
   }
 
@@ -171,14 +171,7 @@ export async function generateBlockQuery(params: BlockQueryParams, connection: K
     query.where('blocks.height', '<=', maxHeight);
   }
 
-  if (limit) {
-    query.limit(limit);
-  }
-
-  if (offset) {
-    query.offset(offset);
-  }
-
+  query.limit(limit).offset(offset);
   if (sortOrder) {
     if (Object.keys(blockOrderByClauses).includes(sortOrder)) {
       query.orderByRaw(blockOrderByClauses[sortOrder]);
