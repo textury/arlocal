@@ -11,10 +11,10 @@ export async function blocksRoute(ctx: Router.RouterContext) {
     }
 
     const indepHash = ctx.params.indep_hash;
-    const { id: indep_hash, mined_at: timestamp, previous_block, txs } = await blockDB.getByIndepHash(indepHash);
+    const { id, mined_at: timestamp, previous_block, txs } = await blockDB.getByIndepHash(indepHash);
 
     ctx.body = {
-      indep_hash,
+      indep_hash: id,
       timestamp: new Date(timestamp).getTime(),
       previous_block,
       height: ctx.network.height,
