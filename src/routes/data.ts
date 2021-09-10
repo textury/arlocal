@@ -65,5 +65,7 @@ export async function dataRoute(ctx: Router.RouterContext) {
 
   ctx.logging.log(data);
 
-  ctx.body = decoder.decode(b64UrlToBuffer(data.data));
+  const body = data.data[0] === '[' ? data.data : decoder.decode(b64UrlToBuffer(data.data));
+
+  ctx.body = body;
 }
