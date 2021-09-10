@@ -11,7 +11,7 @@ export class DataDB {
   }
 
   async insert(obj: { txid: string; data: string }): Promise<{ txid: string; data: string }> {
-    writeFileSync(this.path + obj.txid, obj.data, 'utf8');
+    writeFileSync(this.path + obj.txid, JSON.stringify(obj.data), 'utf8');
     return obj;
   }
 

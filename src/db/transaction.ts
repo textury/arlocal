@@ -40,28 +40,32 @@ export const transactionFields = [
 ];
 
 export function formatTransaction(transaction: TransactionType) {
-  const indexFields: any = {};
+  try {
+    const indexFields: any = {};
 
-  for (const index of indices) {
-    const value = Utils.tagValue(transaction.tags, index);
+    for (const index of indices) {
+      const value = Utils.tagValue(transaction.tags, index);
 
-    if (value) {
-      indexFields[index] = value;
+      if (value) {
+        indexFields[index] = value;
+      }
     }
-  }
 
-  return pick(
-    {
-      ...transaction,
-      ...indexFields,
-      content_type: Utils.tagValue(transaction.tags, 'content-type'),
-      format: transaction.format || 0,
-      data_size: transaction.data_size || transaction.data ? fromB64Url(transaction.data).byteLength : undefined,
-      tags: JSON.stringify(transaction.tags),
-      owner_address: sha256B64Url(fromB64Url(transaction.owner)),
-    },
-    transactionFields.concat(indices),
-  );
+    return pick(
+      {
+        ...transaction,
+        ...indexFields,
+        content_type: Utils.tagValue(transaction.tags, 'content-type'),
+        format: transaction.format || 0,
+        data_size: transaction.data_size || (transaction.data ? fromB64Url(transaction.data).byteLength : undefined),
+        tags: JSON.stringify(transaction.tags),
+        owner_address: sha256B64Url(fromB64Url(transaction.owner)),
+      },
+      transactionFields.concat(indices),
+    );
+  } catch (error) {
+    console.error({ error });
+  }
 }
 
 export function formatAnsTransaction(ansTransaction: DataItemJson) {
