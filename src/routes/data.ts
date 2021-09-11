@@ -51,7 +51,12 @@ export async function dataRoute(ctx: Router.RouterContext) {
 
   try {
     const contentType = Utils.tagValue(metadata.tags, 'Content-Type');
-    ctx.type = contentType;
+
+    const bundleFormat = Utils.tagValue(metadata.tags, 'Bundle-Format');
+    const bundleVersion = Utils.tagValue(metadata.tags, 'Bundle-Version');
+
+    if (bundleFormat === 'binary' && bundleVersion === '2.0.0') ctx.type = 'application/octet-stream';
+    else ctx.type = contentType;
   } catch (e) {
     ctx.type = 'text/plain';
   }
@@ -60,5 +65,7 @@ export async function dataRoute(ctx: Router.RouterContext) {
 
   ctx.logging.log(data);
 
-  ctx.body = decoder.decode(b64UrlToBuffer(data.data));
+  const body = data.data[0] === '[' ? data.data : decoder.decode(b64UrlToBuffer(data.data));
+
+  ctx.body = body;
 }
