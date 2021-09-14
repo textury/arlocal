@@ -20,6 +20,7 @@ import { Utils } from './utils/utils';
 import { NetworkInterface } from './faces/network';
 import Logging from './utils/logging';
 import { blocksRoute } from './routes/blocks';
+import { createWalletRoute, getBalanceRoute, getLastWalletTxRoute, updateBalanceRoute } from './routes/wallet';
 
 declare module 'koa' {
   interface BaseContext {
@@ -79,12 +80,18 @@ export default class ArLocal {
     this.router.get('/mine/:qty?', mineRoute);
 
     this.router.get('/tx_anchor', txAnchorRoute);
-    this.router.get('/price/:price/:addy?', async (ctx) => (ctx.body = +ctx.params.price * 1965132));
+    this.router.get('/price/:bytes/:addy?', async (ctx) => (ctx.body = +ctx.params.bytes * 1965132));
 
     this.router.get('/tx/:txid', txRoute);
     this.router.post('/tx', txPostRoute);
 
     this.router.get('/block/hash/:indep_hash', blocksRoute);
+
+    this.router.post('/wallet', createWalletRoute);
+    this.router.patch('/wallet/:address/balance', updateBalanceRoute);
+
+    this.router.get('/wallet/:address/balance', getBalanceRoute);
+    this.router.get('/wallet/:address/last_tx', getLastWalletTxRoute);
 
     this.router.head(dataRouteRegex, dataHeadRoute);
     this.router.get(dataRouteRegex, dataRoute);
