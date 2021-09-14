@@ -65,7 +65,7 @@ export async function up(knex: Knex) {
     .createTable('wallets', (table) => {
       table.string('id', 64).notNullable();
       table.string('address').notNullable();
-      table.float('balance');
+      table.float('balance').defaultTo(0);
       table.timestamp('created_at').defaultTo(knex.fn.now());
 
       table.primary(['id'], 'pkey_tags');

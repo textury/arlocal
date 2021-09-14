@@ -56,7 +56,6 @@ export async function updateBalanceRoute(ctx: Router.RouterContext) {
     }
     const address = ctx.params.address;
     const body = ctx.request.body as any;
-    console.log({ body });
 
     if (!body?.balance) {
       ctx.status = 422;
