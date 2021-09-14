@@ -4,11 +4,13 @@ import { DataDB } from '../db/data';
 import { Utils } from '../utils/utils';
 import { TransactionType } from '../faces/transaction';
 import { Bundle } from 'arbundles';
+import { WalletDB } from '../db/wallet';
 
 export const pathRegex = /^\/?([a-z0-9-_]{43})/i;
 
 let transactionDB: TransactionDB;
 let dataDB: DataDB;
+let walletDB: WalletDB;
 
 export async function txAnchorRoute(ctx: Router.RouterContext) {
   const txs = await ctx.connection.select('id').from('blocks').limit(1);
@@ -46,7 +48,9 @@ export async function txPostRoute(ctx: Router.RouterContext) {
     if (!dataDB) {
       dataDB = new DataDB(ctx.dbPath);
     }
-
+    if (!walletDB) {
+      walletDB = new WalletDB(ctx.connection);
+    }
     const data = ctx.request.body as unknown as TransactionType;
 
     ctx.logging.log('post', data);
@@ -89,6 +93,27 @@ export async function txPostRoute(ctx: Router.RouterContext) {
         });
       }
     }
+
+    // BALANCE UPDATES
+    if (data?.target && data?.quantity) {
+      const fromWallet = await walletDB.getWallet(data.owner);
+      const targetWallet = await walletDB.getWallet(data.target);
+
+      if (!fromWallet || !targetWallet) {
+        ctx.status = 404;
+        ctx.body = { status: 404, error: `Wallet not found` };
+        return;
+      }
+      if (fromWallet?.balance < +data.quantity + +data.reward) {
+        ctx.status = 403;
+        ctx.body = { status: 403, error: `you don't have enough funds to send ${data.quantity}` };
+        return;
+      }
+      await walletDB.incrementBalance(data.target, +data.quantity);
+      await walletDB.incrementBalance(data.owner, -data.quantity);
+    }
+
+    await walletDB.incrementBalance(data.owner, -data.reward);
 
     await dataDB.insert({ txid: data.id, data: data.data });
     const tx = formatTransaction(data);
