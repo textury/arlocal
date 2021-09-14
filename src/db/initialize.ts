@@ -3,7 +3,11 @@ import { Knex } from 'knex';
 export async function up(knex: Knex) {
   const indices = JSON.parse(process.env.INDICES || '[]');
 
-  await knex.schema.dropTableIfExists('transactions').dropTableIfExists('blocks').dropTableIfExists('tags');
+  await knex.schema
+    .dropTableIfExists('transactions')
+    .dropTableIfExists('blocks')
+    .dropTableIfExists('tags')
+    .dropTableIfExists('wallets');
 
   return knex.schema
     .createTable('transactions', (table) => {
@@ -57,6 +61,14 @@ export async function up(knex: Knex) {
       table.index(['tx_id', 'name'], 'tags_tx_id_name', 'BTREE');
       table.index(['name'], 'tags_name', 'HASH');
       table.index(['name', 'value'], 'tags_name_value', 'BTREE');
+    })
+    .createTable('wallets', (table) => {
+      table.string('id', 64).notNullable();
+      table.string('address').notNullable();
+      table.float('balance').defaultTo(0);
+      table.timestamp('created_at').defaultTo(knex.fn.now());
+
+      table.primary(['id'], 'pkey_tags');
     });
 }
 
@@ -65,5 +77,6 @@ export async function down(knex: Knex) {
     .withSchema(process.env.ENVIRONMENT || 'public')
     .dropTableIfExists('transactions')
     .dropTableIfExists('blocks')
-    .dropTableIfExists('tags');
+    .dropTableIfExists('tags')
+    .dropTableIfExists('wallets');
 }
