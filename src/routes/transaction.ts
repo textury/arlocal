@@ -96,6 +96,7 @@ export async function txPostRoute(ctx: Router.RouterContext) {
       }
     }
 
+    const ownerB64 = data.owner;
     const owner = bufferTob64Url(await crypto.hash(b64UrlToBuffer(data.owner)));
     data.owner = owner;
 
@@ -148,6 +149,7 @@ export async function txPostRoute(ctx: Router.RouterContext) {
 
     ctx.transactions.push(data.id);
 
+    data.owner = ownerB64;
     ctx.body = data;
   } catch (error) {
     console.error({ error });
