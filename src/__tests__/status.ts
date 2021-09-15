@@ -22,6 +22,17 @@ describe('STATUS', () => {
     await arlocal.stop();
   });
 
+  beforeEach(() => {
+    jest.spyOn(console, 'error');
+    // @ts-ignore jest.spyOn adds this functionallity
+    console.error.mockImplementation(() => null);
+  });
+
+  afterEach(() => {
+    // @ts-ignore jest.spyOn adds this functionallity
+    console.error.mockRestore();
+  });
+
   // Test if the server started successfully 
   test('Network info', async () => {
     const info: NetworkInfoInterface = await blockweave.network.getInfo(); 
