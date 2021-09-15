@@ -11,8 +11,12 @@ export class DataDB {
   }
 
   async insert(obj: { txid: string; data: string }): Promise<{ txid: string; data: string }> {
-    writeFileSync(this.path + obj.txid, typeof obj.data === 'string' ? obj.data : JSON.stringify(obj.data), 'utf8');
-    return obj;
+    try {
+      writeFileSync(this.path + obj.txid, typeof obj.data === 'string' ? obj.data : JSON.stringify(obj.data), 'utf8');
+      return obj;
+    } catch (error) {
+      console.error({ error });
+    }
   }
 
   async findOne(txid: string): Promise<{ txid: string; data: string }> {
