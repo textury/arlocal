@@ -57,7 +57,7 @@
     "@types/minimist": "^1.2.1",
     "@types/nedb": "^1.8.11",
     "@types/node": "^15.12.2",
-    "ardb": "^1.0.8",
+    "ardb": "^1.1.7",
     "arweave": "^1.10.14",
     "blockweave": "^1.0.12",
     "copyfiles": "^2.4.1",
