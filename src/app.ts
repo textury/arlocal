@@ -173,4 +173,8 @@ export default class ArLocal {
       })
       .catch(() => {});
   }
+
+  getServer(): Server {
+    return this.server;
+  }
 }
