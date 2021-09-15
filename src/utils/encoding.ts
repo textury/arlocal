@@ -157,21 +157,20 @@ export function utf8DecodeTag(tag: Tag): { name: string | undefined; value: stri
     if (isValidUTF8(valueBuffer)) {
       value = valueBuffer.toString('utf8');
     }
-  } catch (error) {}
+  } catch (error) { }
   return {
     name,
     value,
   };
 }
 
-// export async function hash(data: Uint8Array, algorithm: string = 'SHA-256'): Promise<Uint8Array> {
-//   return new Uint8Array(await crypto.subtle.digest(algorithm, data));
-// }
-
-export async function hash(data: Uint8Array, algorithm: string = 'SHA-256'): Promise<Uint8Array> {
-  const hasher = createHash(algorithm);
-  hasher.update(data);
-  return new Uint8Array(hasher.digest());
+export async function hash(
+  data: Uint8Array,
+  algorithm: string = "SHA-256"
+): Promise<Uint8Array> {
+  return createHash(parseHashAlgorithm(algorithm))
+    .update(data)
+    .digest();
 }
 
 export function bufferTob64(buffer: Uint8Array): string {
@@ -184,4 +183,16 @@ export function bufferTob64Url(buffer: Uint8Array): string {
 
 export function b64UrlEncode(b64UrlString: string): string {
   return b64UrlString.replace(/\+/g, '-').replace(/\//g, '_').replace(/\=/g, '');
+}
+
+
+function parseHashAlgorithm(algorithm: string): string {
+  switch (algorithm) {
+    case "SHA-256":
+      return "sha256";
+    case "SHA-384":
+      return "sha384";
+    default:
+      throw new Error(`Algorithm not supported: ${algorithm}`);
+  }
 }
