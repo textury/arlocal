@@ -15,7 +15,7 @@
     "start": "node ./bin",
     "build": "rimraf bin && tsc && copyfiles -u 1 \"./src/**/*.graphql\" bin",
     "dev": "tsc-watch --onSuccess \"node bin\"",
-    "test": "jest --passWithNoTests",
+    "test": "jest --detectOpenHandles --silent",
     "format": "prettier --write \"src/**/*.ts\"",
     "lint": "tslint -p tsconfig.json",
     "precommit": "npm run format && npm run lint && npm run build",
