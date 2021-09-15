@@ -1,11 +1,8 @@
-import Ar from 'arweave/node/ar';
 import * as B64js from 'base64-js';
 import { base32 } from 'rfc4648';
 import { createHash } from 'crypto';
 import { Readable, PassThrough, Transform } from 'stream';
 import { Tag } from '../faces/arweave';
-
-const ar = new Ar();
 
 export type Base64EncodedString = string;
 export type Base64UrlEncodedString = string;
@@ -148,14 +145,6 @@ export function bufferToStream(buffer: Buffer) {
   });
 }
 
-export function winstonToAr(amount: string) {
-  return ar.winstonToAr(amount);
-}
-
-export function arToWinston(amount: string) {
-  return ar.arToWinston(amount);
-}
-
 export function utf8DecodeTag(tag: Tag): { name: string | undefined; value: string | undefined } {
   let name;
   let value;
@@ -168,7 +157,7 @@ export function utf8DecodeTag(tag: Tag): { name: string | undefined; value: stri
     if (isValidUTF8(valueBuffer)) {
       value = valueBuffer.toString('utf8');
     }
-  } catch (error) {}
+  } catch (error) { }
   return {
     name,
     value,
