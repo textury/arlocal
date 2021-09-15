@@ -59,7 +59,7 @@
     "@types/node": "^15.12.2",
     "ardb": "^1.0.8",
     "arweave": "^1.10.14",
-    "blockweave": "^1.0.11",
+    "blockweave": "^1.0.12",
     "copyfiles": "^2.4.1",
     "jest": "^27.0.4",
     "prettier": "^2.3.1",
