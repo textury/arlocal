@@ -13,5 +13,5 @@ export function arToWinston(arString: string, { formatted = false } = {}) {
 }
 
 export function stringToBigNum(stringValue: string, decimalPlaces: number = 12): BigNumber {
-  return this.BigNum(stringValue, decimalPlaces);
+  return new BigNumber(stringValue, decimalPlaces);
 }

@@ -173,4 +173,11 @@ export default class ArLocal {
       })
       .catch(() => {});
   }
+
+  getServer(): Server {
+    return this.server;
+  }
+  getDbPath(): string {
+    return this.dbPath;
+  }
 }
