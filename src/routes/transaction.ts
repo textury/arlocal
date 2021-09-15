@@ -7,7 +7,6 @@ import { Bundle } from 'arbundles';
 import { WalletDB } from '../db/wallet';
 import { b64UrlToBuffer, bufferTob64Url, hash } from '../utils/encoding';
 
-
 export const pathRegex = /^\/?([a-z0-9-_]{43})/i;
 
 let transactionDB: TransactionDB;
