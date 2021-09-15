@@ -164,8 +164,14 @@ export function utf8DecodeTag(tag: Tag): { name: string | undefined; value: stri
   };
 }
 
+// export async function hash(data: Uint8Array, algorithm: string = 'SHA-256'): Promise<Uint8Array> {
+//   return new Uint8Array(await crypto.subtle.digest(algorithm, data));
+// }
+
 export async function hash(data: Uint8Array, algorithm: string = 'SHA-256'): Promise<Uint8Array> {
-  return new Uint8Array(await crypto.subtle.digest(algorithm, data));
+  const hasher = createHash(algorithm);
+  hasher.update(data);
+  return new Uint8Array(hasher.digest());
 }
 
 export function bufferTob64(buffer: Uint8Array): string {
