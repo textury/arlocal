@@ -30,6 +30,7 @@
     "apollo-server-koa": "^2.25.1",
     "arbundles": "^0.2.6",
     "arweave-bundles": "^1.0.3",
+    "bignumber.js": "^9.0.1",
     "graphql": "^15.5.0",
     "knex": "^0.95.6",
     "koa": "^2.13.1",

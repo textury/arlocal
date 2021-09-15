@@ -163,3 +163,22 @@ export function utf8DecodeTag(tag: Tag): { name: string | undefined; value: stri
     value,
   };
 }
+
+export async function hash(data: Uint8Array, algorithm: string = 'SHA-256'): Promise<Uint8Array> {
+  return new Uint8Array(await crypto.subtle.digest(algorithm, data));
+}
+
+export function bufferTob64(buffer: Uint8Array): string {
+  return B64js.fromByteArray(buffer);
+}
+
+export function bufferTob64Url(buffer: Uint8Array): string {
+  return b64UrlEncode(bufferTob64(buffer));
+}
+
+export function b64UrlEncode(b64UrlString: string): string {
+  return b64UrlString
+    .replace(/\+/g, "-")
+    .replace(/\//g, "_")
+    .replace(/\=/g, "");
+}

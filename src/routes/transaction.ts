@@ -5,8 +5,8 @@ import { Utils } from '../utils/utils';
 import { TransactionType } from '../faces/transaction';
 import { Bundle } from 'arbundles';
 import { WalletDB } from '../db/wallet';
-import { b64UrlToBuffer, bufferTob64Url } from 'arweave/node/lib/utils';
-const { crypto } = require('arweave');
+import { b64UrlToBuffer, bufferTob64Url, hash } from '../utils/encoding';
+
 
 export const pathRegex = /^\/?([a-z0-9-_]{43})/i;
 
@@ -96,7 +96,7 @@ export async function txPostRoute(ctx: Router.RouterContext) {
       }
     }
 
-    const owner = bufferTob64Url(await crypto.hash(b64UrlToBuffer(data.owner)));
+    const owner = bufferTob64Url(await hash(b64UrlToBuffer(data.owner)));
     data.owner = owner;
 
     // BALANCE UPDATES
