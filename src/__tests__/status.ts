@@ -34,7 +34,7 @@ describe('STATUS', () => {
   });
 
   // Test if the server started successfully 
-  test('Network info', async () => {
+  test('GET /info', async () => {
     const info: NetworkInfoInterface = await blockweave.network.getInfo(); 
 
     expect(info).toBeInstanceOf(Object);
