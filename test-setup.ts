@@ -37,6 +37,7 @@ afterEach(async () => {
   blockweave = null;
   ardb = null;
 
+  jest.spyOn(console, 'error');
   // @ts-ignore jest.spyOn adds this functionallity
   console.error.mockRestore();
 });
