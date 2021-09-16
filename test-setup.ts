@@ -6,6 +6,8 @@ export let blockweave: Blockweave;
 export let ardb: Ardb;
 export let server;
 let arLocalTesting: ArLocal;
+
+jest.setTimeout(30000);
 beforeEach(async () => {
   const port = Math.floor(Math.random() * (9000 - 5000) + 5000);
 
@@ -15,13 +17,14 @@ beforeEach(async () => {
 
   blockweave = new Blockweave({
     host: '127.0.0.1',
-    port: '1984',
+    port: `${port}`,
     protocol: 'http',
     timeout: 20000,
     logging: false,
   });
 
   const url = `http://localhost:${port}`;
+  // blockweave = new Blockweave({ url })
   //@ts-ignore
   ardb = new Ardb(blockweave);
 
