@@ -110,3 +110,4 @@ db.sqlite
 .DS_Store
 bin
 .idea
+.db
