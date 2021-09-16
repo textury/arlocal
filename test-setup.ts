@@ -9,7 +9,8 @@ let arLocalTesting: ArLocal;
 
 jest.setTimeout(30000);
 beforeEach(async () => {
-  const port = Math.floor(Math.random() * (9000 - 5000) + 5000);
+  const port = Math.floor(Math.random() * (9000 - 5000 + 1) + 5000);
+  const url = `http://127.0.0.1:${port}`;
 
   arLocalTesting = new ArLocal(port);
   await arLocalTesting.start();
@@ -17,17 +18,16 @@ beforeEach(async () => {
 
   blockweave = new Blockweave(
     {
+      url,
       host: '127.0.0.1',
       port,
       protocol: 'http',
       timeout: 20000,
-      logging: false,
+      logging: true,
     },
-    [`http://127.0.0.1:${port}`],
+    [url],
   );
 
-  const url = `http://localhost:${port}`;
-  // blockweave = new Blockweave({ url })
   //@ts-ignore
   ardb = new Ardb(blockweave);
 
