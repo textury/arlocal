@@ -5,16 +5,20 @@ import Router from 'koa-router';
 let blockDB: BlockDB;
 
 export async function mineRoute(ctx: Router.RouterContext) {
-  if (!blockDB) {
-    blockDB = new BlockDB(ctx.connection);
+  try {
+    if (!blockDB) {
+      blockDB = new BlockDB(ctx.connection);
+    }
+
+    const inc = +(ctx.params?.qty || 1);
+
+    ctx.network.current = await blockDB.mine(ctx.network.height, ctx.network.current, ctx.transactions);
+    ctx.network.height = ctx.network.height + inc;
+    ctx.network.blocks = ctx.network.blocks + inc;
+    ctx.transactions = [];
+
+    ctx.body = ctx.network;
+  } catch (error) {
+    console.error({ error });
   }
-
-  const inc = +(ctx.params?.qty || 1);
-
-  ctx.network.current = await blockDB.mine(ctx.network.height, ctx.network.current, ctx.transactions);
-  ctx.network.height = ctx.network.height + inc;
-  ctx.network.blocks = ctx.network.blocks + inc;
-  ctx.transactions = [];
-
-  ctx.body = ctx.network;
 }

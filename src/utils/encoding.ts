@@ -1,11 +1,8 @@
-import Ar from 'arweave/node/ar';
 import * as B64js from 'base64-js';
 import { base32 } from 'rfc4648';
 import { createHash } from 'crypto';
 import { Readable, PassThrough, Transform } from 'stream';
 import { Tag } from '../faces/arweave';
-
-const ar = new Ar();
 
 export type Base64EncodedString = string;
 export type Base64UrlEncodedString = string;
@@ -148,14 +145,6 @@ export function bufferToStream(buffer: Buffer) {
   });
 }
 
-export function winstonToAr(amount: string) {
-  return ar.winstonToAr(amount);
-}
-
-export function arToWinston(amount: string) {
-  return ar.arToWinston(amount);
-}
-
 export function utf8DecodeTag(tag: Tag): { name: string | undefined; value: string | undefined } {
   let name;
   let value;
@@ -173,4 +162,31 @@ export function utf8DecodeTag(tag: Tag): { name: string | undefined; value: stri
     name,
     value,
   };
+}
+
+export async function hash(data: Uint8Array, algorithm: string = 'SHA-256'): Promise<Uint8Array> {
+  return createHash(parseHashAlgorithm(algorithm)).update(data).digest();
+}
+
+export function bufferTob64(buffer: Uint8Array): string {
+  return B64js.fromByteArray(buffer);
+}
+
+export function bufferTob64Url(buffer: Uint8Array): string {
+  return b64UrlEncode(bufferTob64(buffer));
+}
+
+export function b64UrlEncode(b64UrlString: string): string {
+  return b64UrlString.replace(/\+/g, '-').replace(/\//g, '_').replace(/\=/g, '');
+}
+
+function parseHashAlgorithm(algorithm: string): string {
+  switch (algorithm) {
+    case 'SHA-256':
+      return 'sha256';
+    case 'SHA-384':
+      return 'sha384';
+    default:
+      throw new Error(`Algorithm not supported: ${algorithm}`);
+  }
 }

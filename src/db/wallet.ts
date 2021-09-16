@@ -50,6 +50,10 @@ export class WalletDB {
     return await this.connection('wallets').update({ balance }).where({ address });
   }
   async incrementBalance(address: string, balance: number) {
-    return await this.connection('wallets').increment('balance', balance).where({ address });
+    try {
+      return await this.connection('wallets').increment('balance', balance).where({ address });
+    } catch (error) {
+      console.log({ error });
+    }
   }
 }

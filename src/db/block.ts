@@ -17,19 +17,23 @@ export class BlockDB {
   }
 
   async mine(height: number, previous: string, txs: string[]) {
-    const id = Utils.randomID(64);
+    try {
+      const id = Utils.randomID(64);
 
-    await this.connection
-      .insert({
-        id,
-        height,
-        mined_at: this.connection.fn.now(),
-        previous_block: previous,
-        txs,
-        extended: '',
-      })
-      .into('blocks');
+      await this.connection
+        .insert({
+          id,
+          height,
+          mined_at: this.connection.fn.now(),
+          previous_block: previous,
+          txs,
+          extended: '',
+        })
+        .into('blocks');
 
-    return id;
+      return id;
+    } catch (error) {
+      console.error({ error });
+    }
   }
 }

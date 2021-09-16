@@ -15,13 +15,16 @@ beforeEach(async () => {
   await arLocalTesting.start();
   server = arLocalTesting.getServer();
 
-  blockweave = new Blockweave({
-    host: '127.0.0.1',
-    port: `${port}`,
-    protocol: 'http',
-    timeout: 20000,
-    logging: false,
-  });
+  blockweave = new Blockweave(
+    {
+      host: '127.0.0.1',
+      port,
+      protocol: 'http',
+      timeout: 20000,
+      logging: false,
+    },
+    [`http://127.0.0.1:${port}`],
+  );
 
   const url = `http://localhost:${port}`;
   // blockweave = new Blockweave({ url })

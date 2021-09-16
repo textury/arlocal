@@ -1,9 +1,10 @@
 import moment from 'moment';
 import { IResolvers } from 'apollo-server-koa';
 import { QueryTransactionsArgs, QueryBlockArgs, QueryBlocksArgs } from './types';
-import { ISO8601DateTimeString, winstonToAr, utf8DecodeTag } from '../utils/encoding';
+import { ISO8601DateTimeString, utf8DecodeTag } from '../utils/encoding';
 import { TransactionHeader } from '../faces/arweave';
 import { QueryParams, generateQuery, generateBlockQuery } from './query';
+import { winstonToAr } from '../utils/ar';
 
 type Resolvers = IResolvers;
 

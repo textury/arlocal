@@ -177,4 +177,7 @@ export default class ArLocal {
   getServer(): Server {
     return this.server;
   }
+  getDbPath(): string {
+    return this.dbPath;
+  }
 }

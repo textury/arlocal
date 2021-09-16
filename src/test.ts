@@ -9,6 +9,7 @@ const arweave = Arweave.init({
   logging: true,
 });
 
+// @ts-ignore
 const ardb = new Ardb(arweave);
 
 (async () => {
