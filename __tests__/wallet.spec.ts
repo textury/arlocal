@@ -1,5 +1,4 @@
-import { blockweave, server } from '../test-setup';
-import supertest from 'supertest';
+import { blockweave } from '../test-setup';
 
 describe('WALLETS', () => {
   it('POST /wallet', async () => {
@@ -13,9 +12,8 @@ describe('WALLETS', () => {
     const jwk = await blockweave.wallets.generate();
     const address = await blockweave.wallets.getAddress(jwk);
     
-    const res = await supertest(server).get(`/wallet/${address}/balance`);
-    expect(typeof res.text).toBe('string');
-    expect(res.text).toEqual('0');
+    const balance = await blockweave.wallets.getBalance(address);
+    expect(typeof balance).toBe('string');
   });
 
   it('GET /wallet/:address/last_tx', async () => {
@@ -28,9 +26,14 @@ describe('WALLETS', () => {
     await transaction.sign(jwk);
     await transaction.post();
 
-    const res = await supertest(server).get(`/wallet/${address}/last_tx`);
-    expect(typeof res.body).toBe('object');
-    expect(typeof res.body.id).toBe('string');
-    expect(res.body.id).toEqual(transaction.id);
+    const transaction2 = await blockweave.createTransaction({
+      data: 'test',
+    }, jwk);
+    await transaction2.sign(jwk);
+    await transaction2.post();
+
+    const lastTx = await blockweave.wallets.getLastTransactionId(address);
+    expect(typeof lastTx).toBe('string');
+    expect(transaction.owner).toBe(transaction2.owner);
   });
 });
