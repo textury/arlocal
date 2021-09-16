@@ -8,7 +8,7 @@ global.crypto = crypto;
 
 module.exports = {
   preset: 'ts-jest',
-  testMatch: ['**/__tests__/**/*.[jt]s?(x)'],
+  testMatch: ['**/__tests__/**/*.spec.[jt]s?(x)'],
   globals: {
     ...defaults.globals,
     crypto,

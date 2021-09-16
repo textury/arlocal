@@ -43,6 +43,7 @@
     "minimist": "^1.2.5",
     "moment": "^2.29.1",
     "rfc4648": "^1.5.0",
+    "smartweave": "^0.4.45",
     "sqlite3": "^5.0.2",
     "tsc-watch": "^4.4.0"
   },
@@ -59,7 +60,7 @@
     "@types/node": "^15.12.2",
     "ardb": "^1.1.7",
     "arweave": "^1.10.14",
-    "blockweave": "^1.0.12",
+    "blockweave": "^1.0.14",
     "copyfiles": "^2.4.1",
     "jest": "^27.0.4",
     "prettier": "^2.3.1",
