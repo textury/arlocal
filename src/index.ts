@@ -8,7 +8,7 @@ const argv = minimist(process.argv.slice(2));
 const port = argv._.length && !isNaN(+argv._[0]) ? argv._[0] : 1984;
 const showLogs = argv.hidelogs ? false : true;
 
-const folder = `${process.cwd()}/database`;
+const folder = appData('arlocal', '.db');
 const dbPath = folder;
 
 let app: ArLocal;

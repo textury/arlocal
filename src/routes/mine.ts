@@ -3,11 +3,13 @@ import { Utils } from '../utils/utils';
 import Router from 'koa-router';
 
 let blockDB: BlockDB;
+let connectionSettings: string;
 
 export async function mineRoute(ctx: Router.RouterContext) {
   try {
-    if (!blockDB) {
+    if (!blockDB || connectionSettings !== ctx.connection.client.connectionSettings.filename) {
       blockDB = new BlockDB(ctx.connection);
+      connectionSettings = ctx.connection.client.connectionSettings.filename;
     }
 
     const inc = +(ctx.params?.qty || 1);

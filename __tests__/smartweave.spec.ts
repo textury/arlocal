@@ -5,6 +5,7 @@ import { readFileSync } from 'fs';
 import { join } from 'path';
 import { interactWrite, readContract } from 'smartweave';
 import ArLocal from '../src/app';
+import { mine } from '../src/utils/tests';
 
 let bw: Blockweave;
 let arlocal: ArLocal;
@@ -42,7 +43,7 @@ describe('Testing the SmartWeave client', () => {
     const { initialStateTxId } = await createContract();
     initStateTxId = initialStateTxId;
 
-    await mine();
+    await mine(bw);
   });
 
   afterAll(async () => {
@@ -56,7 +57,7 @@ describe('Testing the SmartWeave client', () => {
   it('should properly add new interaction', async () => {
     await add();
 
-    await mine();
+    await mine(bw);
 
     expect((await getLatestState()).counter).toEqual(556);
   });
@@ -65,14 +66,14 @@ describe('Testing the SmartWeave client', () => {
     await add();
     await add();
     await add();
-    await mine();
+    await mine(bw);
 
     expect((await getLatestState()).counter).toEqual(559);
   });
 
   it('should properly add another interaction with a payload', async () => {
     await add(2);
-    await mine();
+    await mine(bw);
 
     expect((await getLatestState()).counter).toEqual(561);
   });
@@ -86,14 +87,14 @@ describe('Testing the SmartWeave client', () => {
     let i = 6;
     while (i--) await subtract();
 
-    await mine();
+    await mine(bw);
 
     expect((await getLatestState()).counter).toEqual(555);
   });
 
   it('should properly get block Height', async () => {
     await blockHeight();
-    await mine();
+    await mine(bw);
     expect((await getLatestState()).blockHeight).toEqual(arlocal.getNetwork().height - 1);
   });
 });
@@ -162,8 +163,4 @@ async function blockHeight() {
 
   //@ts-ignore
   await interactWrite(bw, wallet, initStateTxId, input);
-}
-
-async function mine() {
-  await bw.api.get('mine');
 }
