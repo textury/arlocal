@@ -62,7 +62,7 @@ export default class ArLocal {
       peers: 0,
       height: 0,
       current: Utils.randomID(64),
-      blocks: 0,
+      blocks: 1,
       node_state_latency: 0,
     };
 

@@ -108,8 +108,8 @@ export async function generateQuery(params: QueryParams, connection: Knex): Prom
     }
   }
 
-  if (minHeight > 0) {
-    query.where('transactions.height', '>=', minHeight - 1);
+  if (minHeight >= 0) {
+    query.where('transactions.height', '>=', minHeight);
   }
 
   if (maxHeight >= 0) {

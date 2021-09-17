@@ -95,7 +95,7 @@ describe('Testing the SmartWeave client', () => {
   it('should properly get block Height', async () => {
     await blockHeight();
     await mine(bw);
-    expect((await getLatestState()).blockHeight).toEqual(arlocal.getNetwork().height - 1);
+    expect((await getLatestState()).blockHeight).toEqual(arlocal.getNetwork().height);
   });
 });
 

@@ -4,7 +4,6 @@ import { TransactionType } from '../faces/transaction';
 import { Utils } from '../utils/utils';
 import { fromB64Url, sha256B64Url } from '../utils/encoding';
 import { indices } from '../utils/order';
-import { DataDB } from './data';
 import { Knex } from 'knex';
 
 export interface ANSTransaction {
@@ -94,11 +93,9 @@ export function formatAnsTransaction(ansTransaction: DataItemJson) {
 
 export class TransactionDB {
   private connection: Knex;
-  private dataDB: DataDB;
 
-  constructor(dbPath: string, connection: Knex) {
+  constructor(connection: Knex) {
     this.connection = connection;
-    this.dataDB = new DataDB(dbPath);
   }
 
   async getById(txId: string) {
@@ -111,5 +108,13 @@ export class TransactionDB {
     } catch (e) {}
 
     return tx;
+  }
+
+  async getUnminedTxs() {
+    return (await this.connection('transactions').where({ mined: false })).map(({ id }) => id);
+  }
+
+  async mineTxs() {
+    return await this.connection('transactions').where({ mined: false }).update({ mined: true });
   }
 }

@@ -14,7 +14,21 @@ describe('TRANSACTION', () => {
     expect(res2.length).toEqual(2);
   });
 
-  it('filter on min and max block height', async () => {
+  it('filter on min and max block height 1', async () => {
+    const data = 'test';
+
+    await createTransaction(blockweave, `${data} : 1`);
+    await mine(blockweave);
+
+    await createTransaction(blockweave, `${data} : 2`);
+    await mine(blockweave);
+
+    const res = (await ardb.search('transactions').find({ block: { min: 1, max: 1 } })) as any;
+
+    expect(res.length).toEqual(1);
+  });
+
+  it('filter on min and max block height 2', async () => {
     const data = 'test';
     let i = 5;
     while (i--) {
