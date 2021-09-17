@@ -16,3 +16,6 @@ export async function createTransaction(blockWeave: Blockweave, data: any = 'hel
 
   return tx.id;
 }
+export async function mine(blockweave: Blockweave) {
+  await blockweave.api.get('mine');
+}

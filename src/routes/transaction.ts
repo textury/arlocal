@@ -24,7 +24,7 @@ export async function txAnchorRoute(ctx: Router.RouterContext) {
 export async function txRoute(ctx: Router.RouterContext) {
   try {
     if (!transactionDB) {
-      transactionDB = new TransactionDB(ctx.dbPath, ctx.connection);
+      transactionDB = new TransactionDB(ctx.connection);
     }
 
     const path = ctx.params.txid.match(pathRegex) || [];
@@ -87,7 +87,6 @@ export async function txPostRoute(ctx: Router.RouterContext) {
           connection: ctx.connection,
           logging: ctx.logging,
           network: ctx.network,
-          transactions: ctx.transactions,
           request: {
             ...ctx.request,
             body: {
@@ -127,7 +126,7 @@ export async function txPostRoute(ctx: Router.RouterContext) {
 
     const tx = formatTransaction(data);
 
-    tx.height = ctx.network.height;
+    tx.height = ctx.network.blocks;
 
     await ctx.connection.insert(tx).into('transactions');
 
@@ -149,8 +148,6 @@ export async function txPostRoute(ctx: Router.RouterContext) {
 
       index++;
     }
-
-    ctx.transactions.push(data.id);
 
     ctx.body = data;
   } catch (error) {

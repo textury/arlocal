@@ -16,7 +16,7 @@ export async function dataHeadRoute(ctx: Router.RouterContext) {
     dataDB = new DataDB(ctx.dbPath);
   }
   if (!transactionDB) {
-    transactionDB = new TransactionDB(ctx.dbPath, ctx.connection);
+    transactionDB = new TransactionDB(ctx.connection);
   }
 
   const path = ctx.path.match(pathRegex) || [];
@@ -35,7 +35,7 @@ export async function dataRoute(ctx: Router.RouterContext) {
     dataDB = new DataDB(ctx.dbPath);
   }
   if (!transactionDB) {
-    transactionDB = new TransactionDB(ctx.dbPath, ctx.connection);
+    transactionDB = new TransactionDB(ctx.connection);
   }
 
   const path = ctx.path.match(pathRegex) || [];

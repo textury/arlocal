@@ -1,21 +1,28 @@
 import { BlockDB } from '../db/block';
-import { Utils } from '../utils/utils';
 import Router from 'koa-router';
+import { TransactionDB } from '../db/transaction';
 
 let blockDB: BlockDB;
+let transactionDB: TransactionDB;
+let connectionSettings: string;
 
 export async function mineRoute(ctx: Router.RouterContext) {
   try {
-    if (!blockDB) {
+    if (!blockDB || connectionSettings !== ctx.connection.client.connectionSettings.filename || !transactionDB) {
       blockDB = new BlockDB(ctx.connection);
+      transactionDB = new TransactionDB(ctx.connection);
+      connectionSettings = ctx.connection.client.connectionSettings.filename;
     }
+
+    const txs = await transactionDB.getUnminedTxs();
 
     const inc = +(ctx.params?.qty || 1);
 
-    ctx.network.current = await blockDB.mine(ctx.network.height, ctx.network.current, ctx.transactions);
+    ctx.network.current = await blockDB.mine(ctx.network.blocks, ctx.network.current, txs);
     ctx.network.height = ctx.network.height + inc;
     ctx.network.blocks = ctx.network.blocks + inc;
-    ctx.transactions = [];
+
+    await transactionDB.mineTxs();
 
     ctx.body = ctx.network;
   } catch (error) {
