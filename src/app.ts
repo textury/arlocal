@@ -67,7 +67,6 @@ export default class ArLocal {
     };
 
     this.app.context.logging = this.log;
-    this.app.context.transactions = [];
     this.app.context.dbPath = dbPath;
     this.app.context.connection = this.connection;
   }

@@ -87,7 +87,6 @@ export async function txPostRoute(ctx: Router.RouterContext) {
           connection: ctx.connection,
           logging: ctx.logging,
           network: ctx.network,
-          transactions: ctx.transactions,
           request: {
             ...ctx.request,
             body: {
@@ -149,8 +148,6 @@ export async function txPostRoute(ctx: Router.RouterContext) {
 
       index++;
     }
-
-    ctx.transactions.push(data.id);
 
     ctx.body = data;
   } catch (error) {
