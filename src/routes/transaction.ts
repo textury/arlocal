@@ -131,7 +131,6 @@ export async function txPostRoute(ctx: Router.RouterContext) {
     }
 
     const owner = bufferTob64Url(await hash(b64UrlToBuffer(data.owner)));
-    data.owner = owner;
 
     // BALANCE UPDATES
     if (data?.target && data?.quantity) {
