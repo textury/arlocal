@@ -15,12 +15,13 @@ import { graphServer } from './graphql/server';
 import { dataRouteRegex, dataHeadRoute, dataRoute } from './routes/data';
 import { mineRoute } from './routes/mine';
 import { statusRoute } from './routes/status';
-import { txAnchorRoute, txRoute, txPostRoute } from './routes/transaction';
+import { txAnchorRoute, txRoute, txPostRoute, txOffsetRoute } from './routes/transaction';
 import { Utils } from './utils/utils';
 import { NetworkInterface } from './faces/network';
 import Logging from './utils/logging';
 import { blocksRoute } from './routes/blocks';
 import { createWalletRoute, getBalanceRoute, getLastWalletTxRoute, updateBalanceRoute } from './routes/wallet';
+import { postChunkRoute } from './routes/chunk';
 
 declare module 'koa' {
   interface BaseContext {
@@ -82,7 +83,10 @@ export default class ArLocal {
     this.router.get('/price/:bytes/:addy?', async (ctx) => (ctx.body = +ctx.params.bytes * 1965132));
 
     this.router.get('/tx/:txid', txRoute);
+    this.router.get('/tx/:txid/offset', txOffsetRoute);
     this.router.post('/tx', txPostRoute);
+
+    this.router.post('/chunk', postChunkRoute);
 
     this.router.get('/block/hash/:indep_hash', blocksRoute);
 
