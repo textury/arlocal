@@ -21,7 +21,7 @@ import { NetworkInterface } from './faces/network';
 import Logging from './utils/logging';
 import { blocksRoute } from './routes/blocks';
 import { createWalletRoute, getBalanceRoute, getLastWalletTxRoute, updateBalanceRoute } from './routes/wallet';
-import { postChunkRoute } from './routes/chunk';
+import { getChunkOffsetRoute, postChunkRoute } from './routes/chunk';
 
 declare module 'koa' {
   interface BaseContext {
@@ -87,6 +87,7 @@ export default class ArLocal {
     this.router.post('/tx', txPostRoute);
 
     this.router.post('/chunk', postChunkRoute);
+    this.router.get('/chunk/:offset', getChunkOffsetRoute);
 
     this.router.get('/block/hash/:indep_hash', blocksRoute);
 

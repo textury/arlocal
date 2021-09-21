@@ -3,8 +3,7 @@ import { ChunkDB } from '../db/chunks';
 import { Chunk } from 'faces/chunk';
 import Router from 'koa-router';
 import { pick } from 'lodash';
-import { b64UrlToBuffer, fromB64Url, sha256 } from '../utils/encoding';
-import { createWriteStream } from 'fs';
+import { parseB64UrlOrThrow } from '../utils/encoding';
 
 let chunkDB: ChunkDB;
 
@@ -41,13 +40,18 @@ export async function postChunkRoute(ctx: Router.RouterContext) {
   }
 }
 
-const parseB64UrlOrThrow = (b64urlString: string, fieldName: string) => {
+export async function getChunkOffsetRoute(ctx: Router.RouterContext) {
   try {
-    return fromB64Url(b64urlString);
+    if (!chunkDB) {
+      chunkDB = new ChunkDB(ctx.connection);
+    }
+    const offset = +ctx.params.offset;
+
+    ctx.body = await chunkDB.getByOffset(offset);
   } catch (error) {
-    throw new Error(`missing field: ${fieldName}`);
+    console.error({ error });
   }
-};
+}
 
 const validateChunk = async (root: Buffer, offset: number, size: number, proof: Buffer) => {
   try {

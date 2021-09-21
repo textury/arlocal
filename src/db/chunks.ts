@@ -45,4 +45,12 @@ export class ChunkDB {
       console.error({ error });
     }
   }
+
+  async getByOffset(offset: number) {
+    try {
+      return (await this.connection('chunks').where({ offset }))[0];
+    } catch (error) {
+      console.error({ error });
+    }
+  }
 }
