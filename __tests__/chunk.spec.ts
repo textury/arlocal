@@ -1,3 +1,52 @@
+import { readFile } from 'fs/promises';
+import { blockweave, port } from '../test-setup';
+import Arweave from 'arweave';
+import { b64UrlDecode, bufferTob64 } from '../src/utils/encoding';
+
 describe('CHUNK', () => {
-  it('', async () => {});
+  it('arweave', async () => {
+    const arweave = Arweave.init({
+      host: '127.0.0.1',
+      port,
+      protocol: 'http',
+    });
+    const data = await readFile(`${process.cwd()}/__tests__/data/wallpaper.jpg`);
+
+    const wallet = await arweave.wallets.generate();
+    const tx = await arweave.createTransaction(
+      {
+        data,
+      },
+      wallet,
+    );
+    tx.addTag('App-Name', 'blockWeave');
+    tx.addTag('Content-Type', 'image/jpg');
+
+    await arweave.transactions.sign(tx, wallet);
+    await arweave.transactions.post(tx);
+    const transaction = await arweave.transactions.getData(tx.id);
+
+    expect(b64UrlDecode(transaction as string)).toEqual(bufferTob64(data));
+  });
+
+  // it('blockweave', async () => {
+  //   const data = await readFile(`${process.cwd()}/__tests__/data/wallpaper.jpg`);
+
+  //   const wallet = await blockweave.wallets.generate();
+  //   const tx = await blockweave.createTransaction(
+  //     {
+  //       data,
+  //     },
+  //     wallet,
+  //   );
+
+  //   tx.addTag('App-Name', 'blockWeave');
+  //   tx.addTag('Content-Type', 'image/jpg');
+
+  //   await blockweave.transactions.sign(tx, wallet);
+  //   await blockweave.transactions.post(tx);
+  //   const transaction = await blockweave.transactions.getData(tx.id);
+
+  //   expect(b64UrlDecode(transaction as string)).toEqual(bufferTob64(data));
+  // });
 });

@@ -53,18 +53,14 @@ export async function dataRoute(ctx: Router.RouterContext) {
     ctx.body = { status: 404, error: 'Not Found' };
     return;
   }
-  const type = Utils.tagValue(metadata.tags, 'type');
 
   try {
-    const contentType = Utils.tagValue(metadata.tags, 'Content-Type');
-
     const bundleFormat = Utils.tagValue(metadata.tags, 'Bundle-Format');
     const bundleVersion = Utils.tagValue(metadata.tags, 'Bundle-Version');
-
     if (bundleFormat === 'binary' && bundleVersion === '2.0.0') ctx.type = 'application/octet-stream';
-    else ctx.type = contentType;
+    else ctx.type = Utils.tagValue(metadata.tags, 'Content-Type') || 'text/plain';
   } catch (e) {
-    ctx.type = 'text/plain';
+    ctx.type = Utils.tagValue(metadata.tags, 'Content-Type') || 'text/plain';
   }
 
   const data = await dataDB.findOne(transaction);
@@ -72,7 +68,7 @@ export async function dataRoute(ctx: Router.RouterContext) {
   ctx.logging.log(data);
 
   let body;
-  if (!data?.data) {
+  if (!data?.data && !metadata.target) {
     const chunks = await chunkDB.getRoot(metadata.data_root);
     const chunk = chunks.map((ch) => Buffer.from(b64UrlToBuffer(ch.chunk)));
 
@@ -80,9 +76,7 @@ export async function dataRoute(ctx: Router.RouterContext) {
     dataDB.insert({ txid: metadata.id, data: bufferTob64(body) });
     ctx.body = body;
     return;
-  }
-  if (type === 'file') body = Buffer.from(b64UrlToBuffer(data.data));
-  else body = data.data[0] === '[' ? data.data : decoder.decode(b64UrlToBuffer(data.data));
+  } else body = data.data[0] === '[' ? data.data : Buffer.from(b64UrlToBuffer(data.data));
 
   ctx.body = body;
 }
