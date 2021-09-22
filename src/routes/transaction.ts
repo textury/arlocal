@@ -14,6 +14,7 @@ let transactionDB: TransactionDB;
 let dataDB: DataDB;
 let walletDB: WalletDB;
 let chunkDB: ChunkDB;
+let oldDbPath: string;
 
 export async function txAnchorRoute(ctx: Router.RouterContext) {
   const txs = await ctx.connection.select('id').from('blocks').limit(1);
@@ -82,11 +83,10 @@ export async function txOffsetRoute(ctx: Router.RouterContext) {
 
 export async function txPostRoute(ctx: Router.RouterContext) {
   try {
-    if (!dataDB) {
+    if (oldDbPath !== ctx.dbPath || !dataDB || !walletDB) {
       dataDB = new DataDB(ctx.dbPath);
-    }
-    if (!walletDB) {
       walletDB = new WalletDB(ctx.connection);
+      oldDbPath = ctx.dbPath;
     }
     const data = ctx.request.body as unknown as TransactionType;
 

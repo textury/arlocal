@@ -11,6 +11,7 @@ export const pathRegex = /^\/?([a-z0-9-_]{43})/i;
 let transactionDB: TransactionDB;
 let dataDB: DataDB;
 let chunkDB: ChunkDB;
+let oldDbPath: string;
 const decoder = new TextDecoder();
 
 export async function dataHeadRoute(ctx: Router.RouterContext) {
@@ -33,14 +34,11 @@ export async function dataHeadRoute(ctx: Router.RouterContext) {
 }
 
 export async function dataRoute(ctx: Router.RouterContext) {
-  if (!dataDB) {
+  if (oldDbPath !== ctx.dbPath || !dataDB || !transactionDB || !chunkDB) {
     dataDB = new DataDB(ctx.dbPath);
-  }
-  if (!transactionDB) {
     transactionDB = new TransactionDB(ctx.connection);
-  }
-  if (!chunkDB) {
     chunkDB = new ChunkDB(ctx.connection);
+    oldDbPath = ctx.dbPath;
   }
 
   const path = ctx.path.match(pathRegex) || [];

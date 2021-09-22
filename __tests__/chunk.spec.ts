@@ -29,24 +29,24 @@ describe('CHUNK', () => {
     expect(b64UrlDecode(transaction as string)).toEqual(bufferTob64(data));
   });
 
-  // it('blockweave', async () => {
-  //   const data = await readFile(`${process.cwd()}/__tests__/data/wallpaper.jpg`);
+  it('blockweave', async () => {
+    const data = await readFile(`${process.cwd()}/__tests__/data/wallpaper.jpg`);
 
-  //   const wallet = await blockweave.wallets.generate();
-  //   const tx = await blockweave.createTransaction(
-  //     {
-  //       data,
-  //     },
-  //     wallet,
-  //   );
+    const wallet = await blockweave.wallets.generate();
+    const tx = await blockweave.createTransaction(
+      {
+        data,
+      },
+      wallet,
+    );
 
-  //   tx.addTag('App-Name', 'blockWeave');
-  //   tx.addTag('Content-Type', 'image/jpg');
+    tx.addTag('App-Name', 'blockWeave');
+    tx.addTag('Content-Type', 'image/jpg');
 
-  //   await blockweave.transactions.sign(tx, wallet);
-  //   await blockweave.transactions.post(tx);
-  //   const transaction = await blockweave.transactions.getData(tx.id);
+    await blockweave.transactions.sign(tx, wallet);
+    await blockweave.transactions.post(tx);
+    const transaction = await blockweave.transactions.getData(tx.id);
 
-  //   expect(b64UrlDecode(transaction as string)).toEqual(bufferTob64(data));
-  // });
+    expect(b64UrlDecode(transaction as string)).toEqual(bufferTob64(data));
+  });
 });
