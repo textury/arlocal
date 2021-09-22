@@ -4,8 +4,8 @@ import { JWKInterface } from 'blockweave/dist/faces/lib/wallet';
 import { readFileSync } from 'fs';
 import { join } from 'path';
 import { interactWrite, readContract } from 'smartweave';
-import ArLocal from '../src/app';
-import { mine } from '../src/utils/tests';
+import ArLocal from '../../src/app';
+import { mine } from '../../src/utils/tests';
 
 let bw: Blockweave;
 let arlocal: ArLocal;

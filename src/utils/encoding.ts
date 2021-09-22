@@ -190,3 +190,11 @@ function parseHashAlgorithm(algorithm: string): string {
       throw new Error(`Algorithm not supported: ${algorithm}`);
   }
 }
+
+export const parseB64UrlOrThrow = (b64urlString: string, fieldName: string) => {
+  try {
+    return fromB64Url(b64urlString);
+  } catch (error) {
+    throw new Error(`missing field: ${fieldName}`);
+  }
+};

@@ -6,12 +6,15 @@ import { TransactionType } from '../faces/transaction';
 import { Bundle } from 'arbundles';
 import { WalletDB } from '../db/wallet';
 import { b64UrlToBuffer, bufferTob64Url, hash } from '../utils/encoding';
+import { ChunkDB } from '../db/chunks';
 
 export const pathRegex = /^\/?([a-z0-9-_]{43})/i;
 
 let transactionDB: TransactionDB;
 let dataDB: DataDB;
 let walletDB: WalletDB;
+let chunkDB: ChunkDB;
+let oldDbPath: string;
 
 export async function txAnchorRoute(ctx: Router.RouterContext) {
   const txs = await ctx.connection.select('id').from('blocks').limit(1);
@@ -48,13 +51,42 @@ export async function txRoute(ctx: Router.RouterContext) {
   }
 }
 
+export async function txOffsetRoute(ctx: Router.RouterContext) {
+  try {
+    if (!transactionDB) {
+      transactionDB = new TransactionDB(ctx.connection);
+    }
+    if (!chunkDB) {
+      chunkDB = new ChunkDB(ctx.connection);
+    }
+
+    const path = ctx.params.txid.match(pathRegex) || [];
+    const transaction = path.length > 1 ? path[1] : '';
+
+    const metadata = await transactionDB.getById(transaction);
+    ctx.logging.log(metadata);
+
+    if (!metadata) {
+      ctx.status = 404;
+      ctx.body = { status: 404, error: 'Not Found' };
+      return;
+    }
+    const chunk = await chunkDB.getByRootAndSize(metadata.data_root, metadata.data_size);
+
+    ctx.status = 200;
+    ctx.type = 'text/plain'; // TODO: updated this in arweave gateway to app/json
+    ctx.body = { offset: +chunk.offset, size: metadata.data_size };
+  } catch (error) {
+    console.error({ error });
+  }
+}
+
 export async function txPostRoute(ctx: Router.RouterContext) {
   try {
-    if (!dataDB) {
+    if (oldDbPath !== ctx.dbPath || !dataDB || !walletDB) {
       dataDB = new DataDB(ctx.dbPath);
-    }
-    if (!walletDB) {
       walletDB = new WalletDB(ctx.connection);
+      oldDbPath = ctx.dbPath;
     }
     const data = ctx.request.body as unknown as TransactionType;
 
@@ -99,7 +131,6 @@ export async function txPostRoute(ctx: Router.RouterContext) {
     }
 
     const owner = bufferTob64Url(await hash(b64UrlToBuffer(data.owner)));
-    data.owner = owner;
 
     // BALANCE UPDATES
     if (data?.target && data?.quantity) {
