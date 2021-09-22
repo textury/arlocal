@@ -7,7 +7,8 @@ export async function up(knex: Knex) {
     .dropTableIfExists('transactions')
     .dropTableIfExists('blocks')
     .dropTableIfExists('tags')
-    .dropTableIfExists('wallets');
+    .dropTableIfExists('wallets')
+    .dropTableIfExists('chunks');
 
   return knex.schema
     .createTable('transactions', (table) => {
@@ -70,6 +71,17 @@ export async function up(knex: Knex) {
       table.timestamp('created_at').defaultTo(knex.fn.now());
 
       table.primary(['id'], 'pkey_tags');
+    })
+    .createTable('chunks', (table) => {
+      table.string('id', 64).notNullable();
+      table.text('chunk').notNullable();
+      table.string('data_root').notNullable();
+      table.string('data_size').notNullable();
+      table.string('offset').notNullable();
+      table.string('data_path').notNullable();
+      table.timestamp('created_at').defaultTo(knex.fn.now());
+
+      table.primary(['id'], 'pkey_tags');
     });
 }
 
@@ -79,5 +91,6 @@ export async function down(knex: Knex) {
     .dropTableIfExists('transactions')
     .dropTableIfExists('blocks')
     .dropTableIfExists('tags')
-    .dropTableIfExists('wallets');
+    .dropTableIfExists('wallets')
+    .dropTableIfExists('chunks');
 }

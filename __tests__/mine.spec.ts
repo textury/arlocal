@@ -1,5 +1,7 @@
+import { bufferTob64Url } from 'arweave/node/lib/utils';
 import { NetworkInfoInterface } from 'blockweave/dist/faces/lib/network';
 import request from 'supertest';
+import { b64UrlToBuffer, hash } from '../src/utils/encoding';
 import { blockweave, server } from '../test-setup';
 
 describe('MINE ENDPOINT', () => {
@@ -21,5 +23,25 @@ describe('MINE ENDPOINT', () => {
 
     expect(res.body.height).toEqual(100);
     expect(info.height).toEqual(100);
+  });
+
+  it('mines a block with a transaction', async () => {
+    const wallet = await blockweave.wallets.generate();
+    const tx = await blockweave.createTransaction(
+      {
+        data: 'hello world',
+      },
+      wallet,
+    );
+    tx.addTag('App-Name', 'blockWeave');
+    tx.addTag('Content-Type', 'text/plain');
+
+    await blockweave.transactions.sign(tx, wallet);
+    await blockweave.transactions.post(tx);
+    await request(server).get('/mine');
+
+    const transaction = await blockweave.transactions.get(tx.id);
+
+    expect(transaction.owner).toEqual(tx.owner);
   });
 });
