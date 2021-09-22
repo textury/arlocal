@@ -39,7 +39,11 @@ export async function dataRoute(ctx: Router.RouterContext) {
   }
 
   const path = ctx.path.match(pathRegex) || [];
-  const transaction = path.length > 1 ? path[1] : '';
+  let transaction = path.length > 1 ? path[1] : '';
+  let data: {
+    txid: string,
+    data: string,
+  };
 
   const metadata = await transactionDB.getById(transaction);
   ctx.logging.log(metadata);
@@ -56,12 +60,24 @@ export async function dataRoute(ctx: Router.RouterContext) {
     const bundleVersion = Utils.tagValue(metadata.tags, 'Bundle-Version');
 
     if (bundleFormat === 'binary' && bundleVersion === '2.0.0') ctx.type = 'application/octet-stream';
+    else if (contentType === 'application/x.arweave-manifest+json')  {
+      data = await dataDB.findOne(transaction);
+      // Decode the data
+      const bdy = JSON.parse(decoder.decode(b64UrlToBuffer(data.data)));
+      console.log(bdy)
+      // find the index path
+
+      const indexPath = bdy.index.path as string;
+      // get transaction id of index path
+      const txid = bdy.paths[indexPath].id;
+      transaction = txid;
+    }
     else ctx.type = contentType;
   } catch (e) {
     ctx.type = 'text/plain';
   }
 
-  const data = await dataDB.findOne(transaction);
+  data = await dataDB.findOne(transaction);
 
   ctx.logging.log(data);
 

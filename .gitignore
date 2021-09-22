@@ -111,3 +111,4 @@ db.sqlite
 bin
 .idea
 .db
+.vscode
