@@ -44,11 +44,11 @@ export async function dataRoute(ctx: Router.RouterContext) {
   const path = ctx.path.match(pathRegex) || [];
   let transaction = path.length > 1 ? path[1] : '';
   let data: {
-    txid: string,
-    data: string,
+    txid: string;
+    data: string;
   };
 
-  const metadata = await transactionDB.getById(transaction);
+  let metadata = await transactionDB.getById(transaction);
   ctx.logging.log(metadata);
   if (!metadata) {
     ctx.status = 404;
@@ -57,24 +57,33 @@ export async function dataRoute(ctx: Router.RouterContext) {
   }
 
   try {
-    const contentType = Utils.tagValue(metadata.tags, 'Content-Type');
+    let contentType = Utils.tagValue(metadata.tags, 'Content-Type');
+
     const bundleFormat = Utils.tagValue(metadata.tags, 'Bundle-Format');
     const bundleVersion = Utils.tagValue(metadata.tags, 'Bundle-Version');
-    // if (bundleFormat === 'binary' && bundleVersion === '2.0.0') ctx.type = 'application/octet-stream';
-    if (contentType === 'application/x.arweave-manifest+json')  {
+    if (bundleFormat === 'binary' && bundleVersion === '2.0.0') ctx.type = 'application/octet-stream';
+    else if (contentType === 'application/x.arweave-manifest+json') {
       data = await dataDB.findOne(transaction);
-      // Decode the data
-      const bdy = JSON.parse(decoder.decode(b64UrlToBuffer(data.data)));
-      console.log(bdy)
-      // find the index path
+      const manifestData = JSON.parse(decoder.decode(b64UrlToBuffer(data.data)));
+      const indexPath = manifestData.index.path as string;
 
-      const indexPath = bdy.index.path as string;
-      // get transaction id of index path
-      const txid = bdy.paths[indexPath].id;
-      transaction = txid;
-    }
-    else ctx.type = contentType || 'text/plain';
-  } catch (e) {
+      if (indexPath) {
+        transaction = manifestData.paths[indexPath].id;
+
+        metadata = await transactionDB.getById(transaction);
+        if (!metadata) {
+          ctx.status = 404;
+          ctx.body = { status: 404, error: 'Index TX not Found' };
+          return;
+        }
+
+        contentType = Utils.tagValue(metadata.tags, 'Content-Type');
+      }
+
+      ctx.type = contentType;
+    } else ctx.type = contentType || 'text/plain';
+  } catch (error) {
+    console.error({ error });
     ctx.type = Utils.tagValue(metadata.tags, 'Content-Type') || 'text/plain';
   }
 
