@@ -1,4 +1,5 @@
 import Router from 'koa-router';
+import { URL } from 'url';
 import { TransactionDB } from '../db/transaction';
 import { DataDB } from '../db/data';
 import { Utils } from '../utils/utils';
@@ -67,21 +68,49 @@ export async function dataRoute(ctx: Router.RouterContext) {
       const manifestData = JSON.parse(decoder.decode(b64UrlToBuffer(data.data)));
       const indexPath = manifestData.index.path as string;
 
-      if (indexPath) {
-        transaction = manifestData.paths[indexPath].id;
+      // Also check for transaction subpath
+      const subPath = getManifestSubpath(ctx.path);
+      if (subPath) {
+        if (!manifestData.paths[subPath]) {
+          // Return 404
+          ctx.status = 404;
+          ctx.body = {
+            status: 404,
+            error: 'Data no found in manifest'
+          };
+          return;
+        }
 
-        metadata = await transactionDB.getById(transaction);
+        transaction = manifestData.paths[subPath].id;
+        metadata = await transactionDB.getById(transaction)
+
         if (!metadata) {
           ctx.status = 404;
-          ctx.body = { status: 404, error: 'Index TX not Found' };
+          ctx.body = { status: 404, error: 'Tx not found' };
           return;
         }
 
         contentType = Utils.tagValue(metadata.tags, 'Content-Type');
       }
 
+      if (!subPath) {
+        if (indexPath) {
+          transaction = manifestData.paths[indexPath].id;
+
+          metadata = await transactionDB.getById(transaction);
+          if (!metadata) {
+            ctx.status = 404;
+            ctx.body = { status: 404, error: 'Index TX not Found' };
+            return;
+          }
+
+          contentType = Utils.tagValue(metadata.tags, 'Content-Type');
+        }
+      }
+
       ctx.type = contentType;
     } else ctx.type = contentType || 'text/plain';
+
   } catch (error) {
     console.error({ error });
     ctx.type = Utils.tagValue(metadata.tags, 'Content-Type') || 'text/plain';
@@ -104,3 +133,37 @@ export async function dataRoute(ctx: Router.RouterContext) {
 
   ctx.body = body;
 }
+
+export async function subDataRoute(ctx: Router.RouterContext, next: () => void) {
+  try {
+    // get the referrer url
+    const { referer } = ctx.headers;
+    // parse the url
+    const url = new URL(referer);
+    // Check if there was id before the data
+    const txid = getTxIdFromPath(url.pathname);
+
+    if (!txid) {
+      next();
+    }
+
+    // Redirect
+    ctx.redirect(`${referer}${ctx.path}`);
+  } catch (error) {
+    next();
+  }
+};
+
+const getTxIdFromPath = (path: string): string | undefined => {
+  const matches = path.match(/^\/?([a-z0-9-_]{43})/i) || [];
+  return matches[1];
+};
+
+const getManifestSubpath = (requestPath: string): string | undefined => {
+  return getTransactionSubpath(requestPath);
+};
+
+const getTransactionSubpath = (requestPath: string): string | undefined => {
+  const subpath = requestPath.match(/^\/?[a-zA-Z0-9-_]{43}\/(.*)$/i);
+  return (subpath && subpath[1]) || undefined;
+};
