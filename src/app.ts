@@ -12,7 +12,7 @@ import { Knex } from 'knex';
 import { connect } from './db/connect';
 import { down, up } from './db/initialize';
 import { graphServer } from './graphql/server';
-import { dataRouteRegex, dataHeadRoute, dataRoute } from './routes/data';
+import { dataRouteRegex, dataHeadRoute, dataRoute, subDataRoute } from './routes/data';
 import { mineRoute } from './routes/mine';
 import { statusRoute } from './routes/status';
 import { txAnchorRoute, txRoute, txPostRoute, txOffsetRoute } from './routes/transaction';
@@ -99,6 +99,8 @@ export default class ArLocal {
 
     this.router.head(dataRouteRegex, dataHeadRoute);
     this.router.get(dataRouteRegex, dataRoute);
+
+    this.router.get('/(.*)', subDataRoute);
 
     this.router.get('/:other', (ctx) => {
       ctx.type = 'application/json';
