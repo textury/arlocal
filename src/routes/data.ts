@@ -76,13 +76,13 @@ export async function dataRoute(ctx: Router.RouterContext) {
           ctx.status = 404;
           ctx.body = {
             status: 404,
-            error: 'Data no found in manifest'
+            error: 'Data no found in manifest',
           };
           return;
         }
 
         transaction = manifestData.paths[subPath].id;
-        metadata = await transactionDB.getById(transaction)
+        metadata = await transactionDB.getById(transaction);
 
         if (!metadata) {
           ctx.status = 404;
@@ -110,7 +110,6 @@ export async function dataRoute(ctx: Router.RouterContext) {
 
       ctx.type = contentType;
     } else ctx.type = contentType || 'text/plain';
-
   } catch (error) {
     console.error({ error });
     ctx.type = Utils.tagValue(metadata.tags, 'Content-Type') || 'text/plain';
@@ -152,7 +151,7 @@ export async function subDataRoute(ctx: Router.RouterContext, next: () => void) 
   } catch (error) {
     next();
   }
-};
+}
 
 const getTxIdFromPath = (path: string): string | undefined => {
   const matches = path.match(/^\/?([a-z0-9-_]{43})/i) || [];
