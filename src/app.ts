@@ -14,7 +14,7 @@ import { down, up } from './db/initialize';
 import { graphServer } from './graphql/server';
 import { dataRouteRegex, dataHeadRoute, dataRoute, subDataRoute } from './routes/data';
 import { mineRoute } from './routes/mine';
-import { statusRoute } from './routes/status';
+import { peersRoute, statusRoute } from './routes/status';
 import {
   txAnchorRoute,
   txRoute,
@@ -69,7 +69,7 @@ export default class ArLocal {
       version: 1,
       release: 1,
       queue_length: 0,
-      peers: 0,
+      peers: 1,
       height: 0,
       current: Utils.randomID(64),
       blocks: 1,
@@ -86,6 +86,7 @@ export default class ArLocal {
 
     this.router.get('/', statusRoute);
     this.router.get('/info', statusRoute);
+    this.router.get('/peers', peersRoute);
     this.router.get('/mine/:qty?', mineRoute);
 
     this.router.get('/tx_anchor', txAnchorRoute);
