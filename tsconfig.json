@@ -1,5 +1,7 @@
 {
   "compilerOptions": {
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
     "sourceMap": true,
     "target": "es6",
     "module": "commonjs",
@@ -9,12 +11,6 @@
     "skipLibCheck": true,
     "declaration": true
   },
-  "include": [
-    "src",
-    "__tests__"
-  ],
-  "exclude": [
-    "node_modules",
-    "**/__tests__/*"
-  ]
+  "include": ["src", "__tests__"],
+  "exclude": ["node_modules", "**/__tests__/*"]
 }

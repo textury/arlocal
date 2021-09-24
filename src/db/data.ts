@@ -4,7 +4,6 @@ import { readFileSync, writeFileSync } from 'fs';
 export class DataDB {
   // DB should be emptied on every run.
   private path: string;
-  private started: boolean = false;
 
   constructor(dbPath: string) {
     this.path = join(dbPath, 'data-');

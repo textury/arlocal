@@ -22,7 +22,7 @@ export async function mineRoute(ctx: Router.RouterContext) {
     ctx.network.height = ctx.network.height + inc;
     ctx.network.blocks = ctx.network.blocks + inc;
 
-    await transactionDB.mineTxs();
+    await transactionDB.mineTxs(ctx.network.current);
 
     ctx.body = ctx.network;
   } catch (error) {

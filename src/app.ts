@@ -1,7 +1,7 @@
 import { Server } from 'http';
 import { rmSync, mkdirSync } from 'fs';
 import path from 'path';
-import Koa, { BaseContext } from 'koa';
+import Koa from 'koa';
 import cors from '@koa/cors';
 import bodyParser from 'koa-bodyparser';
 import Router from 'koa-router';
@@ -15,7 +15,15 @@ import { graphServer } from './graphql/server';
 import { dataRouteRegex, dataHeadRoute, dataRoute, subDataRoute } from './routes/data';
 import { mineRoute } from './routes/mine';
 import { statusRoute } from './routes/status';
-import { txAnchorRoute, txRoute, txPostRoute, txOffsetRoute } from './routes/transaction';
+import {
+  txAnchorRoute,
+  txRoute,
+  txPostRoute,
+  txOffsetRoute,
+  txStatusRoute,
+  txFieldRoute,
+  txFileRoute,
+} from './routes/transaction';
 import { Utils } from './utils/utils';
 import { NetworkInterface } from './faces/network';
 import Logging from './utils/logging';
@@ -82,8 +90,11 @@ export default class ArLocal {
     this.router.get('/tx_anchor', txAnchorRoute);
     this.router.get('/price/:bytes/:addy?', async (ctx) => (ctx.body = +ctx.params.bytes * 1965132));
 
-    this.router.get('/tx/:txid', txRoute);
     this.router.get('/tx/:txid/offset', txOffsetRoute);
+    this.router.get('/tx/:txid/status', txStatusRoute);
+    this.router.get('/tx/:txid/:field', txFieldRoute);
+    this.router.get('/tx/:txid/:file', txFileRoute);
+    this.router.get('/tx/:txid', txRoute);
     this.router.post('/tx', txPostRoute);
 
     this.router.post('/chunk', postChunkRoute);

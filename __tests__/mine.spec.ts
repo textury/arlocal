@@ -1,7 +1,5 @@
-import { bufferTob64Url } from 'arweave/node/lib/utils';
 import { NetworkInfoInterface } from 'blockweave/dist/faces/lib/network';
 import request from 'supertest';
-import { b64UrlToBuffer, hash } from '../src/utils/encoding';
 import { blockweave, server } from '../test-setup';
 
 describe('MINE ENDPOINT', () => {

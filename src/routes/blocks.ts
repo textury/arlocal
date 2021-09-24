@@ -1,5 +1,4 @@
 import { BlockDB } from '../db/block';
-import { Utils } from '../utils/utils';
 import Router from 'koa-router';
 
 let blockDB: BlockDB;

@@ -111,10 +111,10 @@ export class TransactionDB {
   }
 
   async getUnminedTxs() {
-    return (await this.connection('transactions').where({ mined: false })).map(({ id }) => id);
+    return (await this.connection('transactions').where({ block: '' })).map(({ id }) => id);
   }
 
-  async mineTxs() {
-    return await this.connection('transactions').where({ mined: false }).update({ mined: true });
+  async mineTxs(block: string) {
+    return await this.connection('transactions').where({ block: '' }).update({ block });
   }
 }

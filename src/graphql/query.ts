@@ -1,8 +1,7 @@
 import { Knex, knex } from 'knex';
 import { indices } from '../utils/order';
-import { ISO8601DateTimeString, toB64url } from '../utils/encoding';
+import { ISO8601DateTimeString } from '../utils/encoding';
 import { TagFilter } from './types';
-import { tagToB64 } from '../query/transaction';
 
 export type TxSortOrder = 'HEIGHT_ASC' | 'HEIGHT_DESC';
 
