@@ -15,7 +15,7 @@ import { graphServer } from './graphql/server';
 import { dataRouteRegex, dataHeadRoute, dataRoute, subDataRoute } from './routes/data';
 import { mineRoute } from './routes/mine';
 import { statusRoute } from './routes/status';
-import { txAnchorRoute, txRoute, txPostRoute, txOffsetRoute } from './routes/transaction';
+import { txAnchorRoute, txRoute, txPostRoute, txOffsetRoute, txRawDataRoute } from './routes/transaction';
 import { Utils } from './utils/utils';
 import { NetworkInterface } from './faces/network';
 import Logging from './utils/logging';
@@ -84,6 +84,7 @@ export default class ArLocal {
 
     this.router.get('/tx/:txid', txRoute);
     this.router.get('/tx/:txid/offset', txOffsetRoute);
+    this.router.get('/tx/:txid/data', txRawDataRoute);
     this.router.post('/tx', txPostRoute);
 
     this.router.post('/chunk', postChunkRoute);
