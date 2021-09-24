@@ -89,7 +89,6 @@ describe('Testing the Profit Sharing Token', () => {
     await mine();
 
     const currentState = await pst.currentState();
-    console.log({ currentState });
 
     expect(currentState.balances[walletAddress]).toEqual(555669 - 555);
     expect(currentState.balances['uhE-QeYS8i4pmUtnxQyHD7dzXFNaJ9oMK-IM-QPNY6M']).toEqual(10000000 + 555);
