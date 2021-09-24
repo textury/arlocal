@@ -15,4 +15,12 @@ describe('TX', () => {
 
     expect(res.body.id).toEqual(txid);
   });
+
+  it('GET /tx/:txid/data', async () => {
+    const txid = await createTransaction(blockweave, 'test');
+    const data = 'dGVzdA';
+    const res = await request(server).get(`/tx/${txid}/data`);
+
+    expect(data).toEqual(res.text);
+  });
 });
