@@ -29,6 +29,7 @@ const FIELDS = [
   'reward',
   'signature',
 ];
+
 export async function txAnchorRoute(ctx: Router.RouterContext) {
   const txs = await ctx.connection.select('id').from('blocks').limit(1);
   if (txs.length) {
@@ -320,5 +321,51 @@ export async function txFileRoute(ctx: Router.RouterContext) {
     return;
   } catch (error) {
     console.error({ error });
+  }
+}
+
+export async function txRawDataRoute(ctx: Router.RouterContext) {
+  try {
+    if (
+      !transactionDB ||
+      !dataDB ||
+      oldDbPath !== ctx.dbPath ||
+      connectionSettings !== ctx.connection.client.connectionSettings.filename
+    ) {
+      transactionDB = new TransactionDB(ctx.connection);
+      dataDB = new DataDB(ctx.dbPath);
+      oldDbPath = ctx.dbPath;
+      connectionSettings = ctx.connection.client.connectionSettings.filename;
+    }
+
+    const path = ctx.params.txid.match(pathRegex) || [];
+    const txid = path.length > 1 ? path[1] : '';
+
+    const metadata: TransactionType = await transactionDB.getById(txid);
+
+    if (!metadata) {
+      ctx.status = 404;
+      ctx.body = { status: 404, error: 'Not found' };
+      return;
+    }
+
+    // Check for the data_size
+    const size = parseInt(metadata.data_size, 10);
+
+    if (size > 12000000) {
+      ctx.status = 400;
+      ctx.body = 'tx_data_too_big';
+      return;
+    }
+
+    // Find the transaction data
+    const data = await dataDB.findOne(txid);
+
+    // Return the base64 data to the user
+    ctx.status = 200;
+    ctx.body = data.data;
+  } catch (error) {
+    ctx.status = 500;
+    ctx.body = { error: error.message };
   }
 }
