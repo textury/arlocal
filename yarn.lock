@@ -2194,10 +2194,10 @@ block-stream@*:
   dependencies:
     inherits "~2.0.0"
 
-blockweave@^1.0.14:
-  version "1.0.14"
-  resolved "https://registry.yarnpkg.com/blockweave/-/blockweave-1.0.14.tgz#88ebe3b8c32c54f992bdf26293f391e23635a02f"
-  integrity sha512-Avt28wNFhfLjGQgd8Jl9y6+P4kkSlvLMDsKBmiwQcDBzQwx3UPPQSlsDAYQEe4QsZF6YDpkKWq+8LWd/c/QmQg==
+blockweave@^1.0.15:
+  version "1.0.15"
+  resolved "https://registry.yarnpkg.com/blockweave/-/blockweave-1.0.15.tgz#65de262696ec10795fd0b92f5cc269958f426714"
+  integrity sha512-SbFmNrZ8mQ7qDae7TFdEmRAvoUKJm7E+eR1PcpWGUBMjWJxiivnh3hwjbDxoAOGxiWTw317Dd9RLs8yJMgT1jw==
   dependencies:
     arconnect "^0.2.9"
     axios "^0.21.4"
