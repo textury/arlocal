@@ -14,7 +14,7 @@ import { down, up } from './db/initialize';
 import { graphServer } from './graphql/server';
 import { dataRouteRegex, dataHeadRoute, dataRoute, subDataRoute } from './routes/data';
 import { mineRoute } from './routes/mine';
-import { peersRoute, statusRoute } from './routes/status';
+import { statusRoute } from './routes/status';
 import {
   txAnchorRoute,
   txRoute,
@@ -31,6 +31,7 @@ import Logging from './utils/logging';
 import { blocksRoute } from './routes/blocks';
 import { createWalletRoute, getBalanceRoute, getLastWalletTxRoute, updateBalanceRoute } from './routes/wallet';
 import { getChunkOffsetRoute, postChunkRoute } from './routes/chunk';
+import { peersRoute } from './routes/peer';
 
 declare module 'koa' {
   interface BaseContext {

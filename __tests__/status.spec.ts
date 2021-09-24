@@ -1,6 +1,5 @@
-import request from 'supertest';
 import { NetworkInfoInterface } from 'blockweave/dist/faces/lib/network';
-import { blockweave, server } from '../test-setup';
+import { blockweave } from '../test-setup';
 
 describe('STATUS', () => {
   // Test if the server started successfully
@@ -17,13 +16,5 @@ describe('STATUS', () => {
     expect(typeof info.peers).toBe('number');
     expect(typeof info.queue_length).toBe('number');
     expect(typeof info.node_state_latency).toBe('number');
-  });
-
-  test('GET /peers', async () => {
-    const res = await request(server).get('/peers');
-
-    // check if it's array
-    expect(res.body instanceof Array).toBe(true);
-    expect(res.body.length).toBeGreaterThanOrEqual(1);
   });
 });

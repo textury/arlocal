@@ -1,14 +1,5 @@
-import Router from 'koa-router';
+import { RouterContext } from 'koa-router';
 
-export async function statusRoute(ctx: Router.RouterContext) {
+export async function statusRoute(ctx: RouterContext) {
   ctx.body = ctx.network;
-}
-
-export async function peersRoute(ctx: Router.RouterContext) {
-  try {
-    ctx.body = [ctx.request.header.host];
-  } catch (error) {
-    ctx.status = 500;
-    ctx.body = { error: error.message };
-  }
 }
