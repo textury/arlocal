@@ -40,7 +40,7 @@ const blockFieldMap = {
 
 export const resolvers: Resolvers = {
   Query: {
-    transaction: async (parent, queryParams, { req, connection }) => {
+    transaction: async (_, queryParams, { connection }) => {
       const params: QueryParams = {
         id: queryParams.id,
         blocks: true,
@@ -51,7 +51,7 @@ export const resolvers: Resolvers = {
 
       return result[0] as TransactionHeader;
     },
-    transactions: async (parent, queryParams: QueryTransactionsArgs, { req, connection }, info) => {
+    transactions: async (_, queryParams: QueryTransactionsArgs, { connection }) => {
       const { timestamp, offset } = parseCursor(queryParams.after || newCursor());
       const pageSize = Math.min(queryParams.first || DEFAULT_PAGE_SIZE, MAX_PAGE_SIZE);
 
@@ -87,7 +87,7 @@ export const resolvers: Resolvers = {
         },
       };
     },
-    block: async (parent, queryParams: QueryBlockArgs, { req, connection }) => {
+    block: async (_, queryParams: QueryBlockArgs, { connection }) => {
       if (queryParams.id) {
         return (
           await generateBlockQuery(
@@ -102,7 +102,7 @@ export const resolvers: Resolvers = {
         return null;
       }
     },
-    blocks: async (parent, queryParams: QueryBlocksArgs, { req, connection }) => {
+    blocks: async (_, queryParams: QueryBlocksArgs, { connection }) => {
       const { timestamp, offset } = parseCursor(queryParams.after || newCursor());
       const pageSize = Math.min(queryParams.first || DEFAULT_PAGE_SIZE, MAX_PAGE_SIZE);
 

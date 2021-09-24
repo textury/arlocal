@@ -1,8 +1,6 @@
 import { ChunkDB } from '../db/chunks';
 import { Chunk } from 'faces/chunk';
 import Router from 'koa-router';
-import { parseB64UrlOrThrow } from '../utils/encoding';
-import { validatePath } from 'arweave/node/lib/merkle';
 
 let chunkDB: ChunkDB;
 let oldDbPath: string;

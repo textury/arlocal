@@ -7,6 +7,7 @@ import { Bundle } from 'arbundles';
 import { WalletDB } from '../db/wallet';
 import { b64UrlToBuffer, bufferTob64Url, hash } from '../utils/encoding';
 import { ChunkDB } from '../db/chunks';
+import { Next } from 'koa';
 
 export const pathRegex = /^\/?([a-z0-9-_]{43})/i;
 
@@ -15,6 +16,19 @@ let dataDB: DataDB;
 let walletDB: WalletDB;
 let chunkDB: ChunkDB;
 let oldDbPath: string;
+let connectionSettings: string;
+const FIELDS = [
+  'id',
+  'last_tx',
+  'owner',
+  'tags',
+  'target',
+  'quantity',
+  'data_root',
+  'data_size',
+  'reward',
+  'signature',
+];
 
 export async function txAnchorRoute(ctx: Router.RouterContext) {
   const txs = await ctx.connection.select('id').from('blocks').limit(1);
@@ -26,10 +40,15 @@ export async function txAnchorRoute(ctx: Router.RouterContext) {
 
 export async function txRoute(ctx: Router.RouterContext) {
   try {
-    if (!transactionDB) {
+    if (
+      oldDbPath !== ctx.dbPath ||
+      !transactionDB ||
+      connectionSettings !== ctx.connection.client.connectionSettings.filename
+    ) {
       transactionDB = new TransactionDB(ctx.connection);
+      oldDbPath = ctx.dbPath;
+      connectionSettings = ctx.connection.client.connectionSettings.filename;
     }
-
     const path = ctx.params.txid.match(pathRegex) || [];
     const transaction = path.length > 1 ? path[1] : '';
 
@@ -183,5 +202,170 @@ export async function txPostRoute(ctx: Router.RouterContext) {
     ctx.body = data;
   } catch (error) {
     console.error({ error });
+  }
+}
+
+export async function txStatusRoute(ctx: Router.RouterContext) {
+  try {
+    if (
+      oldDbPath !== ctx.dbPath ||
+      !transactionDB ||
+      connectionSettings !== ctx.connection.client.connectionSettings.filename
+    ) {
+      transactionDB = new TransactionDB(ctx.connection);
+      oldDbPath = ctx.dbPath;
+      connectionSettings = ctx.connection.client.connectionSettings.filename;
+    }
+
+    const path = ctx.params.txid.match(pathRegex) || [];
+    const transaction = path.length > 1 ? path[1] : '';
+
+    const metadata = await transactionDB.getById(transaction);
+
+    if (!metadata) {
+      ctx.status = 404;
+      ctx.body = { status: 404, error: 'Not Found !' };
+      return;
+    }
+    if (!metadata.block) {
+      ctx.body = 'Pending';
+      return;
+    }
+
+    ctx.body = {
+      block_height: metadata.height,
+      block_indep_hash: metadata.block,
+      number_of_confirmations: ctx.network.height - metadata.height,
+    };
+    return;
+  } catch (error) {
+    console.error({ error });
+  }
+}
+
+export async function txFieldRoute(ctx: Router.RouterContext, next: Next) {
+  try {
+    if (
+      oldDbPath !== ctx.dbPath ||
+      !transactionDB ||
+      connectionSettings !== ctx.connection.client.connectionSettings.filename
+    ) {
+      transactionDB = new TransactionDB(ctx.connection);
+      oldDbPath = ctx.dbPath;
+      connectionSettings = ctx.connection.client.connectionSettings.filename;
+    }
+
+    const path = ctx.params.txid.match(pathRegex) || [];
+    const transaction = path.length > 1 ? path[1] : '';
+
+    const field = ctx.params.field;
+    if (field.includes('.')) {
+      await next();
+      return;
+    }
+    if (!FIELDS.includes(field)) {
+      ctx.status = 404;
+      ctx.body = { status: 404, error: 'Field Not Found !' };
+      return;
+    }
+
+    const metadata = await transactionDB.getById(transaction);
+    if (!metadata) {
+      ctx.status = 404;
+      ctx.body = { status: 404, error: 'Not Found !' };
+      return;
+    }
+
+    if (!metadata.block) {
+      ctx.body = 'Pending';
+      return;
+    }
+
+    ctx.body = metadata[field];
+    return;
+  } catch (error) {
+    console.error({ error });
+  }
+}
+
+export async function txFileRoute(ctx: Router.RouterContext) {
+  try {
+    if (
+      oldDbPath !== ctx.dbPath ||
+      !transactionDB ||
+      connectionSettings !== ctx.connection.client.connectionSettings.filename
+    ) {
+      transactionDB = new TransactionDB(ctx.connection);
+      oldDbPath = ctx.dbPath;
+      connectionSettings = ctx.connection.client.connectionSettings.filename;
+    }
+
+    const path = ctx.params.txid.match(pathRegex) || [];
+    const transaction = path.length > 1 ? path[1] : '';
+
+    const file = ctx.params.file;
+
+    const metadata = await transactionDB.getById(transaction);
+    if (!metadata) {
+      ctx.status = 404;
+      ctx.body = { status: 404, error: 'Not Found !' };
+      return;
+    }
+
+    if (!metadata.block) {
+      ctx.body = 'Pending';
+      return;
+    }
+
+    ctx.redirect(`http://${ctx.request.header.host}/${transaction}/${file}`);
+    return;
+  } catch (error) {
+    console.error({ error });
+  }
+}
+
+export async function txRawDataRoute(ctx: Router.RouterContext) {
+  try {
+    if (
+      !transactionDB ||
+      !dataDB ||
+      oldDbPath !== ctx.dbPath ||
+      connectionSettings !== ctx.connection.client.connectionSettings.filename
+    ) {
+      transactionDB = new TransactionDB(ctx.connection);
+      dataDB = new DataDB(ctx.dbPath);
+      oldDbPath = ctx.dbPath;
+      connectionSettings = ctx.connection.client.connectionSettings.filename;
+    }
+
+    const path = ctx.params.txid.match(pathRegex) || [];
+    const txid = path.length > 1 ? path[1] : '';
+
+    const metadata: TransactionType = await transactionDB.getById(txid);
+
+    if (!metadata) {
+      ctx.status = 404;
+      ctx.body = { status: 404, error: 'Not found' };
+      return;
+    }
+
+    // Check for the data_size
+    const size = parseInt(metadata.data_size, 10);
+
+    if (size > 12000000) {
+      ctx.status = 400;
+      ctx.body = 'tx_data_too_big';
+      return;
+    }
+
+    // Find the transaction data
+    const data = await dataDB.findOne(txid);
+
+    // Return the base64 data to the user
+    ctx.status = 200;
+    ctx.body = data.data;
+  } catch (error) {
+    ctx.status = 500;
+    ctx.body = { error: error.message };
   }
 }

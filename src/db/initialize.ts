@@ -27,7 +27,7 @@ export async function up(knex: Knex) {
       table.string('owner_address');
       table.string('data_root', 64);
       table.string('parent', 64);
-      table.boolean('mined').defaultTo(false);
+      table.string('block', 64).defaultTo('');
       table.timestamp('created_at').defaultTo(knex.fn.now());
 
       for (const index of indices) {

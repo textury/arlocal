@@ -20,7 +20,7 @@ export class Base64DUrlecode extends Transform {
     this.bytesProcessed = 0;
   }
 
-  _transform(chunk: Buffer, encoding: any, cb: () => void) {
+  _transform(chunk: Buffer, _: any, cb: () => void) {
     const conbinedChunk =
       this.extra +
       chunk
@@ -94,7 +94,7 @@ export function sha256B64Url(input: Buffer): string {
 
 export async function streamToBuffer(stream: Readable): Promise<Buffer> {
   let buffer = Buffer.alloc(0);
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     stream.on('data', (chunk: Buffer) => {
       buffer = Buffer.concat([buffer, chunk]);
     });

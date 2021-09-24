@@ -1,5 +1,5 @@
-import Router from 'koa-router';
+import { RouterContext } from 'koa-router';
 
-export async function statusRoute(ctx: Router.RouterContext) {
+export async function statusRoute(ctx: RouterContext) {
   ctx.body = ctx.network;
 }

@@ -50,7 +50,7 @@ export async function dataRoute(ctx: Router.RouterContext) {
   };
 
   let metadata = await transactionDB.getById(transaction);
-  ctx.logging.log(metadata);
+
   if (!metadata) {
     ctx.status = 404;
     ctx.body = { status: 404, error: 'Not Found' };
@@ -58,7 +58,7 @@ export async function dataRoute(ctx: Router.RouterContext) {
   }
 
   try {
-    let contentType = Utils.tagValue(metadata.tags, 'Content-Type');
+    const contentType = Utils.tagValue(metadata.tags, 'Content-Type');
 
     const bundleFormat = Utils.tagValue(metadata.tags, 'Bundle-Format');
     const bundleVersion = Utils.tagValue(metadata.tags, 'Bundle-Version');
@@ -68,32 +68,27 @@ export async function dataRoute(ctx: Router.RouterContext) {
       const manifestData = JSON.parse(decoder.decode(b64UrlToBuffer(data.data)));
       const indexPath = manifestData.index.path as string;
 
-      // Also check for transaction subpath
       const subPath = getManifestSubpath(ctx.path);
+
       if (subPath) {
         if (!manifestData.paths[subPath]) {
-          // Return 404
           ctx.status = 404;
           ctx.body = {
             status: 404,
-            error: 'Data no found in manifest',
+            error: 'Data not found in the manifest',
           };
           return;
         }
 
         transaction = manifestData.paths[subPath].id;
-        metadata = await transactionDB.getById(transaction);
 
+        metadata = await transactionDB.getById(transaction);
         if (!metadata) {
           ctx.status = 404;
           ctx.body = { status: 404, error: 'Tx not found' };
           return;
         }
-
-        contentType = Utils.tagValue(metadata.tags, 'Content-Type');
-      }
-
-      if (!subPath) {
+      } else {
         if (indexPath) {
           transaction = manifestData.paths[indexPath].id;
 
@@ -103,12 +98,10 @@ export async function dataRoute(ctx: Router.RouterContext) {
             ctx.body = { status: 404, error: 'Index TX not Found' };
             return;
           }
-
-          contentType = Utils.tagValue(metadata.tags, 'Content-Type');
         }
       }
 
-      ctx.type = contentType;
+      ctx.type = Utils.tagValue(metadata.tags, 'Content-Type');
     } else ctx.type = contentType || 'text/plain';
   } catch (error) {
     console.error({ error });
@@ -117,6 +110,7 @@ export async function dataRoute(ctx: Router.RouterContext) {
 
   data = await dataDB.findOne(transaction);
 
+  ctx.logging.log(metadata);
   ctx.logging.log(data);
 
   let body;
