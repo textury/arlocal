@@ -1,5 +1,6 @@
 import { createTransaction, mine } from '../src/utils/tests';
-import { blockweave, ardb } from '../test-setup';
+import { blockweave, ardb, server } from '../test-setup';
+import request from 'supertest';
 jest.setTimeout(100000);
 describe('TRANSACTION', () => {
   it('gets 10 txs then 2', async () => {
@@ -39,6 +40,59 @@ describe('TRANSACTION', () => {
     const res = (await ardb.search('transactions').find({ block: { min: 3, max: 5 } })) as any;
 
     expect(res.length).toEqual(3);
+  });
+  it('filter tags with an "and"', async () => {
+    const wallet = await blockweave.wallets.generate();
+    let tx = await blockweave.createTransaction(
+      {
+        data: 'hello world',
+      },
+      wallet,
+    );
+    tx.addTag('key1', 'value1');
+    tx.addTag('key2', 'value2');
+
+    await blockweave.transactions.sign(tx, wallet);
+    await blockweave.transactions.post(tx);
+
+    tx = await blockweave.createTransaction(
+      {
+        data: 'hello world',
+      },
+      wallet,
+    );
+    tx.addTag('key2', 'value2');
+    tx.addTag('key3', 'value3');
+
+    await blockweave.transactions.sign(tx, wallet);
+    await blockweave.transactions.post(tx);
+    await mine(blockweave);
+    const res = await request(server)
+      .post('/graphql')
+      .send({
+        query: `
+              query {
+                    transactions(
+                    tags: [
+                      { name: "key1", values: ["value1"] }
+                      { name: "key2", values: ["value2"] }
+                    ]
+                  ) {
+                    edges {
+                      node {
+                        tags {
+                          name
+                          value
+                        }
+                      }
+                    }
+                  }
+                }
+      `,
+      });
+    console.log(res.body);
+
+    expect(res.body.data.transactions.edges.length).toEqual(1);
   });
 });
 

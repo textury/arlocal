@@ -9,7 +9,8 @@
     "baseUrl": "./src",
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "declaration": true
+    "declaration": true,
+    "lib": ["es2019"]
   },
   "include": ["src", "__tests__"],
   "exclude": ["node_modules", "**/__tests__/*"]

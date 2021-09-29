@@ -24,3 +24,10 @@ export class Utils {
     return '';
   }
 }
+
+export const groupBy = (obj, key) => {
+  return obj.reduce((rv, x) => {
+    (rv[x[key]] = rv[x[key]] || []).push(x);
+    return rv;
+  }, {});
+};
