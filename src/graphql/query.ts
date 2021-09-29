@@ -2,6 +2,7 @@ import { Knex, knex } from 'knex';
 import { indices } from '../utils/order';
 import { ISO8601DateTimeString } from '../utils/encoding';
 import { TagFilter } from './types';
+import { groupBy } from '../utils/utils';
 
 export type TxSortOrder = 'HEIGHT_ASC' | 'HEIGHT_DESC';
 
@@ -68,8 +69,6 @@ export async function generateQuery(params: QueryParams, connection: Knex): Prom
 
   if (tags) {
     const names: string[] = [];
-    const values: string[] = [];
-
     const subQuery = connection.queryBuilder().select('*').from('tags');
 
     let runSubQuery = false;
@@ -86,22 +85,28 @@ export async function generateQuery(params: QueryParams, connection: Knex): Prom
 
       if (indexed === false) {
         names.push(tag.name);
-        values.push.apply(values, tag.values);
+        subQuery.orWhere('name', tag.name);
+        subQuery.whereIn('value', tag.values);
 
         runSubQuery = true;
       }
     }
-    subQuery.whereIn('name', names);
-    subQuery.whereIn('value', values);
 
     if (runSubQuery) {
       const results = await subQuery.limit(limit).offset(offset).orderByRaw(tagOrderByClauses[sortOrder]);
 
-      const txIds = [];
+      const txIds = [
+        ...new Set(
+          Object.values(groupBy(results, 'tx_id'))
+            .filter((txIdGroup: []) => {
+              const txTags: string[] = txIdGroup.map(({ name }) => name);
 
-      for (const result of results) {
-        txIds.push(result.tx_id);
-      }
+              return names.every((name) => txTags.includes(name));
+            })
+            .flat(1000)
+            .map(({ tx_id }) => tx_id),
+        ),
+      ];
 
       query.whereIn('transactions.id', txIds);
     }
