@@ -219,7 +219,7 @@ export const resolvers: Resolvers = {
     },
     */
     timestamp: (parent) => {
-      return moment(parent?.timestamp).unix();
+      return parent?.timestamp;
     },
   },
 };

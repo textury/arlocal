@@ -175,7 +175,7 @@ export async function txPostRoute(ctx: Router.RouterContext) {
     await dataDB.insert({ txid: data.id, data: data.data });
 
     const tx = formatTransaction(data);
-
+    tx.created_at = new Date().toISOString();
     tx.height = ctx.network.blocks;
 
     await ctx.connection.insert(tx).into('transactions');
