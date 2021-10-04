@@ -24,7 +24,7 @@ export class BlockDB {
         .insert({
           id,
           height,
-          mined_at: this.connection.fn.now(),
+          mined_at: Date.now(),
           previous_block: previous,
           txs,
           extended: '',
