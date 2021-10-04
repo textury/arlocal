@@ -1,8 +1,6 @@
 import { Knex, knex } from 'knex';
-import { indices } from '../utils/order';
 import { ISO8601DateTimeString } from '../utils/encoding';
 import { TagFilter } from './types';
-import { groupBy } from '../utils/utils';
 
 export type TxSortOrder = 'HEIGHT_ASC' | 'HEIGHT_DESC';
 
@@ -35,7 +33,7 @@ export interface QueryParams {
 
 export async function generateQuery(params: QueryParams, connection: Knex): Promise<knex.QueryBuilder> {
   const { to, from, tags, id, ids, status = 'confirmed', select } = params;
-  const { limit = 10, blocks = false, sortOrder = 'HEIGHT_DESC' } = params;
+  const { limit = 10, blocks = false, sortOrder } = params;
   const { offset = 0, minHeight = -1, maxHeight = -1 } = params;
 
   const query = connection
@@ -68,48 +66,23 @@ export async function generateQuery(params: QueryParams, connection: Knex): Prom
   }
 
   if (tags) {
-    const names: string[] = [];
-    const subQuery = connection.queryBuilder().select('*').from('tags');
+    tags.forEach((tag, index) => {
+      const tagAlias = `${index}_${index}`;
 
-    let runSubQuery = false;
+      query.join(`tags as ${tagAlias}`, (join) => {
+        join.on('transactions.id', `${tagAlias}.tx_id`);
 
-    for (const tag of tags) {
-      let indexed = false;
+        join.andOnIn(`${tagAlias}.name`, [tag.name]);
 
-      for (const index of indices) {
-        if (tag.name === index) {
-          indexed = true;
-          query.whereIn(`transactions.${index}`, tag.values);
+        if (tag.op === 'EQ') {
+          join.andOnIn(`${tagAlias}.value`, tag.values);
         }
-      }
 
-      if (indexed === false) {
-        names.push(tag.name);
-        subQuery.orWhere('name', tag.name);
-        subQuery.whereIn('value', tag.values);
-
-        runSubQuery = true;
-      }
-    }
-
-    if (runSubQuery) {
-      const results = await subQuery.limit(limit).offset(offset).orderByRaw(tagOrderByClauses[sortOrder]);
-
-      const txIds = [
-        ...new Set(
-          Object.values(groupBy(results, 'tx_id'))
-            .filter((txIdGroup: []) => {
-              const txTags: string[] = txIdGroup.map(({ name }) => name);
-
-              return names.every((name) => txTags.includes(name));
-            })
-            .flat(1000)
-            .map(({ tx_id }) => tx_id),
-        ),
-      ];
-
-      query.whereIn('transactions.id', txIds);
-    }
+        if (tag.op === 'NEQ') {
+          join.andOnNotIn(`${tagAlias}.value`, tag.values);
+        }
+      });
+    });
   }
 
   if (minHeight >= 0) {

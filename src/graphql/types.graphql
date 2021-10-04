@@ -43,7 +43,7 @@ type Query {
     """
     Optionally specify the result sort order.
     """
-    sort: SortOrder = HEIGHT_DESC
+    sort: SortOrder
   ): TransactionConnection!
   block(id: String): Block
   blocks(
