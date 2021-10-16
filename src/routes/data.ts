@@ -144,14 +144,7 @@ export async function dataRoute(ctx: Router.RouterContext) {
     dataDB.insert({ txid: metadata.id, data: bufferTob64(body) });
     ctx.body = body;
     return;
-  } else {
-    if (data.data[0] === '[') {
-      // body = data.data;
-      console.log('string buffer', data);
-    }
-    body = Buffer.from(b64UrlToBuffer(data.data));
-    // body = data.data[0] === '[' ? data.data : Buffer.from(b64UrlToBuffer(data.data));
-  }
+  } else body = data.data[0] === '[' ? data.data : Buffer.from(b64UrlToBuffer(data.data)); 
 
   ctx.body = body;
 }
