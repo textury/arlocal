@@ -1,6 +1,5 @@
 import Router from 'koa-router';
 import { URL } from 'url';
-// import svg2img from 'svg2img';
 import { TransactionDB } from '../db/transaction';
 import { DataDB } from '../db/data';
 import { Utils } from '../utils/utils';
