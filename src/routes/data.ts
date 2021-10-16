@@ -1,5 +1,6 @@
 import Router from 'koa-router';
 import { URL } from 'url';
+// import svg2img from 'svg2img';
 import { TransactionDB } from '../db/transaction';
 import { DataDB } from '../db/data';
 import { Utils } from '../utils/utils';
@@ -114,15 +115,44 @@ export async function dataRoute(ctx: Router.RouterContext) {
   ctx.logging.log(data);
 
   let body;
+
   if (!data?.data && !metadata.target) {
     const chunks = await chunkDB.getRoot(metadata.data_root);
+
+    /**
+     * Svgs always have the same data across chunks, I don't know if it's all tho
+     */
+    if (ctx.type === 'image/svg+xml') {
+      const stringChunk = chunks.map((ch) => ch.chunk);
+
+      // Convert base64 string to svg string
+      const svgString = Utils.atob(stringChunk.join(''));
+      let svgEnd = svgString.indexOf('</svg>');
+      let endCalculation;
+      if (svgEnd === -1) {
+        svgEnd = svgString.indexOf('</ svg>');
+        endCalculation = svgEnd + '</ svg>'.length
+      }
+
+      endCalculation = svgEnd + '</svg>'.length;
+      ctx.body = svgString.slice(0, endCalculation).trim();
+      return;
+    }
+
     const chunk = chunks.map((ch) => Buffer.from(b64UrlToBuffer(ch.chunk)));
 
     body = Buffer.concat(chunk);
     dataDB.insert({ txid: metadata.id, data: bufferTob64(body) });
     ctx.body = body;
     return;
-  } else body = data.data[0] === '[' ? data.data : Buffer.from(b64UrlToBuffer(data.data));
+  } else {
+    if (data.data[0] === '[') {
+      // body = data.data;
+      console.log('string buffer', data);
+    }
+    body = Buffer.from(b64UrlToBuffer(data.data));
+    // body = data.data[0] === '[' ? data.data : Buffer.from(b64UrlToBuffer(data.data));
+  }
 
   ctx.body = body;
 }
