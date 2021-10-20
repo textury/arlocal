@@ -130,7 +130,7 @@ export async function dataRoute(ctx: Router.RouterContext) {
       let endCalculation;
       if (svgEnd === -1) {
         svgEnd = svgString.indexOf('</ svg>');
-        endCalculation = svgEnd + '</ svg>'.length
+        endCalculation = svgEnd + '</ svg>'.length;
       }
 
       endCalculation = svgEnd + '</svg>'.length;
@@ -144,7 +144,7 @@ export async function dataRoute(ctx: Router.RouterContext) {
     dataDB.insert({ txid: metadata.id, data: bufferTob64(body) });
     ctx.body = body;
     return;
-  } else body = data.data[0] === '[' ? data.data : Buffer.from(b64UrlToBuffer(data.data)); 
+  } else body = data.data[0] === '[' ? data.data : Buffer.from(b64UrlToBuffer(data.data));
 
   ctx.body = body;
 }
