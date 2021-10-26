@@ -33,9 +33,10 @@ const FIELDS = [
 export async function txAnchorRoute(ctx: Router.RouterContext) {
   const txs = await ctx.connection.select('id').from('blocks').limit(1);
   if (txs.length) {
-    return (ctx.body = txs[0].id);
+    ctx.body = txs[0].id;
+    return;
   }
-  ctx.body = Utils.randomID();
+  ctx.body = '';
 }
 
 export async function txRoute(ctx: Router.RouterContext) {
