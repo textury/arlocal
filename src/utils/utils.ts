@@ -2,9 +2,9 @@ import { Tag } from '../graphql/types';
 import { fromB64Url } from './encoding';
 
 export class Utils {
-  static randomID(_: number = 43): string {
+  static randomID(len?: number): string {
     // tslint:disable-next-line: no-bitwise
-    return [...Array(43)].map(() => (~~(Math.random() * 36)).toString(36)).join('');
+    return [...Array(len || 43)].map(() => (~~(Math.random() * 36)).toString(36)).join('');
   }
 
   static atob(a: string) {
