@@ -69,10 +69,6 @@ You can also mine more than one block at a time by hitting `/mine/{blocks}`, thi
 - Test transactions, SmartWeave Contracts, GraphQL requests, NFT deployment and more.
 - Works on Windows, Mac, Linux, Raspberry Pi, and pretty much everywhere as long as NodeJS is installed.
 
-### TODO
-- Balances management, allow to create new wallets, set their balances and handle balances (fees, transfer, deposit, etc).
-- Multiple paths are still missing, please refer to the `routes` folder to see the list of the currently available routes.
-
 ### Contributing
 PRs are greatly appreciated, help us build this hugely needed tool so anyone else can easily test their own transactions and SmartWeave contracts.
 
