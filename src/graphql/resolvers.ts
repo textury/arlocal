@@ -187,7 +187,7 @@ export const resolvers: Resolvers = {
         return {
           id: parent.block_id,
           previous: parent.block_previous,
-          timestamp: moment(parent.block_timestamp).unix(),
+          timestamp: parent.block_timestamp,
           height: parent.block_height,
         };
       }
@@ -219,7 +219,7 @@ export const resolvers: Resolvers = {
     },
     */
     timestamp: (parent) => {
-      return parent?.timestamp;
+      return moment(parent?.timestamp).unix();
     },
   },
 };
