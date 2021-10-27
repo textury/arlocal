@@ -98,8 +98,9 @@ describe('TRANSACTION', () => {
 
 describe('BLOCK', () => {
   it('gets 10 blocks then 2', async () => {
-    let i = 12;
-    while (i--) await mine(blockweave);
+    // let i = 12;
+    // while (i--) await mine(blockweave);
+    await request(server).get('/mine/12')
 
     const res1 = (await ardb.search('blocks').find()) as any;
     const res2 = (await ardb.next()) as any;
