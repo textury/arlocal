@@ -1,5 +1,5 @@
 import { Server } from 'http';
-import { rmSync, mkdirSync } from 'fs';
+import { rmSync, mkdirSync, existsSync } from 'fs';
 import path from 'path';
 import Koa from 'koa';
 import cors from '@koa/cors';
@@ -46,6 +46,7 @@ declare module 'koa' {
 export default class ArLocal {
   private port: number = 1984;
   private dbPath: string;
+  private persist: boolean;
   private log: Logging;
 
   private connection: Knex;
@@ -55,12 +56,13 @@ export default class ArLocal {
   private app = new Koa();
   private router = new Router();
 
-  constructor(port: number = 1984, showLogs: boolean = true, dbPath?: string) {
+  constructor(port: number = 1984, showLogs: boolean = true, dbPath?: string, persist = false) {
     this.port = port || this.port;
     dbPath = dbPath || path.join(__dirname, '.db', port.toString());
 
     this.dbPath = dbPath;
 
+    this.persist = persist;
     this.log = new Logging(showLogs);
 
     this.connection = connect(dbPath);
@@ -145,10 +147,10 @@ export default class ArLocal {
   private async startDB() {
     // Delete old database
     try {
-      rmSync(this.dbPath, { recursive: true });
+      if (!this.persist) rmSync(this.dbPath, { recursive: true });
     } catch (e) {}
 
-    mkdirSync(this.dbPath, { recursive: true });
+    if (!existsSync(this.dbPath)) mkdirSync(this.dbPath, { recursive: true });
 
     // sqlite
     this.apollo = graphServer(
@@ -160,8 +162,7 @@ export default class ArLocal {
     );
 
     this.apollo.applyMiddleware({ app: this.app, path: '/graphql' });
-
-    await up(this.connection);
+    if (!this.persist) await up(this.connection);
   }
 
   async stop() {
@@ -169,7 +170,7 @@ export default class ArLocal {
       this.server.close((err) => {
         if (err) {
           try {
-            rmSync(this.dbPath, { recursive: true });
+            if (!this.persist) rmSync(this.dbPath, { recursive: true });
           } catch (err) {}
           return;
         }
@@ -185,7 +186,7 @@ export default class ArLocal {
               .destroy()
               .then(() => {
                 try {
-                  rmSync(this.dbPath, { recursive: true });
+                  if (!this.persist) rmSync(this.dbPath, { recursive: true });
                 } catch (e) {}
               })
               .catch(() => {});
