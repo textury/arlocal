@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 import minimist from 'minimist';
+import { join } from 'path';
 import ArLocal from './app';
 import { appData } from './utils/appdata';
 
@@ -9,8 +10,7 @@ const port = argv._.length && !isNaN(+argv._[0]) ? argv._[0] : 1984;
 const showLogs = argv.hidelogs ? false : true;
 const persist = argv.persist;
 
-const folder = appData('arlocal', '.db');
-const dbPath = folder;
+const dbPath = argv.dbpath ? join(process.cwd(), argv.dbpath) : appData('arlocal', '.db');
 
 let app: ArLocal;
 

@@ -1,6 +1,6 @@
 import { Server } from 'http';
 import { rmSync, mkdirSync, existsSync } from 'fs';
-import path from 'path';
+import path, { join } from 'path';
 import Koa from 'koa';
 import cors from '@koa/cors';
 import bodyParser from 'koa-bodyparser';
@@ -162,7 +162,7 @@ export default class ArLocal {
     );
 
     this.apollo.applyMiddleware({ app: this.app, path: '/graphql' });
-    if (!this.persist) await up(this.connection);
+    if (!existsSync(join(this.dbPath, 'db.sqlite'))) await up(this.connection);
   }
 
   async stop() {
@@ -176,8 +176,7 @@ export default class ArLocal {
         }
       });
     }
-
-    down(this.connection)
+    down(this.connection, this.persist)
       .then(() => {
         this.apollo
           .stop()

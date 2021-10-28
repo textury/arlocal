@@ -85,7 +85,8 @@ export async function up(knex: Knex) {
     });
 }
 
-export async function down(knex: Knex) {
+export async function down(knex: Knex, persist: boolean) {
+  if (!persist) return;
   return knex.schema
     .withSchema(process.env.ENVIRONMENT || 'public')
     .dropTableIfExists('transactions')
