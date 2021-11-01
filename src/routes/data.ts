@@ -159,7 +159,7 @@ export async function subDataRoute(ctx: Router.RouterContext, next: () => void) 
     const txid = getTxIdFromPath(url.pathname);
 
     if (!txid) {
-      next();
+      return next();
     }
 
     // Redirect
