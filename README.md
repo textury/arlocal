@@ -53,7 +53,7 @@ ArLocal(port = 1984, showLogs = true, dbPath = '.db', persist = false)
 port = What port to use for ArLocal.
 showLogs = Should we show logs.
 dbPath = folder where the db will be temporary stored.
-persist = Whether data stored should be persisted among server restarts.
+persist = Whether or not data stored should be persisted among server restarts.
 ```
 
 #### Sending transactions
