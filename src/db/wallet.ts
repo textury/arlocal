@@ -31,6 +31,7 @@ export class WalletDB {
 
   async getWalletBalance(address: string): Promise<number> {
     const wallet = await this.getWallet(address);
+    if(!wallet) return 0
     return wallet.balance;
   }
 
