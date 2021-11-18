@@ -18,6 +18,7 @@
     "start": "node ./bin",
     "build": "rimraf bin && tsc && copyfiles -u 1 \"./src/**/*.graphql\" bin",
     "dev": "tsc-watch --onSuccess \"node bin\"",
+    "cmd": "yarn build && yarn start",
     "test": "jest --detectOpenHandles --silent",
     "format": "prettier --write \"src/**/*.ts\"",
     "lint": "tslint -p tsconfig.json",

@@ -29,7 +29,7 @@ import { Utils } from './utils/utils';
 import { NetworkInterface } from './faces/network';
 import Logging from './utils/logging';
 import { blocksRoute } from './routes/blocks';
-import { createWalletRoute, getBalanceRoute, getLastWalletTxRoute, updateBalanceRoute } from './routes/wallet';
+import { addBalanceRoute, createWalletRoute, getBalanceRoute, getLastWalletTxRoute, updateBalanceRoute } from './routes/wallet';
 import { getChunkOffsetRoute, postChunkRoute } from './routes/chunk';
 import { peersRoute } from './routes/peer';
 
@@ -110,6 +110,7 @@ export default class ArLocal {
 
     this.router.post('/wallet', createWalletRoute);
     this.router.patch('/wallet/:address/balance', updateBalanceRoute);
+    this.router.get('/mint/:address/:balance', addBalanceRoute);
 
     this.router.get('/wallet/:address/balance', getBalanceRoute);
     this.router.get('/wallet/:address/last_tx', getLastWalletTxRoute);

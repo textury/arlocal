@@ -106,6 +106,8 @@ export async function txPostRoute(ctx: Router.RouterContext) {
     if (oldDbPath !== ctx.dbPath || !dataDB || !walletDB) {
       dataDB = new DataDB(ctx.dbPath);
       walletDB = new WalletDB(ctx.connection);
+      chunkDB = new ChunkDB(ctx.connection);
+
       oldDbPath = ctx.dbPath;
     }
     const data = ctx.request.body as unknown as TransactionType;
@@ -126,27 +128,47 @@ export async function txPostRoute(ctx: Router.RouterContext) {
     if (bundleFormat === 'binary' && bundleVersion === '2.0.0') {
       // ANS-104
 
-      const buffer = Buffer.from(data.data, 'base64');
+      const createTxsFromItems = async (buffer: Buffer) => {
+        const bundle = new Bundle(buffer);
 
-      const bundle = new Bundle(buffer);
+        const items = bundle.items;
+        for (let i = 0; i < items.length; i++) {
+          const item = items[i];
 
-      const items = bundle.items;
-      for (let i = 0; i < items.length; i++) {
-        const item = items[i];
-
-        await txPostRoute({
-          ...ctx,
-          connection: ctx.connection,
-          logging: ctx.logging,
-          network: ctx.network,
-          request: {
-            ...ctx.request,
-            body: {
-              id: bundle.getIdBy(i),
-              ...item.toJSON(),
+          await txPostRoute({
+            ...ctx,
+            connection: ctx.connection,
+            dbPath: ctx.dbPath,
+            logging: ctx.logging,
+            network: ctx.network,
+            request: {
+              ...ctx.request,
+              body: {
+                id: bundle.getIdBy(i),
+                ...item.toJSON(),
+              },
             },
-          },
-        });
+          });
+        }
+      };
+
+      if (data.data) {
+        const buffer = Buffer.from(data.data, 'base64');
+        await createTxsFromItems(buffer);
+      } else {
+        (async () => {
+          let lastOffset = 0;
+          let chunks;
+          while (+data.data_size - 1 !== lastOffset) {
+            chunks = await chunkDB.getRoot(data.data_root);
+            lastOffset = +chunks[chunks.length - 1]?.offset || 0;
+          }
+
+          const chunk = chunks.map((ch) => Buffer.from(b64UrlToBuffer(ch.chunk)));
+
+          const buffer = Buffer.concat(chunk);
+          await createTxsFromItems(buffer);
+        })();
       }
     }
 
