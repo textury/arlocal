@@ -29,7 +29,13 @@ import { Utils } from './utils/utils';
 import { NetworkInterface } from './faces/network';
 import Logging from './utils/logging';
 import { blocksRoute } from './routes/blocks';
-import { addBalanceRoute, createWalletRoute, getBalanceRoute, getLastWalletTxRoute, updateBalanceRoute } from './routes/wallet';
+import {
+  addBalanceRoute,
+  createWalletRoute,
+  getBalanceRoute,
+  getLastWalletTxRoute,
+  updateBalanceRoute,
+} from './routes/wallet';
 import { getChunkOffsetRoute, postChunkRoute } from './routes/chunk';
 import { peersRoute } from './routes/peer';
 
