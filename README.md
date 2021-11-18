@@ -69,6 +69,7 @@ You can also mine more than one block at a time by hitting `/mine/{blocks}`, thi
 - No need of external resources, only NodeJS + NPM.
 - Test transactions, SmartWeave Contracts, GraphQL requests, NFT deployment and more.
 - Works on Windows, Mac, Linux, Raspberry Pi, and pretty much everywhere as long as NodeJS is installed.
+- Automatic airdrop, every address has infinite balance
 
 ### Contributing
 PRs are greatly appreciated, help us build this hugely needed tool so anyone else can easily test their own transactions and SmartWeave contracts.
