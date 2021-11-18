@@ -156,13 +156,19 @@ export async function txPostRoute(ctx: Router.RouterContext) {
         const buffer = Buffer.from(data.data, 'base64');
         await createTxsFromItems(buffer);
       } else {
-        setTimeout(async () => {
-          const chunks = await chunkDB.getRoot(data.data_root);
+        (async () => {
+          let lastOffset = 0;
+          let chunks;
+          while (+data.data_size - 1 !== lastOffset) {
+            chunks = await chunkDB.getRoot(data.data_root);
+            lastOffset = +chunks[chunks.length - 1]?.offset || 0;
+          }
+
           const chunk = chunks.map((ch) => Buffer.from(b64UrlToBuffer(ch.chunk)));
 
           const buffer = Buffer.concat(chunk);
           await createTxsFromItems(buffer);
-        }, 5000);
+        })();
       }
     }
 

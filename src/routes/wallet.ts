@@ -82,10 +82,15 @@ export async function addBalanceRoute(ctx: Router.RouterContext) {
     const address = ctx.params.address;
     const balance = +ctx.params.balance;
 
-    const wallet = await walletDB.incrementBalance(address, balance);
-    if (!wallet) await walletDB.addWallet({ address, balance });
-
-    ctx.body = address;
+    const wallet = await walletDB.getWallet(address);
+    if (wallet) {
+      await walletDB.incrementBalance(address, balance);
+      ctx.body = +wallet.balance + balance;
+      return;
+    }
+    await walletDB.addWallet({ address, balance });
+    ctx.body = balance;
+    return;
   } catch (error) {
     console.error({ error });
   }
