@@ -3,7 +3,7 @@ import { URL } from 'url';
 import { TransactionDB } from '../db/transaction';
 import { DataDB } from '../db/data';
 import { Utils } from '../utils/utils';
-import { b64UrlToBuffer, bufferTob64 } from '../utils/encoding';
+import { b64UrlToBuffer } from '../utils/encoding';
 import { ChunkDB } from '../db/chunks';
 
 export const dataRouteRegex = /^\/?([a-zA-Z0-9-_]{43})\/?$|^\/?([a-zA-Z0-9-_]{43})\/(.*)$/i;
@@ -141,7 +141,6 @@ export async function dataRoute(ctx: Router.RouterContext) {
     const chunk = chunks.map((ch) => Buffer.from(b64UrlToBuffer(ch.chunk)));
 
     body = Buffer.concat(chunk);
-    dataDB.insert({ txid: metadata.id, data: bufferTob64(body) });
     ctx.body = body;
     return;
   } else body = data.data[0] === '[' ? data.data : Buffer.from(b64UrlToBuffer(data.data));
