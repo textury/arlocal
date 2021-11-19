@@ -57,6 +57,8 @@ persist = Whether or not data stored should be persisted among server restarts.
 ```
 
 #### Sending transactions
+Before sending a transaction to ArLocal, make sure you mint new AR tokens for the wallet you'll be using. This is done using the endpoint `/mint/<address>/<balance>`.
+
 Sending a new transaction is done just like with the default gateway, use ArweaveJS to create your transaction, sign and post it.
 
 After this transaction is sent, to confirm (`mine`) your transactions, you need to hit the `/mine` endpoint. You can do this programmatically or by simply going to `http://localhost:1984/mine`.
