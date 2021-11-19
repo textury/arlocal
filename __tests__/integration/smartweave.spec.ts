@@ -1,3 +1,4 @@
+import request from 'supertest';
 import Blockweave from 'blockweave';
 import { JWKInterface } from 'blockweave/dist/faces/lib/wallet';
 
@@ -37,6 +38,8 @@ describe('Testing the SmartWeave client', () => {
       protocol: 'http',
     });
     wallet = await bw.wallets.generate();
+    const address = await bw.wallets.getAddress(wallet);
+    await request(arlocal.getServer()).get(`/mint/${address}/100000000000000000000`);
 
     contractSource = readFileSync(join(__dirname, 'data/example-contract.js'), 'utf8');
     initialState = readFileSync(join(__dirname, 'data/example-contract-state.json'), 'utf8');

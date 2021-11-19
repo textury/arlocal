@@ -1,5 +1,5 @@
 import { NetworkInfoInterface } from 'blockweave/dist/faces/lib/network';
-import { blockweave } from '../test-setup';
+import { blockweave } from '../src/test-setup';
 
 describe('STATUS', () => {
   // Test if the server started successfully

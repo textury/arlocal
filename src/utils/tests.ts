@@ -1,7 +1,7 @@
 import Blockweave from 'blockweave';
+import { wallet } from '../test-setup';
 
 export async function createTransaction(blockWeave: Blockweave, data: any = 'hello world'): Promise<string> {
-  const wallet = await blockWeave.wallets.generate();
   const tx = await blockWeave.createTransaction(
     {
       data,
