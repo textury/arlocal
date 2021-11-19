@@ -1,5 +1,5 @@
 import { createTransaction, mine } from '../src/utils/tests';
-import { blockweave, ardb, server } from '../test-setup';
+import { blockweave, ardb, server } from '../src/test-setup';
 import request from 'supertest';
 jest.setTimeout(100000);
 describe('TRANSACTION', () => {
@@ -43,6 +43,10 @@ describe('TRANSACTION', () => {
   });
   it('filter tags with an "and"', async () => {
     const wallet = await blockweave.wallets.generate();
+    const address = await blockweave.wallets.getAddress(wallet);
+
+    await request(server).get(`/mint/${address}/100000000000000000000`);
+
     let tx = await blockweave.createTransaction(
       {
         data: 'hello world',

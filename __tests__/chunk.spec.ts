@@ -1,5 +1,7 @@
 import { readFile } from 'fs/promises';
-import { blockweave, port } from '../test-setup';
+import request from 'supertest';
+
+import { blockweave, port, server } from '../src/test-setup';
 import Arweave from 'arweave';
 import { b64UrlDecode, bufferTob64 } from '../src/utils/encoding';
 
@@ -13,6 +15,9 @@ describe('CHUNK', () => {
     const data = await readFile(`${process.cwd()}/__tests__/data/wallpaper.jpg`);
 
     const wallet = await arweave.wallets.generate();
+    const walletAddress = await arweave.wallets.jwkToAddress(wallet);
+    await request(server).get(`/mint/${walletAddress}/100000000000000000000`);
+
     const tx = await arweave.createTransaction(
       {
         data,
@@ -33,6 +38,9 @@ describe('CHUNK', () => {
     const data = await readFile(`${process.cwd()}/__tests__/data/wallpaper.jpg`);
 
     const wallet = await blockweave.wallets.generate();
+    const walletAddress = await blockweave.wallets.jwkToAddress(wallet);
+    await request(server).get(`/mint/${walletAddress}/100000000000000000000`);
+
     const tx = await blockweave.createTransaction(
       {
         data,

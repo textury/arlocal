@@ -1,4 +1,4 @@
-import { blockweave, server } from '../test-setup';
+import { blockweave, server } from '../src/test-setup';
 import request from 'supertest';
 
 describe('WALLETS', () => {

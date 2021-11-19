@@ -1,5 +1,5 @@
 import request from 'supertest';
-import { server } from '../test-setup';
+import { server } from '../src/test-setup';
 
 describe('txAnchor ENDPOINT', () => {
   it('Should be empty when no tx', async () => {

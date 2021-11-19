@@ -1,4 +1,5 @@
 import fs from 'fs';
+import request from 'supertest';
 
 import ArLocal from '../../src/app';
 import Arweave from 'arweave';
@@ -37,6 +38,7 @@ describe('Testing the Profit Sharing Token', () => {
 
     wallet = await arweave.wallets.generate();
     walletAddress = await arweave.wallets.jwkToAddress(wallet);
+    await request(arlocal.getServer()).get(`/mint/${walletAddress}/100000000000000000000`);
 
     contractSrc = fs.readFileSync(path.join(__dirname, 'data/token-pst.js'), 'utf8');
     const stateFromFile: PstState = JSON.parse(fs.readFileSync(path.join(__dirname, 'data/token-pst.json'), 'utf8'));

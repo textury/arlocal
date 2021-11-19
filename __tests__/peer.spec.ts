@@ -1,5 +1,5 @@
 import request from 'supertest';
-import { server } from '../test-setup';
+import { server } from '../src/test-setup';
 test('GET /peers', async () => {
   const res = await request(server).get('/peers');
 

@@ -29,9 +29,16 @@ import { Utils } from './utils/utils';
 import { NetworkInterface } from './faces/network';
 import Logging from './utils/logging';
 import { blocksRoute } from './routes/blocks';
-import { addBalanceRoute, createWalletRoute, getBalanceRoute, getLastWalletTxRoute, updateBalanceRoute } from './routes/wallet';
+import {
+  addBalanceRoute,
+  createWalletRoute,
+  getBalanceRoute,
+  getLastWalletTxRoute,
+  updateBalanceRoute,
+} from './routes/wallet';
 import { getChunkOffsetRoute, postChunkRoute } from './routes/chunk';
 import { peersRoute } from './routes/peer';
+import { WalletDB } from './db/wallet';
 
 declare module 'koa' {
   interface BaseContext {
@@ -55,6 +62,7 @@ export default class ArLocal {
   private server: Server;
   private app = new Koa();
   private router = new Router();
+  private walletDB: WalletDB;
 
   constructor(port: number = 1984, showLogs: boolean = true, dbPath?: string, persist = false) {
     this.port = port || this.port;
@@ -82,6 +90,7 @@ export default class ArLocal {
     this.app.context.logging = this.log;
     this.app.context.dbPath = dbPath;
     this.app.context.connection = this.connection;
+    this.walletDB = new WalletDB(this.connection);
   }
 
   async start() {
@@ -205,5 +214,8 @@ export default class ArLocal {
 
   getDbPath(): string {
     return this.dbPath;
+  }
+  getWalletDb(): WalletDB {
+    return this.walletDB;
   }
 }
