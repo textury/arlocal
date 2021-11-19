@@ -34,7 +34,7 @@ beforeEach(async () => {
   const address = await blockweave.wallets.getAddress(wallet);
   arLocalTesting.getWalletDb().addWallet({ address, balance: 100000000000000 });
 
-  //@ts-ignore
+  // @ts-ignore
   ardb = new Ardb(blockweave);
 
   jest.spyOn(console, 'error');
