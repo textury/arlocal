@@ -1,4 +1,4 @@
-import { blockweave } from '../test-setup';
+import { blockweave } from '../src/test-setup';
 import { mine } from '../src/utils/tests';
 
 describe('BLOCK', () => {

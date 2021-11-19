@@ -1,5 +1,5 @@
 import request from 'supertest';
-import { blockweave, server } from '../test-setup';
+import { blockweave, server } from '../src/test-setup';
 import { createTransaction, mine } from '../src/utils/tests';
 
 jest.setTimeout(20000);

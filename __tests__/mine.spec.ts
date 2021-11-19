@@ -1,6 +1,6 @@
 import { NetworkInfoInterface } from 'blockweave/dist/faces/lib/network';
 import request from 'supertest';
-import { blockweave, server } from '../test-setup';
+import { blockweave, server } from '../src/test-setup';
 
 describe('MINE ENDPOINT', () => {
   it('mines one block', async () => {
@@ -25,6 +25,9 @@ describe('MINE ENDPOINT', () => {
 
   it('mines a block with a transaction', async () => {
     const wallet = await blockweave.wallets.generate();
+    const address = await blockweave.wallets.getAddress(wallet);
+    await request(server).get(`/mint/${address}/100000000000000000000`);
+
     const tx = await blockweave.createTransaction(
       {
         data: 'hello world',

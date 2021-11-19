@@ -111,6 +111,16 @@ export async function txPostRoute(ctx: Router.RouterContext) {
       oldDbPath = ctx.dbPath;
     }
     const data = ctx.request.body as unknown as TransactionType;
+    const owner = bufferTob64Url(await hash(b64UrlToBuffer(data.owner)));
+
+    const wallet = await walletDB.getWallet(owner);
+    const calculatedReward = +data.data_size * 1965132;
+
+    if (!wallet || wallet.balance < calculatedReward) {
+      ctx.status = 410;
+      ctx.body = { code: 410, msg: 'Poor' };
+      return;
+    }
 
     ctx.logging.log('post', data);
 
@@ -148,6 +158,8 @@ export async function txPostRoute(ctx: Router.RouterContext) {
                 ...item.toJSON(),
               },
             },
+            // @ts-ignore
+            txInBundle: true,
           });
         }
       };
@@ -172,19 +184,16 @@ export async function txPostRoute(ctx: Router.RouterContext) {
       }
     }
 
-    const owner = bufferTob64Url(await hash(b64UrlToBuffer(data.owner)));
-
     // BALANCE UPDATES
     if (data?.target && data?.quantity) {
-      const fromWallet = await walletDB.getWallet(owner);
       const targetWallet = await walletDB.getWallet(data.target);
 
-      if (!fromWallet || !targetWallet) {
+      if (!wallet || !targetWallet) {
         ctx.status = 404;
         ctx.body = { status: 404, error: `Wallet not found` };
         return;
       }
-      if (fromWallet?.balance < +data.quantity + +data.reward) {
+      if (wallet?.balance < +data.quantity + +data.reward) {
         ctx.status = 403;
         ctx.body = { status: 403, error: `you don't have enough funds to send ${data.quantity}` };
         return;
@@ -192,8 +201,6 @@ export async function txPostRoute(ctx: Router.RouterContext) {
       await walletDB.incrementBalance(data.target, +data.quantity);
       await walletDB.incrementBalance(data.owner, -data.quantity);
     }
-
-    await walletDB.incrementBalance(data.owner, -data.reward);
 
     await dataDB.insert({ txid: data.id, data: data.data });
 
@@ -222,6 +229,11 @@ export async function txPostRoute(ctx: Router.RouterContext) {
       index++;
     }
 
+    // @ts-ignore
+    if (!ctx.txInBundle) {
+      const fee = +data.reward > calculatedReward ? +data.reward : calculatedReward;
+      await walletDB.incrementBalance(owner, -fee);
+    }
     ctx.body = data;
   } catch (error) {
     console.error({ error });

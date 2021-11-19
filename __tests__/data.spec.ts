@@ -1,4 +1,4 @@
-import { blockweave } from '../test-setup';
+import { blockweave } from '../src/test-setup';
 import { createTransaction } from '../src/utils/tests';
 
 describe('DATA ENDPOINT', () => {
