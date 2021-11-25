@@ -118,7 +118,7 @@ export async function txPostRoute(ctx: Router.RouterContext) {
 
     if (!wallet || wallet.balance < calculatedReward) {
       ctx.status = 410;
-      ctx.body = { code: 410, msg: 'Poor' };
+      ctx.body = { code: 410, msg: "You don't have enough tokens" };
       return;
     }
 

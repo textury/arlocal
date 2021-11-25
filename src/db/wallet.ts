@@ -41,7 +41,7 @@ export class WalletDB {
         .queryBuilder()
         .select('*')
         .from('transactions')
-        .where('owner', '=', address)
+        .where('owner_address', '=', address)
         .orderBy('created_at', 'desc')
         .limit(1)
     )[0];

@@ -1,4 +1,4 @@
-import { blockweave, server } from '../src/test-setup';
+import { blockweave, server, wallet } from '../src/test-setup';
 import request from 'supertest';
 
 describe('WALLETS', () => {
@@ -18,8 +18,8 @@ describe('WALLETS', () => {
   });
 
   it('GET /wallet/:address/last_tx', async () => {
-    const jwk = await blockweave.wallets.generate();
-    const address = await blockweave.wallets.getAddress(jwk);
+    const jwk = wallet;
+    const address = await blockweave.wallets.getAddress(wallet);
 
     const transaction = await blockweave.createTransaction(
       {
@@ -40,7 +40,7 @@ describe('WALLETS', () => {
     await transaction2.post();
 
     const lastTx = await blockweave.wallets.getLastTransactionId(address);
-    expect(typeof lastTx).toBe('string');
+    expect(lastTx).toEqual(transaction2.id);
     expect(transaction.owner).toBe(transaction2.owner);
   });
 
