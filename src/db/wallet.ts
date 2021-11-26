@@ -1,4 +1,4 @@
-import { TransactionType } from 'faces/transaction';
+import { TransactionType } from '../faces/transaction';
 import { Knex } from 'knex';
 import { Utils } from '../utils/utils';
 export interface Wallet {
