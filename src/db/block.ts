@@ -36,4 +36,11 @@ export class BlockDB {
       console.error({ error });
     }
   }
+  async getLastBlock() {
+    try {
+      return (await this.connection('blocks').orderBy('created_at', 'desc').limit(1))[0];
+    } catch (error) {
+      console.error({ error });
+    }
+  }
 }
