@@ -39,6 +39,7 @@ import {
 import { getChunkOffsetRoute, postChunkRoute } from './routes/chunk';
 import { peersRoute } from './routes/peer';
 import { WalletDB } from './db/wallet';
+import { BlockDB } from './db/block';
 
 declare module 'koa' {
   interface BaseContext {
@@ -95,6 +96,14 @@ export default class ArLocal {
 
   async start() {
     await this.startDB();
+
+    const blockDB = new BlockDB(this.connection);
+    const lastBlock = await blockDB.getLastBlock();
+    if (lastBlock) {
+      this.app.context.network.current = lastBlock.id;
+      this.app.context.network.height = lastBlock.height;
+      this.app.context.network.blocks = lastBlock.height + 1;
+    }
 
     this.router.get('/', statusRoute);
     this.router.get('/info', statusRoute);
