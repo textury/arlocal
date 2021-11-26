@@ -1,10 +1,10 @@
 import { Server } from 'http';
 import { rmSync, mkdirSync, existsSync } from 'fs';
 import path, { join } from 'path';
-import Koa from 'koa';
+import Koa, { Next } from 'koa';
 import cors from '@koa/cors';
 import bodyParser from 'koa-bodyparser';
-import Router from 'koa-router';
+import Router, { RouterContext } from 'koa-router';
 import json from 'koa-json';
 import logger from 'koa-logger';
 import { ApolloServer } from 'apollo-server-koa';
@@ -104,6 +104,16 @@ export default class ArLocal {
       this.app.context.network.height = lastBlock.height;
       this.app.context.network.blocks = lastBlock.height + 1;
     }
+
+    // ISSUE WITH ARCONNECT THAT IS SENDING HEAD REQUESTS FOR NO REASON
+    this.router.use(async (ctx: RouterContext, next: Next) => {
+      if (ctx.method === 'HEAD') {
+        ctx.status = 405;
+        ctx.body = 'Method Not Allowed';
+        return;
+      }
+      await next();
+    });
 
     this.router.get('/', statusRoute);
     this.router.get('/info', statusRoute);
