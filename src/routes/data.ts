@@ -27,6 +27,12 @@ export async function dataHeadRoute(ctx: Router.RouterContext) {
   const transaction = path.length > 1 ? path[1] : '';
   const metadata = await transactionDB.getById(transaction);
 
+  if (!metadata) {
+    ctx.status = 404;
+    ctx.body = { status: 404, error: 'Not Found' };
+    return;
+  }
+
   ctx.logging.log(metadata);
 
   ctx.status = 200;
