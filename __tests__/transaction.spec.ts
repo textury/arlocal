@@ -140,6 +140,21 @@ describe('', () => {
     });
   });
 
+  describe('Delete TX', () => {
+    it('Delete TX', async () => {
+      const txid = await createTransaction(blockweave, 'test');
+
+      expect(txid).toBeDefined();
+      // Call the endpoint directly
+      let res = await request(server).get(`/tx/${txid}`);
+
+      expect(res.body.id).toEqual(txid);
+      await request(server).delete(`/tx/${txid}`);
+      res = await request(server).get(`/tx/${txid}`);
+      expect(res.status).toEqual(404);
+    });
+  });
+
   it('GET /tx/:txid/data', async () => {
     const txid = await createTransaction(blockweave, 'test');
     const data = 'dGVzdA';

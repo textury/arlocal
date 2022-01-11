@@ -404,3 +404,38 @@ export async function txRawDataRoute(ctx: Router.RouterContext) {
     ctx.body = { error: error.message };
   }
 }
+
+export async function deleteTxRoute(ctx: Router.RouterContext) {
+  try {
+    if (
+      !transactionDB ||
+      !dataDB ||
+      oldDbPath !== ctx.dbPath ||
+      connectionSettings !== ctx.connection.client.connectionSettings.filename
+    ) {
+      transactionDB = new TransactionDB(ctx.connection);
+      dataDB = new DataDB(ctx.dbPath);
+      oldDbPath = ctx.dbPath;
+      connectionSettings = ctx.connection.client.connectionSettings.filename;
+    }
+
+    const path = ctx.params.txid.match(pathRegex) || [];
+    const txid = path.length > 1 ? path[1] : '';
+
+    const metadata: TransactionType = await transactionDB.getById(txid);
+
+    if (!metadata) {
+      ctx.status = 404;
+      ctx.body = { status: 404, error: 'Not found' };
+      return;
+    }
+
+    await transactionDB.deleteById(txid);
+
+    ctx.status = 200;
+    return;
+  } catch (error) {
+    ctx.status = 500;
+    ctx.body = { error: error.message };
+  }
+}
