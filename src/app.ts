@@ -13,7 +13,7 @@ import { connect } from './db/connect';
 import { down, up } from './db/initialize';
 import { graphServer } from './graphql/server';
 import { dataRouteRegex, dataHeadRoute, dataRoute, subDataRoute } from './routes/data';
-import { mineRoute } from './routes/mine';
+import { mineRoute, mineWithFailsRoute } from './routes/mine';
 import { statusRoute } from './routes/status';
 import {
   txAnchorRoute,
@@ -49,6 +49,7 @@ declare module 'koa' {
     transactions: string[];
     dbPath: string;
     logging: Logging;
+    fails: number;
   }
 }
 
@@ -56,6 +57,7 @@ export default class ArLocal {
   private port: number = 1984;
   private dbPath: string;
   private persist: boolean;
+  private fails: number;
   private log: Logging;
 
   private connection: Knex;
@@ -66,13 +68,14 @@ export default class ArLocal {
   private router = new Router();
   private walletDB: WalletDB;
 
-  constructor(port: number = 1984, showLogs: boolean = true, dbPath?: string, persist = false) {
+  constructor(port: number = 1984, showLogs: boolean = true, dbPath?: string, persist = false, fails = 0) {
     this.port = port || this.port;
     dbPath = dbPath || path.join(__dirname, '.db', port.toString());
 
     this.dbPath = dbPath;
 
     this.persist = persist;
+    this.fails = fails;
     this.log = new Logging(showLogs);
 
     this.connection = connect(dbPath);
@@ -92,6 +95,7 @@ export default class ArLocal {
     this.app.context.logging = this.log;
     this.app.context.dbPath = dbPath;
     this.app.context.connection = this.connection;
+    this.app.context.fails = this.fails / 100;
     this.walletDB = new WalletDB(this.connection);
   }
 
@@ -120,6 +124,7 @@ export default class ArLocal {
     this.router.get('/info', statusRoute);
     this.router.get('/peers', peersRoute);
     this.router.get('/mine/:qty?', mineRoute);
+    this.router.get('/mineWithFails/:qty?', mineWithFailsRoute);
 
     this.router.get('/tx_anchor', txAnchorRoute);
     this.router.get('/price/:bytes/:addy?', async (ctx) => (ctx.body = +ctx.params.bytes * 1965132));

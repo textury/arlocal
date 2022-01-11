@@ -46,3 +46,10 @@ describe('MINE ENDPOINT', () => {
     expect(transaction.owner).toEqual(tx.owner);
   });
 });
+
+describe('MINE With FAIL ENDPOINT', () => {
+  it('mines one block', async () => {
+    const res = await request(server).get('/mineWithFails');
+    expect(res.body.height).toEqual(1);
+  });
+});
