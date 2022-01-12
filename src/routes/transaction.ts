@@ -186,7 +186,15 @@ export async function txPostRoute(ctx: Router.RouterContext) {
 
     // BALANCE UPDATES
     if (data?.target && data?.quantity) {
-      const targetWallet = await walletDB.getWallet(data.target);
+      let targetWallet = await walletDB.getWallet(data.target);
+      if (!targetWallet) {
+        await walletDB.addWallet({
+          address: data?.target,
+          balance: 0
+        })
+
+        targetWallet = await walletDB.getWallet(data.target)
+      }
 
       if (!wallet || !targetWallet) {
         ctx.status = 404;
@@ -199,7 +207,7 @@ export async function txPostRoute(ctx: Router.RouterContext) {
         return;
       }
       await walletDB.incrementBalance(data.target, +data.quantity);
-      await walletDB.incrementBalance(data.owner, -data.quantity);
+      await walletDB.incrementBalance(wallet.address, -data.quantity);
     }
 
     await dataDB.insert({ txid: data.id, data: data.data });
