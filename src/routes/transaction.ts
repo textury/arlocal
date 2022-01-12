@@ -190,10 +190,10 @@ export async function txPostRoute(ctx: Router.RouterContext) {
       if (!targetWallet) {
         await walletDB.addWallet({
           address: data?.target,
-          balance: 0
-        })
+          balance: 0,
+        });
 
-        targetWallet = await walletDB.getWallet(data.target)
+        targetWallet = await walletDB.getWallet(data.target);
       }
 
       if (!wallet || !targetWallet) {
