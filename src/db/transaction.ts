@@ -114,6 +114,10 @@ export class TransactionDB {
     return (await this.connection('transactions').where({ block: '' })).map(({ id }) => id);
   }
 
+  async deleteById(id: string) {
+    return this.connection('transactions').where({ id }).del();
+  }
+
   async mineTxs(block: string) {
     return await this.connection('transactions').where({ block: '' }).update({ block });
   }

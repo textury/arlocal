@@ -9,13 +9,14 @@ const argv = minimist(process.argv.slice(2));
 const port = argv._.length && !isNaN(+argv._[0]) ? argv._[0] : 1984;
 const showLogs = argv.hidelogs ? false : true;
 const persist = argv.persist;
+const fails = argv.fails || 0;
 
 const dbPath = argv.dbpath ? join(process.cwd(), argv.dbpath) : appData('arlocal', '.db');
 
 let app: ArLocal;
 
 (async () => {
-  app = new ArLocal(+port, showLogs, dbPath, !!persist);
+  app = new ArLocal(+port, showLogs, dbPath, !!persist, fails);
   await app.start();
 
   process.on('SIGINT', stop);
