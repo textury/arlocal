@@ -10,7 +10,7 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
     "declaration": true,
-    "lib": ["es2019"]
+    "lib": ["es2019", "DOM"]
   },
   "include": ["src", "__tests__"],
   "exclude": ["node_modules", "**/__tests__/*"]

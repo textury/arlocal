@@ -13,6 +13,7 @@ describe('CHUNK', () => {
       protocol: 'http',
     });
     const data = await readFile(`${process.cwd()}/__tests__/data/wallpaper.jpg`);
+    console.log('file_data: ', data)
 
     const wallet = await arweave.wallets.generate();
     const walletAddress = await arweave.wallets.jwkToAddress(wallet);
@@ -29,6 +30,7 @@ describe('CHUNK', () => {
 
     await arweave.transactions.sign(tx, wallet);
     await arweave.transactions.post(tx);
+    console.log('tx: ', tx)
     const transaction = await arweave.transactions.getData(tx.id);
 
     expect(b64UrlDecode(transaction as string)).toEqual(bufferTob64(data));
