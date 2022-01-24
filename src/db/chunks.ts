@@ -53,4 +53,12 @@ export class ChunkDB {
       console.error({ error });
     }
   }
+
+  async getLowerOffset(offset: number) {
+    try {
+      return (await this.connection('chunks').where( 'offset','<',offset ).orderBy('offset','desc'))[0];
+    } catch (error) {
+      console.error({ error });
+    }
+  }
 }

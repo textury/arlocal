@@ -29,6 +29,7 @@ describe('CHUNK', () => {
 
     await arweave.transactions.sign(tx, wallet);
     await arweave.transactions.post(tx);
+
     const transaction = await arweave.transactions.getData(tx.id);
 
     expect(b64UrlDecode(transaction as string)).toEqual(bufferTob64(data));

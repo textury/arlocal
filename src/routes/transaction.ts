@@ -95,7 +95,8 @@ export async function txOffsetRoute(ctx: Router.RouterContext) {
 
     ctx.status = 200;
     ctx.type = 'text/plain'; // TODO: updated this in arweave gateway to app/json
-    ctx.body = { offset: +chunk.offset, size: metadata.data_size };
+
+    ctx.body = { offset: +chunk.offset + metadata.data_size - 1, size: metadata.data_size };
   } catch (error) {
     console.error({ error });
   }
