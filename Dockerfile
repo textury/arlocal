@@ -1,16 +1,16 @@
-FROM node:alpine as build-stage
-
+FROM node:16 as build
 WORKDIR /app
-
-COPY ./ .
-
+COPY . .
 RUN yarn
 
-FROM node:alpine 
-
+FROM node:16-alpine 
+RUN apk add dumb-init
+USER node
 WORKDIR /arlocal
 
-COPY --from=build-stage /app/bin/ ./bin
-COPY --from=build-stage /app/node_modules/ ./node_modules
+COPY --chown=node:node --from=build /app/bin/ ./bin
+COPY --chown=node:node --from=build /app/node_modules/ ./node_modules
+COPY --chown=node:node --from=build /app/package.json ./package.json
 
-CMD [ "node","bin/index.js" ]
+EXPOSE 1984
+CMD [ "dumb-init", "node", "bin/index.js" ]
