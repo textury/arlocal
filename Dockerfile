@@ -1,16 +1,16 @@
-FROM node:alpine as build-stage
+FROM node:16-alpine as build
+RUN apk add python2 python3 make gcc g++
 
 WORKDIR /app
-
-COPY ./ .
-
+COPY . .
 RUN yarn
 
-FROM node:alpine 
-
+FROM node:16-alpine 
+USER node
 WORKDIR /arlocal
 
-COPY --from=build-stage /app/bin/ ./bin
-COPY --from=build-stage /app/node_modules/ ./node_modules
+COPY --chown=node:node --from=build /app/bin/ ./bin
+COPY --chown=node:node --from=build /app/node_modules/ ./node_modules
 
-CMD [ "node","bin/index.js" ]
+EXPOSE 1984
+CMD [ "node", "bin/index.js" ]
