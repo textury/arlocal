@@ -1,5 +1,4 @@
 FROM node:16-alpine as build
-RUN apk add python2 python3 make gcc g++
 
 WORKDIR /app
 COPY . .
