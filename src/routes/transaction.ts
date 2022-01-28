@@ -218,6 +218,14 @@ export async function txPostRoute(ctx: Router.RouterContext) {
     tx.height = ctx.network.blocks;
 
     await ctx.connection.insert(tx).into('transactions');
+    // insert into chunkdb
+    await chunkDB.create({
+      chunk: data.data,
+      data_root: data.data_root,
+      data_size: parseInt(data.data_size, 10),
+      offset: 0,
+      data_path: data.id
+    });
 
     let index = 0;
     for (const tag of data.tags) {
