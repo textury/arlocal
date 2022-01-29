@@ -91,12 +91,7 @@ export async function txOffsetRoute(ctx: Router.RouterContext) {
       ctx.body = { status: 404, error: 'Not Found' };
       return;
     }
-    let chunk = await chunkDB.getByRootAndSize(metadata.data_root, metadata.data_size);
-    if (!chunk) {
-      chunk = {
-        offset: 0
-      }
-    }
+    const chunk = await chunkDB.getByRootAndSize(metadata.data_root, metadata.data_size);
 
     ctx.status = 200;
     ctx.type = 'text/plain'; // TODO: updated this in arweave gateway to app/json
@@ -223,6 +218,14 @@ export async function txPostRoute(ctx: Router.RouterContext) {
     tx.height = ctx.network.blocks;
 
     await ctx.connection.insert(tx).into('transactions');
+    // insert into chunkdb
+    await chunkDB.create({
+      chunk: data.data,
+      data_root: data.data_root,
+      data_size: parseInt(data.data_size, 10),
+      offset: 0,
+      data_path: data.id
+    });
 
     let index = 0;
     for (const tag of data.tags) {
