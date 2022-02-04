@@ -15,7 +15,7 @@ export async function postChunkRoute(ctx: Router.RouterContext) {
     const chunk = ctx.request.body as unknown as Chunk;
 
     await chunkDB.create(chunk);
-
+    
     ctx.body = {};
   } catch (error) {
     console.error({ error });
@@ -32,7 +32,6 @@ export async function getChunkOffsetRoute(ctx: Router.RouterContext) {
     let chunk = await chunkDB.getByOffset(offset);
     if (!chunk) {
       chunk = await chunkDB.getLowerOffset(offset);
-      console.log({ chunk });
     }
     ctx.body = chunk;
   } catch (error) {
