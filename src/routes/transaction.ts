@@ -97,7 +97,7 @@ export async function txOffsetRoute(ctx: Router.RouterContext) {
       return;
     }
     const chunk = await chunkDB.getByRootAndSize(metadata.data_root, metadata.data_size);
-    
+
     ctx.status = 200;
     ctx.type = 'text/plain'; // TODO: updated this in arweave gateway to app/json
 

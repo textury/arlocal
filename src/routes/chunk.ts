@@ -15,7 +15,7 @@ export async function postChunkRoute(ctx: Router.RouterContext) {
     const chunk = ctx.request.body as unknown as Chunk;
 
     await chunkDB.create(chunk);
-    
+
     ctx.body = {};
   } catch (error) {
     console.error({ error });
