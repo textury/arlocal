@@ -73,11 +73,16 @@ export async function txRoute(ctx: Router.RouterContext) {
 
 export async function txOffsetRoute(ctx: Router.RouterContext) {
   try {
-    if (!transactionDB) {
+    if (
+      oldDbPath !== ctx.dbPath ||
+      !transactionDB ||
+      !chunkDB ||
+      connectionSettings !== ctx.connection.client.connectionSettings.filename
+    ) {
       transactionDB = new TransactionDB(ctx.connection);
-    }
-    if (!chunkDB) {
       chunkDB = new ChunkDB(ctx.connection);
+      oldDbPath = ctx.dbPath;
+      connectionSettings = ctx.connection.client.connectionSettings.filename;
     }
 
     const path = ctx.params.txid.match(pathRegex) || [];
@@ -92,7 +97,7 @@ export async function txOffsetRoute(ctx: Router.RouterContext) {
       return;
     }
     const chunk = await chunkDB.getByRootAndSize(metadata.data_root, metadata.data_size);
-
+    
     ctx.status = 200;
     ctx.type = 'text/plain'; // TODO: updated this in arweave gateway to app/json
 
