@@ -3,9 +3,6 @@
 Run a local Arweave gateway-like server.
 
 ## Getting Started
-
-These instructions will cover usage information and for the docker container 
-
 ### Prerequisites
 
 
