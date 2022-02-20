@@ -8,6 +8,8 @@ import { WalletDB } from '../db/wallet';
 import { b64UrlToBuffer, bufferTob64Url, hash } from '../utils/encoding';
 import { ChunkDB } from '../db/chunks';
 import { Next } from 'koa';
+import Transaction from 'arweave/node/lib/transaction';
+import { generateTransactionChunks } from 'arweave/node/lib/merkle';
 
 export const pathRegex = /^\/?([a-z0-9-_]{43})/i;
 
@@ -88,7 +90,7 @@ export async function txOffsetRoute(ctx: Router.RouterContext) {
     const path = ctx.params.txid.match(pathRegex) || [];
     const transaction = path.length > 1 ? path[1] : '';
 
-    const metadata = await transactionDB.getById(transaction);
+    const metadata: Transaction = await transactionDB.getById(transaction);
     ctx.logging.log(metadata);
 
     if (!metadata) {
@@ -96,12 +98,37 @@ export async function txOffsetRoute(ctx: Router.RouterContext) {
       ctx.body = { status: 404, error: 'Not Found' };
       return;
     }
-    const chunk = await chunkDB.getByRootAndSize(metadata.data_root, metadata.data_size);
+    let chunk = await chunkDB.getByRootAndSize(metadata.data_root, +metadata.data_size);
+
+    // for tx without chunk
+    if (!chunk) {
+      // get data from data db
+      const data = await dataDB.findOne(transaction);
+      const dataBuf = b64UrlToBuffer(data.data);
+
+      const nChunk = await generateTransactionChunks(dataBuf);
+      // create all chunks
+      const asyncOps = nChunk.chunks.map((_chunk, idx) => {
+        const proof = nChunk.proofs[idx];
+        return chunkDB.create({
+          chunk: bufferTob64Url(dataBuf.slice(_chunk.minByteRange, _chunk.maxByteRange)),
+          data_size: +metadata.data_size,
+          data_path: bufferTob64Url(proof.proof),
+          data_root: bufferTob64Url(nChunk.data_root),
+          offset: proof.offset,
+        });
+      });
+
+      await Promise.all(asyncOps);
+
+      // find chunk again
+      chunk = await chunkDB.getByRootAndSize(metadata.data_root, +metadata.data_size);
+    }
 
     ctx.status = 200;
     ctx.type = 'text/plain'; // TODO: updated this in arweave gateway to app/json
 
-    ctx.body = { offset: +chunk.offset + metadata.data_size - 1, size: metadata.data_size };
+    ctx.body = { offset: +chunk.offset + +metadata.data_size - 1, size: metadata.data_size };
   } catch (error) {
     console.error({ error });
   }
