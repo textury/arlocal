@@ -29,7 +29,7 @@ docker run --name arlocal -p 1984:1984 textury/arlocal
 
 ## Contributing
 
-Please read [CONTRIBUTING](README.md#contributing) for details on our code of conduct, and the process for submitting pull requests to us.
+Please read [CONTRIBUTING](https://github.com/textury/arlocal#contributing) for details on our code of conduct, and the process for submitting pull requests to us.
 
 ## Versioning
 
@@ -43,4 +43,4 @@ participated in this project.
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License - see the [LICENSE](https://github.com/textury/arlocal/blob/main/LICENSE) file for details.
