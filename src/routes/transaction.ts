@@ -84,7 +84,7 @@ export async function txOffsetRoute(ctx: Router.RouterContext) {
     ) {
       transactionDB = new TransactionDB(ctx.connection);
       chunkDB = new ChunkDB(ctx.connection);
-      dataDB = new DataDB(ctx.dbPath)
+      dataDB = new DataDB(ctx.dbPath);
       oldDbPath = ctx.dbPath;
       connectionSettings = ctx.connection.client.connectionSettings.filename;
     }
