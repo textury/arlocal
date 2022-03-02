@@ -1,4 +1,5 @@
 import Router from 'koa-router';
+import mime from 'mime';
 import { formatTransaction, TransactionDB } from '../db/transaction';
 import { DataDB } from '../db/data';
 import { Utils } from '../utils/utils';
@@ -442,6 +443,54 @@ export async function txRawDataRoute(ctx: Router.RouterContext) {
     // Return the base64 data to the user
     ctx.status = 200;
     ctx.body = data.data;
+  } catch (error) {
+    ctx.status = 500;
+    ctx.body = { error: error.message };
+  }
+}
+
+export async function txDataRoute(ctx: Router.RouterContext, next: () => any) {
+  try {
+    if (
+      !transactionDB ||
+      !dataDB ||
+      oldDbPath !== ctx.dbPath ||
+      connectionSettings !== ctx.connection.client.connectionSettings.filename
+    ) {
+      transactionDB = new TransactionDB(ctx.connection);
+      dataDB = new DataDB(ctx.dbPath);
+      oldDbPath = ctx.dbPath;
+      connectionSettings = ctx.connection.client.connectionSettings.filename;
+    }
+
+    const path = ctx.params.txid.match(pathRegex) || [];
+    const txid = path.length > 1 ? path[1] : '';
+
+    const metadata: TransactionType = await transactionDB.getById(txid);
+
+    if (!metadata) {
+      ctx.status = 404;
+      ctx.body = { status: 404, error: 'Not found' };
+      return;
+    }
+
+    const ext = ctx.params.ext;
+    const contentType = mime.getType(ext);
+
+    // Find the transaction data
+    const data = await dataDB.findOne(txid);
+
+    if (!data || !data.data) {
+      // move to next controller
+      return next();
+    }
+
+    // parse raw data to manifest
+    const parsedData = Utils.atob(data.data);
+
+    ctx.header['content-type'] = contentType;
+    ctx.status = 200;
+    ctx.body = parsedData;
   } catch (error) {
     ctx.status = 500;
     ctx.body = { error: error.message };

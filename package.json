@@ -33,6 +33,7 @@
     "@koa/cors": "^3.1.0",
     "apollo-server-koa": "^3.6.2",
     "arbundles": "^0.6.12",
+    "arweave": "^1.10.23",
     "arweave-bundles": "^1.0.3",
     "bignumber.js": "^9.0.2",
     "graphql": "^16.2.0",
@@ -44,13 +45,13 @@
     "koa-logger": "^3.2.1",
     "koa-router": "^10.1.1",
     "lodash": "^4.17.21",
+    "mime": "^3.0.0",
     "minimist": "^1.2.5",
     "moment": "^2.29.1",
     "rfc4648": "^1.5.1",
     "smartweave": "^0.4.46",
     "sqlite3": "^5.0.2",
-    "tsc-watch": "^4.6.0",
-    "arweave": "^1.10.23"
+    "tsc-watch": "^4.6.0"
   },
   "devDependencies": {
     "@types/jest": "^27.4.0",
@@ -60,6 +61,7 @@
     "@types/koa-logger": "^3.1.2",
     "@types/koa-router": "^7.4.4",
     "@types/lodash": "^4.14.178",
+    "@types/mime": "^2.0.3",
     "@types/minimist": "^1.2.2",
     "@types/nedb": "^1.8.12",
     "@types/node": "^17.0.10",
