@@ -25,7 +25,7 @@ import {
   txFileRoute,
   txRawDataRoute,
   deleteTxRoute,
-  txDataRoute
+  txDataRoute,
 } from './routes/transaction';
 import { Utils } from './utils/utils';
 import { NetworkInterface } from './faces/network';
