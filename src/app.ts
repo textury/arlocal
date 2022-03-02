@@ -25,6 +25,7 @@ import {
   txFileRoute,
   txRawDataRoute,
   deleteTxRoute,
+  txManifestRoute,
 } from './routes/transaction';
 import { Utils } from './utils/utils';
 import { NetworkInterface } from './faces/network';
@@ -132,6 +133,7 @@ export default class ArLocal {
     this.router.get('/tx/:txid/offset', txOffsetRoute);
     this.router.get('/tx/:txid/status', txStatusRoute);
     this.router.get('/tx/:txid/data', txRawDataRoute);
+    this.router.get('/tx/:txid/data.json', txManifestRoute);
     this.router.get('/tx/:txid/:field', txFieldRoute);
     this.router.get('/tx/:txid/:file', txFileRoute);
     this.router.get('/tx/:txid', txRoute);

@@ -448,6 +448,59 @@ export async function txRawDataRoute(ctx: Router.RouterContext) {
   }
 }
 
+export async function txManifestRoute(ctx: Router.RouterContext, next: () => any) {
+  try {
+    if (
+      !transactionDB ||
+      !dataDB ||
+      oldDbPath !== ctx.dbPath ||
+      connectionSettings !== ctx.connection.client.connectionSettings.filename
+    ) {
+      transactionDB = new TransactionDB(ctx.connection);
+      dataDB = new DataDB(ctx.dbPath);
+      oldDbPath = ctx.dbPath;
+      connectionSettings = ctx.connection.client.connectionSettings.filename;
+    }
+
+    const path = ctx.params.txid.match(pathRegex) || [];
+    const txid = path.length > 1 ? path[1] : '';
+
+    const metadata: TransactionType = await transactionDB.getById(txid);
+
+    if (!metadata) {
+      ctx.status = 404;
+      ctx.body = { status: 404, error: 'Not found' };
+      return;
+    }
+
+    // check if tx is manifest tx
+    const contentType = Utils.tagValue(metadata.tags, 'Content-Type');
+
+    if (contentType !== 'application/x.arweave-manifest+json') {
+      // move to next controller
+      return next();
+    }
+
+    // Find the transaction data
+    const data = await dataDB.findOne(txid);
+
+    if (!data || !data.data) {
+      // move to next controller
+      return next();
+    }
+
+    // parse raw data to manifest
+    const manifest = Utils.atob(data.data);
+
+    ctx.header['content-type'] = 'application/json';
+    ctx.status = 200;
+    ctx.body = manifest;
+  } catch (error) {
+    ctx.status = 500;
+    ctx.body = { error: error.message };
+  }
+}
+
 export async function deleteTxRoute(ctx: Router.RouterContext) {
   try {
     if (
