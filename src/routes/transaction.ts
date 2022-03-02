@@ -1,4 +1,5 @@
 import Router from 'koa-router';
+import mime from 'mime';
 import { formatTransaction, TransactionDB } from '../db/transaction';
 import { DataDB } from '../db/data';
 import { Utils } from '../utils/utils';
@@ -448,7 +449,7 @@ export async function txRawDataRoute(ctx: Router.RouterContext) {
   }
 }
 
-export async function txManifestRoute(ctx: Router.RouterContext, next: () => any) {
+export async function txDataRoute(ctx: Router.RouterContext, next: () => any) {
   try {
     if (
       !transactionDB ||
@@ -473,13 +474,8 @@ export async function txManifestRoute(ctx: Router.RouterContext, next: () => any
       return;
     }
 
-    // check if tx is manifest tx
-    const contentType = Utils.tagValue(metadata.tags, 'Content-Type');
-
-    if (contentType !== 'application/x.arweave-manifest+json') {
-      // move to next controller
-      return next();
-    }
+    const ext = ctx.params.ext;
+    const contentType = mime.getType(ext);
 
     // Find the transaction data
     const data = await dataDB.findOne(txid);
@@ -490,11 +486,11 @@ export async function txManifestRoute(ctx: Router.RouterContext, next: () => any
     }
 
     // parse raw data to manifest
-    const manifest = Utils.atob(data.data);
+    const parsedData = Utils.atob(data.data);
 
-    ctx.header['content-type'] = 'application/json';
+    ctx.header['content-type'] = contentType;
     ctx.status = 200;
-    ctx.body = manifest;
+    ctx.body = parsedData;
   } catch (error) {
     ctx.status = 500;
     ctx.body = { error: error.message };
