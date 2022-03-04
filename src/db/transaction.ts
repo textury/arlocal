@@ -59,6 +59,7 @@ export function formatTransaction(transaction: TransactionType) {
         data_size: transaction.data_size || (transaction.data ? fromB64Url(transaction.data).byteLength : undefined),
         tags: JSON.stringify(transaction.tags),
         owner_address: sha256B64Url(fromB64Url(transaction.owner)),
+        last_tx: transaction.last_tx || '',
       },
       transactionFields.concat(indices),
     );
