@@ -48,7 +48,7 @@ export async function blocksRouteViaHeight(ctx: Router.RouterContext) {
         timestamp: ctx.timestamp,
         previous_block: '',
         height: h,
-        txs: [""]
+        txs: [''],
       };
       return;
     }
