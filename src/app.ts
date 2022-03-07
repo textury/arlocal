@@ -30,7 +30,7 @@ import {
 import { Utils } from './utils/utils';
 import { NetworkInterface } from './faces/network';
 import Logging from './utils/logging';
-import { blocksRoute } from './routes/blocks';
+import { blocksRoute, blocksRouteViaHeight } from './routes/blocks';
 import {
   addBalanceRoute,
   createWalletRoute,
@@ -51,6 +51,7 @@ declare module 'koa' {
     dbPath: string;
     logging: Logging;
     fails: number;
+    timestamp: number;
   }
 }
 
@@ -97,6 +98,8 @@ export default class ArLocal {
     this.app.context.dbPath = dbPath;
     this.app.context.connection = this.connection;
     this.app.context.fails = this.fails / 100;
+    // server start date for genesis block timestamp
+    this.app.context.timestamp = new Date().getTime();
     this.walletDB = new WalletDB(this.connection);
   }
 
@@ -144,6 +147,7 @@ export default class ArLocal {
     this.router.get('/chunk/:offset', getChunkOffsetRoute);
 
     this.router.get('/block/hash/:indep_hash', blocksRoute);
+    this.router.get('/block/height/:height', blocksRouteViaHeight);
 
     this.router.post('/wallet', createWalletRoute);
     this.router.patch('/wallet/:address/balance', updateBalanceRoute);

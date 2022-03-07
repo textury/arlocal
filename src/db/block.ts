@@ -43,4 +43,8 @@ export class BlockDB {
       console.error({ error });
     }
   }
+
+  async getByHeight(height: number) {
+    return (await this.connection.queryBuilder().select('*').from('blocks').where('height', '=', height).limit(1))[0];
+  }
 }
