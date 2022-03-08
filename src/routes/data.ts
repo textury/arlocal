@@ -1,3 +1,4 @@
+import { Next } from 'koa';
 import Router from 'koa-router';
 import { URL } from 'url';
 import { TransactionDB } from '../db/transaction';
@@ -154,7 +155,7 @@ export async function dataRoute(ctx: Router.RouterContext) {
   ctx.body = body;
 }
 
-export async function subDataRoute(ctx: Router.RouterContext, next: () => void) {
+export async function subDataRoute(ctx: Router.RouterContext, next: Next) {
   try {
     // get the referrer url
     const { referer } = ctx.headers;
@@ -164,13 +165,13 @@ export async function subDataRoute(ctx: Router.RouterContext, next: () => void) 
     const txid = getTxIdFromPath(url.pathname);
 
     if (!txid) {
-      return next();
+      return await next();
     }
 
     // Redirect
     ctx.redirect(`${referer}${ctx.path}`);
   } catch (error) {
-    next();
+    await next();
   }
 }
 

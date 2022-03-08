@@ -449,7 +449,7 @@ export async function txRawDataRoute(ctx: Router.RouterContext) {
   }
 }
 
-export async function txDataRoute(ctx: Router.RouterContext, next: () => any) {
+export async function txDataRoute(ctx: Router.RouterContext, next: Next) {
   try {
     if (
       !transactionDB ||
@@ -482,7 +482,7 @@ export async function txDataRoute(ctx: Router.RouterContext, next: () => any) {
 
     if (!data || !data.data) {
       // move to next controller
-      return next();
+      return await next();
     }
 
     // parse raw data to manifest
