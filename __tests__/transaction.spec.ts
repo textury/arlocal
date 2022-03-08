@@ -1,5 +1,6 @@
 import request from 'supertest';
-import { blockweave, server } from '../src/test-setup';
+import { createData, bundleAndSignData, signers } from 'arbundles';
+import { blockweave, server, wallet } from '../src/test-setup';
 import { createTransaction, mine } from '../src/utils/tests';
 
 jest.setTimeout(20000);
@@ -162,4 +163,40 @@ describe('', () => {
 
     expect(data).toEqual(res.text);
   });
+
+  describe('Bundled TX', () => {
+    it('should return "not found"', async () => {
+      const signer = new signers.ArweaveSigner(wallet);
+
+      const dataItems = [createData("hello", signer), createData("world", signer)];
+      const bundle = await bundleAndSignData(dataItems, signer);
+      const tx = await bundle.toTransaction({}, blockweave as any, wallet);
+      
+      await blockweave.transactions.sign(tx as any, wallet);
+      await blockweave.transactions.post(tx);
+
+      await mine(blockweave);
+
+      // call all tx endpoints
+      let res = await request(server).get(`/tx/${tx.id}`);
+      expect(res.statusCode).toEqual(404);
+      expect(res.text).toEqual('Not Found');
+
+      res = await request(server).get(`/tx/${tx.id}/data`);
+      expect(res.statusCode).toEqual(404);
+      expect(res.text).toEqual('Not Found');
+
+      res = await request(server).get(`/tx/${tx.id}/data.json`);
+      expect(res.statusCode).toEqual(404);
+      expect(res.text).toEqual('Not Found');
+
+      res = await request(server).get(`/tx/${tx.id}/offset`);
+      expect(res.statusCode).toEqual(404);
+      expect(res.text).toEqual('Not Found');
+      
+      res = await request(server).get(`/tx/${tx.id}/status`);
+      expect(res.statusCode).toEqual(404);
+      expect(res.text).toEqual('Not Found');
+    });
+  })
 });
