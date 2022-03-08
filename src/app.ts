@@ -27,6 +27,7 @@ import {
   deleteTxRoute,
   txDataRoute,
 } from './routes/transaction';
+import { txAccessMiddleware } from './middlewares/transaction';
 import { Utils } from './utils/utils';
 import { NetworkInterface } from './faces/network';
 import Logging from './utils/logging';
@@ -132,6 +133,9 @@ export default class ArLocal {
 
     this.router.get('/tx_anchor', txAnchorRoute);
     this.router.get('/price/:bytes/:addy?', async (ctx) => (ctx.body = +ctx.params.bytes * 1965132));
+
+    // tx filter endpoint to restrict ans-104 txs
+    this.router.get(/^\/tx(?:\/|$)/, txAccessMiddleware);
 
     this.router.get('/tx/:txid/offset', txOffsetRoute);
     this.router.get('/tx/:txid/status', txStatusRoute);
