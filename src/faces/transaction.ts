@@ -16,4 +16,5 @@ export interface TransactionType {
   data_root: string;
   reward: string;
   signature: string;
+  bundledIn?: string;
 }

@@ -28,6 +28,7 @@ export async function up(knex: Knex) {
       table.string('data_root', 64);
       table.string('parent', 64);
       table.string('block', 64).defaultTo('');
+      table.string('bundledIn', 64).defaultTo('');
       table.timestamp('created_at').defaultTo(new Date().toISOString());
 
       for (const index of indices) {
