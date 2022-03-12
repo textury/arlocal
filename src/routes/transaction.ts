@@ -191,6 +191,7 @@ export async function txPostRoute(ctx: Router.RouterContext) {
               ...ctx.request,
               body: {
                 id: bundle.getIdBy(i),
+                bundledIn: data.id,
                 ...item.toJSON(),
               },
             },
@@ -273,6 +274,7 @@ export async function txPostRoute(ctx: Router.RouterContext) {
       index++;
     }
 
+    // Don't charge wallet for arbundles Data-Items
     // @ts-ignore
     if (!ctx.txInBundle) {
       const fee = +data.reward > calculatedReward ? +data.reward : calculatedReward;

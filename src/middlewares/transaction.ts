@@ -2,7 +2,6 @@ import { TransactionType } from 'faces/transaction';
 import { Next } from 'koa';
 import Router from 'koa-router';
 import { TransactionDB } from '../db/transaction';
-import { Utils } from '../utils/utils';
 
 const pathRegex = /^\/?([a-z0-9-_]{43})/i;
 let transactionDB: TransactionDB;
@@ -34,14 +33,8 @@ export async function txAccessMiddleware(ctx: Router.RouterContext, next: Next) 
       return;
     }
 
-    let bundleFormat = '';
-    let bundleVersion = '';
-
-    bundleFormat = Utils.tagValue(metadata.tags, 'Bundle-Format');
-    bundleVersion = Utils.tagValue(metadata.tags, 'Bundle-Version');
-
-    if (bundleFormat === 'binary' && bundleVersion === '2.0.0') {
-      // return not found
+    // restrict tx in a bundle
+    if ((metadata.bundledIn || '').length) {
       ctx.status = 404;
       ctx.body = 'Not Found';
       return;
