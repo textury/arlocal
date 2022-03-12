@@ -36,7 +36,7 @@ export const transactionFields = [
   'content_type',
   'data_size',
   'data_root',
-  'bundledIn'
+  'bundledIn',
 ];
 
 export function formatTransaction(transaction: TransactionType) {

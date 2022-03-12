@@ -164,37 +164,36 @@ describe('', () => {
     expect(data).toEqual(res.text);
   });
 
-  describe('Bundled TX', () => {
+  describe('Bundled TX data-items', () => {
     it('should return "not found"', async () => {
       const signer = new signers.ArweaveSigner(wallet);
 
       const dataItems = [createData("hello", signer), createData("world", signer)];
       const bundle = await bundleAndSignData(dataItems, signer);
       const tx = await bundle.toTransaction({}, blockweave as any, wallet);
+      // get the zero item
+      const txid = bundle.getIdBy(0);
       
       await blockweave.transactions.sign(tx as any, wallet);
       await blockweave.transactions.post(tx);
 
       await mine(blockweave);
 
+      // EXPECT DATA-ITEM TO RETURN 404
       // call all tx endpoints
-      let res = await request(server).get(`/tx/${tx.id}`);
+      let res = await request(server).get(`/tx/${txid}`);
       expect(res.statusCode).toEqual(404);
       expect(res.text).toEqual('Not Found');
 
-      res = await request(server).get(`/tx/${tx.id}/data`);
+      res = await request(server).get(`/tx/${txid}/data`);
       expect(res.statusCode).toEqual(404);
       expect(res.text).toEqual('Not Found');
 
-      res = await request(server).get(`/tx/${tx.id}/data.json`);
+      res = await request(server).get(`/tx/${txid}/data.json`);
       expect(res.statusCode).toEqual(404);
       expect(res.text).toEqual('Not Found');
 
-      res = await request(server).get(`/tx/${tx.id}/offset`);
-      expect(res.statusCode).toEqual(404);
-      expect(res.text).toEqual('Not Found');
-      
-      res = await request(server).get(`/tx/${tx.id}/status`);
+      res = await request(server).get(`/tx/${txid}/offset`);
       expect(res.statusCode).toEqual(404);
       expect(res.text).toEqual('Not Found');
     });
