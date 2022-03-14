@@ -123,27 +123,12 @@ export async function dataRoute(ctx: Router.RouterContext) {
   let body;
 
   if (!data?.data && !metadata.target) {
-    const chunks = await chunkDB.getRoot(metadata.data_root);
+    let chunks = await chunkDB.getRoot(metadata.data_root);
 
-    /**
-     * Svgs always have the same data across chunks, I don't know if it's all tho
-     */
-    if (ctx.type === 'image/svg+xml') {
-      const stringChunk = chunks.map((ch) => ch.chunk);
-
-      // Convert base64 string to svg string
-      const svgString = Utils.atob(stringChunk.join(''));
-      let svgEnd = svgString.indexOf('</svg>');
-      let endCalculation;
-      if (svgEnd === -1) {
-        svgEnd = svgString.indexOf('</ svg>');
-        endCalculation = svgEnd + '</ svg>'.length;
-      }
-
-      endCalculation = svgEnd + '</svg>'.length;
-      ctx.body = svgString.slice(0, endCalculation).trim();
-      return;
-    }
+    // remove duplicate chunks: same issue with svg
+    const chunksOffsets = Array.from(new Set(chunks.map(c => c.offset)));
+    chunksOffsets.sort((a, b) => a - b);
+    chunks = chunksOffsets.map(c => chunks.find(i => i.offset === c))
 
     const chunk = chunks.map((ch) => Buffer.from(b64UrlToBuffer(ch.chunk)));
 
