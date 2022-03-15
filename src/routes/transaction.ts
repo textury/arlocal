@@ -101,32 +101,7 @@ export async function txOffsetRoute(ctx: Router.RouterContext) {
       ctx.body = { status: 404, error: 'Not Found' };
       return;
     }
-    let chunk = await chunkDB.getByRootAndSize(metadata.data_root, +metadata.data_size);
-
-    // for tx without chunk
-    if (!chunk) {
-      // get data from data db
-      const data = await dataDB.findOne(transaction);
-      const dataBuf = b64UrlToBuffer(data.data);
-
-      const nChunk = await generateTransactionChunks(dataBuf);
-      // create all chunks
-      const asyncOps = nChunk.chunks.map((_chunk, idx) => {
-        const proof = nChunk.proofs[idx];
-        return chunkDB.create({
-          chunk: bufferTob64Url(dataBuf.slice(_chunk.minByteRange, _chunk.maxByteRange)),
-          data_size: +metadata.data_size,
-          data_path: bufferTob64Url(proof.proof),
-          data_root: bufferTob64Url(nChunk.data_root),
-          offset: proof.offset,
-        });
-      });
-
-      await Promise.all(asyncOps);
-
-      // find chunk again
-      chunk = await chunkDB.getByRootAndSize(metadata.data_root, +metadata.data_size);
-    }
+    const chunk = await chunkDB.getByRootAndSize(metadata.data_root, +metadata.data_size);
 
     ctx.status = 200;
     ctx.type = 'text/plain'; // TODO: updated this in arweave gateway to app/json
@@ -218,6 +193,36 @@ export async function txPostRoute(ctx: Router.RouterContext) {
           const buffer = Buffer.concat(chunk);
           await createTxsFromItems(buffer);
         })();
+      }
+    }
+
+    // for tx without chunk
+    // create the chunk, to prevent offset error on tx/:offset endpoint
+    if (data.data) {
+      // create tx chunks if not exists
+      const chunk = await chunkDB.getByRootAndSize(data.data_root, +data.data_size);
+
+      if (!chunk) {
+        // get data from data db
+        const dataBuf = b64UrlToBuffer(data.data);
+
+        const nChunk = await generateTransactionChunks(dataBuf);
+        // make chunks offsets unique
+        const lastOffset = await chunkDB.getLastChunkOffset();
+
+        // create all chunks
+        const asyncOps = nChunk.chunks.map((_chunk, idx) => {
+          const proof = nChunk.proofs[idx];
+          return chunkDB.create({
+            chunk: bufferTob64Url(dataBuf.slice(_chunk.minByteRange, _chunk.maxByteRange)),
+            data_size: +data.data_size,
+            data_path: bufferTob64Url(proof.proof),
+            data_root: bufferTob64Url(nChunk.data_root),
+            offset: proof.offset + lastOffset,
+          });
+        });
+
+        await Promise.all(asyncOps);
       }
     }
 
