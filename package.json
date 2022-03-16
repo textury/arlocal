@@ -54,6 +54,7 @@
     "tsc-watch": "^4.6.0"
   },
   "devDependencies": {
+    "@assemblyscript/loader": "^0.19.23",
     "@types/jest": "^27.4.0",
     "@types/koa": "^2.13.4",
     "@types/koa-bodyparser": "^4.3.5",
@@ -72,7 +73,8 @@
     "copyfiles": "^2.4.1",
     "jest": "^27.4.7",
     "prettier": "^2.5.1",
-    "redstone-smartweave": "^0.4.16",
+    "redstone-smartweave": "^0.4.47",
+    "redstone-wasm-metering": "^1.0.1",
     "rimraf": "^3.0.2",
     "supertest": "^6.2.2",
     "ts-jest": "^27.1.3",
