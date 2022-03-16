@@ -17,9 +17,10 @@ module.exports = {
   },
   verbose: true,
   testEnvironment: 'node',
+  moduleFileExtensions: ['ts', 'js'],
   transform: {
-    'node_modules/variables/.+\\.(j|t)sx?$': 'ts-jest',
+    '^.+\\.(ts|js)$': 'ts-jest',
   },
-  transformIgnorePatterns: ['node_modules/(?!variables/.*)'],
+  transformIgnorePatterns: ['<rootDir>/node_modules/(?!@assemblyscript/.*)'],
   setupFilesAfterEnv: ['<rootDir>/src/test-setup.ts'],
 };
