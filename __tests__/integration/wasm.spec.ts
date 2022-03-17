@@ -108,7 +108,7 @@ describe('Testing the Go WASM Profit Sharing Token', () => {
   afterAll(async () => {
     await arlocal.stop();
   });
-
+  jest.setTimeout(60000);
   it('should properly deploy contract', async () => {
     const contractTx = await arweave.transactions.get(contractTxId);
 

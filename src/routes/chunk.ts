@@ -13,6 +13,7 @@ export async function postChunkRoute(ctx: Router.RouterContext) {
     }
 
     const chunk = ctx.request.body as unknown as Chunk;
+    console.log({ offset: chunk.offset, dataSize: chunk.data_size });
 
     await chunkDB.create(chunk);
 
@@ -24,8 +25,9 @@ export async function postChunkRoute(ctx: Router.RouterContext) {
 
 export async function getChunkOffsetRoute(ctx: Router.RouterContext) {
   try {
-    if (!chunkDB) {
+    if (oldDbPath !== ctx.dbPath || !chunkDB) {
       chunkDB = new ChunkDB(ctx.connection);
+      oldDbPath = ctx.dbPath;
     }
     const offset = +ctx.params.offset;
 
