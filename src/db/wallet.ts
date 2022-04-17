@@ -61,7 +61,6 @@ export class WalletDB {
 
   async decrementBalance(address: string, balance: number) {
     try {
-      console.log(balance);
       return await this.connection('wallets').decrement('balance', balance).where({ address });
     } catch (error) {
       console.log({ error });
