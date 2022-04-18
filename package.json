@@ -50,7 +50,7 @@
     "moment": "^2.29.1",
     "rfc4648": "^1.5.1",
     "smartweave": "^0.4.46",
-    "sqlite3": "^5.0.2",
+    "sqlite3": "^5.0.3",
     "tsc-watch": "^4.6.0"
   },
   "devDependencies": {
