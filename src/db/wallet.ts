@@ -32,7 +32,8 @@ export class WalletDB {
   async getWalletBalance(address: string): Promise<number> {
     const wallet = await this.getWallet(address);
     if (!wallet) return 0;
-    return wallet.balance;
+    // default wallet.balance to 0 incase wallet.balance = null;
+    return wallet.balance || 0;
   }
 
   async getLastTx(address: string): Promise<TransactionType> {
@@ -53,6 +54,14 @@ export class WalletDB {
   async incrementBalance(address: string, balance: number) {
     try {
       return await this.connection('wallets').increment('balance', balance).where({ address });
+    } catch (error) {
+      console.log({ error });
+    }
+  }
+
+  async decrementBalance(address: string, balance: number) {
+    try {
+      return await this.connection('wallets').decrement('balance', balance).where({ address });
     } catch (error) {
       console.log({ error });
     }

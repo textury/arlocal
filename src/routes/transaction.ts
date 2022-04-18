@@ -125,7 +125,7 @@ export async function txPostRoute(ctx: Router.RouterContext) {
     const owner = bufferTob64Url(await hash(b64UrlToBuffer(data.owner)));
 
     const wallet = await walletDB.getWallet(owner);
-    const calculatedReward = +data.data_size * 1965132;
+    const calculatedReward = +(data.data_size || '0') * 1965132;
 
     if (!wallet || wallet.balance < calculatedReward) {
       ctx.status = 410;
@@ -249,7 +249,7 @@ export async function txPostRoute(ctx: Router.RouterContext) {
         return;
       }
       await walletDB.incrementBalance(data.target, +data.quantity);
-      await walletDB.incrementBalance(wallet.address, -data.quantity);
+      await walletDB.decrementBalance(wallet.address, +data.quantity);
     }
 
     await dataDB.insert({ txid: data.id, data: data.data });
@@ -283,7 +283,7 @@ export async function txPostRoute(ctx: Router.RouterContext) {
     // @ts-ignore
     if (!ctx.txInBundle) {
       const fee = +data.reward > calculatedReward ? +data.reward : calculatedReward;
-      await walletDB.incrementBalance(owner, -fee);
+      await walletDB.decrementBalance(owner, +fee);
     }
     ctx.body = data;
   } catch (error) {
