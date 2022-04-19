@@ -173,7 +173,16 @@ export default class ArLocal {
       };
     });
 
-    this.app.use(cors());
+    this.app.use(
+      cors({
+        origin: '*',
+      }),
+    );
+    this.app.use((ctx, next) => {
+      // set cross origin resource policy header
+      ctx.set('Cross-Origin-Resource-Policy', 'cross-origin');
+      next();
+    });
     this.app.use(json());
     this.app.use(
       logger({
