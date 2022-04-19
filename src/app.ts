@@ -183,7 +183,7 @@ export default class ArLocal {
       try {
         ctx.set('Cross-Origin-Resource-Policy', 'cross-origin');
       } catch {}
-      await next();
+      return await next();
     });
     this.app.use(json());
     this.app.use(
