@@ -178,10 +178,12 @@ export default class ArLocal {
         origin: '*',
       }),
     );
-    this.app.use((ctx, next) => {
+    this.app.use(async (ctx, next) => {
       // set cross origin resource policy header
-      ctx.set('Cross-Origin-Resource-Policy', 'cross-origin');
-      next();
+      try {
+        ctx.set('Cross-Origin-Resource-Policy', 'cross-origin');
+      } catch {}
+      return await next();
     });
     this.app.use(json());
     this.app.use(
