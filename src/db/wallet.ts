@@ -18,7 +18,7 @@ export class WalletDB {
       .insert({
         id: Utils.randomID(64),
         address: wallet.address,
-        balance: wallet.balance,
+        balance: wallet.balance || 0,
       })
       .into('wallets');
   }
