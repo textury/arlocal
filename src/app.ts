@@ -113,6 +113,9 @@ export default class ArLocal {
       this.app.context.network.current = lastBlock.id;
       this.app.context.network.height = lastBlock.height;
       this.app.context.network.blocks = lastBlock.height + 1;
+    } else {
+      // save the genesis block to db
+      await blockDB.insertGenesis(this.app.context.network.current);
     }
 
     // ISSUE WITH ARCONNECT THAT IS SENDING HEAD REQUESTS FOR NO REASON

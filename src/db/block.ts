@@ -47,4 +47,25 @@ export class BlockDB {
   async getByHeight(height: number) {
     return (await this.connection.queryBuilder().select('*').from('blocks').where('height', '=', height).limit(1))[0];
   }
+
+  /**
+   *
+   * @param id Genesis block ID/indep_hash
+   */
+  async insertGenesis(id: string) {
+    try {
+      await this.connection
+        .insert({
+          id,
+          height: 0,
+          mined_at: Date.now(),
+          previous_block: '',
+          txs: [''],
+          extended: '',
+        })
+        .into('blocks');
+    } catch (error) {
+      console.error({ error });
+    }
+  }
 }
