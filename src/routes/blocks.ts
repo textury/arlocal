@@ -14,7 +14,7 @@ export async function blocksRoute(ctx: Router.RouterContext) {
 
     ctx.body = {
       indep_hash: id,
-      timestamp: new Date(timestamp).getTime(),
+      timestamp: Math.round(new Date(timestamp).getTime() / 1000),
       previous_block,
       // return block height instead of current height
       height,
@@ -45,7 +45,7 @@ export async function blocksRouteViaHeight(ctx: Router.RouterContext) {
 
       ctx.body = {
         indep_hash: hash,
-        timestamp: ctx.timestamp,
+        timestamp: Math.round(ctx.timestamp / 1000),
         previous_block: '',
         height: h,
         txs: [''],
@@ -56,7 +56,7 @@ export async function blocksRouteViaHeight(ctx: Router.RouterContext) {
     const { id, mined_at: timestamp, previous_block, txs, height } = block;
     ctx.body = {
       indep_hash: id,
-      timestamp: new Date(timestamp).getTime(),
+      timestamp: Math.round(new Date(timestamp).getTime() / 1000),
       previous_block,
       height,
       txs: txs.split(','),
