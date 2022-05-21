@@ -198,3 +198,7 @@ export const parseB64UrlOrThrow = (b64urlString: string, fieldName: string) => {
     throw new Error(`missing field: ${fieldName}`);
   }
 };
+
+export function sha256Hex(data: string) {
+  return createHash("sha256").update(data).digest("hex");
+};
