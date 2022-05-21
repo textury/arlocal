@@ -200,5 +200,5 @@ export const parseB64UrlOrThrow = (b64urlString: string, fieldName: string) => {
 };
 
 export function sha256Hex(data: string) {
-  return createHash("sha256").update(data).digest("hex");
-};
+  return createHash('sha256').update(data).digest('hex');
+}

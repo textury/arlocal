@@ -129,9 +129,9 @@ export async function dataRoute(ctx: Router.RouterContext) {
       const chunksOffsets = Array.from(new Set(chunks.map((c) => c.offset)));
       chunks = chunksOffsets.map((c) => chunks.find((i) => i.offset === c));
       // filter duplicate data chunks
-      const chunksHash = Array.from(new Set(chunks.map((c) => sha256Hex(c.chunk))))
+      const chunksHash = Array.from(new Set(chunks.map((c) => sha256Hex(c.chunk))));
       chunks = chunksHash.map((h) => chunks.find((c) => sha256Hex(c.chunk) === h));
-      chunks.sort((a, b) => a.offset - b.offset)
+      chunks.sort((a, b) => a.offset - b.offset);
 
       const chunk = chunks.map((ch) => Buffer.from(b64UrlToBuffer(ch.chunk)));
 
