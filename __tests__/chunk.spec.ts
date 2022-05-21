@@ -61,7 +61,7 @@ describe('CHUNK', () => {
     expect(b64UrlDecode(txData as string)).toEqual(bufferTob64(data));
   });
 
-  it.only('should not duplicate data in txt file after subsequent uploads', async () => {
+  it('should not duplicate data in txt file after subsequent uploads', async () => {
     const arweave = Arweave.init({
       host: '127.0.0.1',
       port,
