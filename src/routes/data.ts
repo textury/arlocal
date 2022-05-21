@@ -4,7 +4,7 @@ import { URL } from 'url';
 import { TransactionDB } from '../db/transaction';
 import { DataDB } from '../db/data';
 import { Utils } from '../utils/utils';
-import { b64UrlToBuffer } from '../utils/encoding';
+import { b64UrlToBuffer, sha256Hex } from '../utils/encoding';
 import { ChunkDB } from '../db/chunks';
 
 export const dataRouteRegex = /^\/?([a-zA-Z0-9-_]{43})\/?$|^\/?([a-zA-Z0-9-_]{43})\/(.*)$/i;
@@ -125,10 +125,13 @@ export async function dataRoute(ctx: Router.RouterContext) {
   if (!data?.data) {
     let chunks = await chunkDB.getRoot(metadata.data_root);
     if (chunks?.length) {
-      // remove duplicate chunks: same issue with svg
+      // remove duplicate offset chunks: same issue with svg
       const chunksOffsets = Array.from(new Set(chunks.map((c) => c.offset)));
-      chunksOffsets.sort((a, b) => a - b);
       chunks = chunksOffsets.map((c) => chunks.find((i) => i.offset === c));
+      // filter duplicate data chunks
+      const chunksHash = Array.from(new Set(chunks.map((c) => sha256Hex(c.chunk))));
+      chunks = chunksHash.map((h) => chunks.find((c) => sha256Hex(c.chunk) === h));
+      chunks.sort((a, b) => a.offset - b.offset);
 
       const chunk = chunks.map((ch) => Buffer.from(b64UrlToBuffer(ch.chunk)));
 

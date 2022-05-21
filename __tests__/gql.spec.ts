@@ -109,6 +109,6 @@ describe('BLOCK', () => {
     const res2 = (await ardb.next()) as any;
 
     expect(res1.length).toEqual(10);
-    expect(res2.length).toEqual(2);
+    expect(res2.length).toEqual(2 + 1); // genesis block inclusion
   });
 });
