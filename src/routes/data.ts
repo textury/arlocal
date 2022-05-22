@@ -125,9 +125,6 @@ export async function dataRoute(ctx: Router.RouterContext) {
   if (!data?.data) {
     let chunks = await chunkDB.getRoot(metadata.data_root);
     if (chunks?.length) {
-      // remove duplicate offset chunks: same issue with svg
-      const chunksOffsets = Array.from(new Set(chunks.map((c) => c.offset)));
-      chunks = chunksOffsets.map((c) => chunks.find((i) => i.offset === c));
       // filter duplicate data chunks
       const chunksHash = Array.from(new Set(chunks.map((c) => sha256Hex(c.chunk))));
       chunks = chunksHash.map((h) => chunks.find((c) => sha256Hex(c.chunk) === h));
