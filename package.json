@@ -32,7 +32,7 @@
   "dependencies": {
     "@koa/cors": "^3.1.0",
     "apollo-server-koa": "^3.6.2",
-    "arbundles": "^0.6.12",
+    "arbundles": "^0.6.19",
     "arweave": "^1.10.23",
     "arweave-bundles": "^1.0.3",
     "bignumber.js": "^9.0.2",
