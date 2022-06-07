@@ -122,6 +122,14 @@ export async function dataRoute(ctx: Router.RouterContext) {
 
   let body;
 
+  // add seek support
+  if (ctx.type.includes('audio')) {
+    ctx.set({
+      'Content-Range': `bytes 0-${metadata.data_size}/${metadata.data_size}`,
+      'Accept-Ranges': 'bytes',
+    });
+  }
+
   if (!data?.data) {
     let chunks = await chunkDB.getRoot(metadata.data_root);
     if (chunks?.length) {
