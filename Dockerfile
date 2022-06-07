@@ -2,6 +2,7 @@ FROM node:16-alpine as build
 
 WORKDIR /app
 COPY . .
+RUN apk add git
 RUN yarn
 
 FROM node:16-alpine 
