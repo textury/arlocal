@@ -202,3 +202,9 @@ export const parseB64UrlOrThrow = (b64urlString: string, fieldName: string) => {
 export function sha256Hex(data: string) {
   return createHash('sha256').update(data).digest('hex');
 }
+
+export function cryptoHash(data: Uint8Array, algorithm: string = 'SHA-256'): Promise<Uint8Array> {
+  return new Promise((resolve, _) => {
+    resolve(createHash(parseHashAlgorithm(algorithm)).update(data).digest());
+  });
+}
