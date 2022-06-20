@@ -215,49 +215,29 @@ export function cryptoHash(data: Uint8Array, algorithm: string = 'SHA-256'): Pro
 }
 
 export function stringToBuffer(str: string) {
-  return Buffer.from(str, "utf-8");
+  return Buffer.from(str, 'utf-8');
 }
 
-export async function deepHash(
-  data: DeepHashChunk
-): Promise<Uint8Array> {
+export async function deepHash(data: DeepHashChunk): Promise<Uint8Array> {
   if (Array.isArray(data)) {
-    const $tag = concatBuffers([
-      stringToBuffer("list"),
-      stringToBuffer(data.length.toString()),
-    ]);
+    const $tag = concatBuffers([stringToBuffer('list'), stringToBuffer(data.length.toString())]);
 
-    return await deepHashChunks(
-      data,
-      await hash($tag, "SHA-384")
-    );
+    return await deepHashChunks(data, await hash($tag, 'SHA-384'));
   }
 
-  const tag = concatBuffers([
-    stringToBuffer("blob"),
-    stringToBuffer(data.byteLength.toString()),
-  ]);
+  const tag = concatBuffers([stringToBuffer('blob'), stringToBuffer(data.byteLength.toString())]);
 
-  const taggedHash = concatBuffers([
-    await hash(tag, "SHA-384"),
-    await hash(data, "SHA-384"),
-  ]);
+  const taggedHash = concatBuffers([await hash(tag, 'SHA-384'), await hash(data, 'SHA-384')]);
 
-  return await hash(taggedHash, "SHA-384");
+  return await hash(taggedHash, 'SHA-384');
 }
 
-export async function deepHashChunks(
-  chunks: DeepHashChunks,
-  acc: Uint8Array
-): Promise<Uint8Array> {
+export async function deepHashChunks(chunks: DeepHashChunks, acc: Uint8Array): Promise<Uint8Array> {
   if (chunks.length < 1) {
     return acc;
   }
 
-  const hashPair = concatBuffers([
-    acc,
-    await deepHash(chunks[0]),
-  ]);
-  const newAcc = await hash(hashPair, "SHA-384");
+  const hashPair = concatBuffers([acc, await deepHash(chunks[0])]);
+  const newAcc = await hash(hashPair, 'SHA-384');
   return await deepHashChunks(chunks.slice(1), newAcc);
 }

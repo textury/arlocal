@@ -34,7 +34,7 @@ const FIELDS = [
 ];
 
 export async function txAnchorRoute(ctx: Router.RouterContext) {
-  const txs = await ctx.connection.select('id').from('blocks').orderBy("created_at", "desc").limit(1);
+  const txs = await ctx.connection.select('id').from('blocks').orderBy('created_at', 'desc').limit(1);
   if (txs.length) {
     ctx.body = txs[0].id;
     return;

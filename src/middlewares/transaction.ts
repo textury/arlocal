@@ -3,15 +3,15 @@ import { Chunk } from '../faces/chunk';
 import { Tag } from '../faces/arweave';
 import { Next } from 'koa';
 import Router from 'koa-router';
-import bytes from "bytes";
+import bytes from 'bytes';
 import {
-  b64UrlToBuffer, 
-  bufferTob64Url, 
-  fromB64Url, 
-  sha256B64Url, 
+  b64UrlToBuffer,
+  bufferTob64Url,
+  fromB64Url,
+  sha256B64Url,
   sha256Hex,
   deepHash,
-  stringToBuffer
+  stringToBuffer,
 } from '../utils/encoding';
 import { TransactionDB } from '../db/transaction';
 import { computeRootHash } from '../utils/merkle';
@@ -65,30 +65,23 @@ export async function txAccessMiddleware(ctx: Router.RouterContext, next: Next) 
 export async function txValidateMiddleware(ctx: Router.RouterContext, next: Next) {
   try {
     const { body = {} }: { body?: Partial<TransactionType> } = ctx.request;
-    const requiredFields = [
-      "format",
-      "id",
-      "last_tx",
-      "owner",
-      "reward",
-      "signature"
-    ];
+    const requiredFields = ['format', 'id', 'last_tx', 'owner', 'reward', 'signature'];
 
-    // closure so as to access 
+    // closure so as to access
     // ctx (i.e &ctx)
     // not copy
     function badRequest() {
       ctx.status = 400;
-      ctx.headers["content-type"] = "text/html";
-      ctx.body = "Bad Request";
-    };
+      ctx.headers['content-type'] = 'text/html';
+      ctx.body = 'Bad Request';
+    }
 
     for (const field of requiredFields) {
       if (!body[field]) {
         // log error to console for debugging
         console.error({
-          error: "Validation Error",
-          validationErrors: requiredFields.filter(f => !body[f]).map(f => `"${f}" is a required field`)
+          error: 'Validation Error',
+          validationErrors: requiredFields.filter((f) => !body[f]).map((f) => `"${f}" is a required field`),
         });
         // return arweave.net type error to user
         badRequest();
@@ -100,11 +93,11 @@ export async function txValidateMiddleware(ctx: Router.RouterContext, next: Next
      * manually check each field validation
      * based on docs.arweave.org
      */
-    
+
     const validationErrors: string[] = [];
 
     // format validation
-    if (![1, 2, "1", "2"].includes(body.format)) {
+    if (![1, 2, '1', '2'].includes(body.format)) {
       validationErrors.push(`"format" should be one of [1, 2]`);
     }
 
@@ -118,22 +111,19 @@ export async function txValidateMiddleware(ctx: Router.RouterContext, next: Next
     }
 
     // last_tx validation
-    if (body.last_tx !== "") {
-      let allowed = [""];
+    if (body.last_tx !== '') {
+      let allowed = [''];
       // check if it's a valid block hash or last tx from wallet address
-      const last50Blocks = await ctx.connection
-        .select("id")
-        .from("blocks")
-        .orderBy("created_at", "desc")
-        .limit(50);
-      allowed = [...allowed, ...last50Blocks.map(blk => blk.id)];
+      const last50Blocks = await ctx.connection.select('id').from('blocks').orderBy('created_at', 'desc').limit(50);
+      allowed = [...allowed, ...last50Blocks.map((blk) => blk.id)];
       // check if it's the last tx from the wallet address
-      const [ownerLastTx = null ] = (await ctx.connection
-        .select("id")
-        .from("transactions")
-        .where("owner", body.owner)
-        .orderBy("created_at", "desc")
-        .limit(1)) || [];
+      const [ownerLastTx = null] =
+        (await ctx.connection
+          .select('id')
+          .from('transactions')
+          .where('owner', body.owner)
+          .orderBy('created_at', 'desc')
+          .limit(1)) || [];
       if (ownerLastTx) {
         allowed.push(ownerLastTx.id);
       }
@@ -141,7 +131,7 @@ export async function txValidateMiddleware(ctx: Router.RouterContext, next: Next
       if (!allowed.includes(body.last_tx)) {
         validationErrors.push(
           `"last_tx" is invalid, should be "", indep_hash one of last 50 blocks` +
-          `or last transaction of owner address. It is always taken from the /tx_anchor endpoint.`
+            `or last transaction of owner address. It is always taken from the /tx_anchor endpoint.`,
         );
       }
     }
@@ -156,11 +146,7 @@ export async function txValidateMiddleware(ctx: Router.RouterContext, next: Next
     switch (parseInt(body.format as any, 10)) {
       case 1:
         const tags = body.tags.reduce((accumulator: Uint8Array, tag: Tag) => {
-          return concatBuffers([
-            accumulator,
-            b64UrlToBuffer(tag.name),
-            b64UrlToBuffer(tag.value),
-          ]);
+          return concatBuffers([accumulator, b64UrlToBuffer(tag.name), b64UrlToBuffer(tag.value)]);
         }, new Uint8Array());
 
         $sign = concatBuffers([
@@ -194,11 +180,11 @@ export async function txValidateMiddleware(ctx: Router.RouterContext, next: Next
       default:
         validationErrors.push(`"format" should be one of [1, 2]`);
     }
-    // verify public key signature with private key generated signature 
-    if (await verifySignature(body.owner, $sign, b64UrlToBuffer(body.signature)) !== true) {
+    // verify public key signature with private key generated signature
+    if ((await verifySignature(body.owner, $sign, b64UrlToBuffer(body.signature))) !== true) {
       validationErrors.push(`transaction "signature" is invalid`);
     }
-    
+
     // tags validation
     if (!Array.isArray(body.tags)) {
       validationErrors.push(`"tags" should be an array`);
@@ -233,16 +219,16 @@ export async function txValidateMiddleware(ctx: Router.RouterContext, next: Next
 
     // data_root validation
     if (body.data_root) {
-      if (body.data_root !== "") {
-        if (body.data && body.data !== "") {
+      if (body.data_root !== '') {
+        if (body.data && body.data !== '') {
           const genRoot = bufferTob64Url(await computeRootHash(b64UrlToBuffer(body.data)));
           if (genRoot !== body.data_root) {
             validationErrors.push(`"data_root" is invalid`);
           }
-        } 
-      } 
+        }
+      }
 
-      if (body.data_root === "" && (body.data || "") !== "") {
+      if (body.data_root === '' && (body.data || '') !== '') {
         validationErrors.push(`"data_root" is invalid, cannot be empty string when "data" exists`);
       }
     }
@@ -254,17 +240,13 @@ export async function txValidateMiddleware(ctx: Router.RouterContext, next: Next
       }
 
       // verify data_size matches data or comb of all chunks
-      if (body.data !== "") {
+      if (body.data !== '') {
         if (fromB64Url(body.data).byteLength !== parseInt(body.data_size, 10)) {
           validationErrors.push(`"data_size" is invalid, should match transaction "data" size`);
         }
       } else {
-        let chunks: Chunk[] = (
-          await ctx.connection
-          .select("*")
-          .from("chunks")
-          .where("data_root", body.data_root)
-        ) || [];
+        let chunks: Chunk[] =
+          (await ctx.connection.select('*').from('chunks').where('data_root', body.data_root)) || [];
 
         if (chunks.length) {
           // filter duplicate data chunks
@@ -272,7 +254,7 @@ export async function txValidateMiddleware(ctx: Router.RouterContext, next: Next
           chunks = chunksHash.map((h) => chunks.find((c) => sha256Hex(c.chunk) === h));
           chunks.sort((a, b) => a.offset - b.offset);
 
-          if (concatBuffers(chunks.map(c => fromB64Url(c.chunk))).byteLength !== parseInt(body.data_size, 10)) {
+          if (concatBuffers(chunks.map((c) => fromB64Url(c.chunk))).byteLength !== parseInt(body.data_size, 10)) {
             validationErrors.push(`"data_size" is invalid, should match transaction chunks combined size`);
           }
         }
@@ -288,12 +270,12 @@ export async function txValidateMiddleware(ctx: Router.RouterContext, next: Next
       // verify data string doesn't pass 10/12 mb of data
       switch (parseInt(body.format as any, 10)) {
         case 1:
-          if (fromB64Url(body.data).byteLength > bytes("10mb")) {
+          if (fromB64Url(body.data).byteLength > bytes('10mb')) {
             validationErrors.push(`"data" is invalid, In v1 transactions, data cannot be bigger than 10 MiB`);
           }
           break;
         case 2:
-          if (fromB64Url(body.data).byteLength > bytes("12mb")) {
+          if (fromB64Url(body.data).byteLength > bytes('12mb')) {
             validationErrors.push(`"data" is invalid, In v2 transactions, data cannot be bigger than 10 MiB`);
           }
           break;
@@ -304,8 +286,8 @@ export async function txValidateMiddleware(ctx: Router.RouterContext, next: Next
 
     if (validationErrors.length) {
       console.error({
-        error: "Validation Error",
-        validationErrors
+        error: 'Validation Error',
+        validationErrors,
       });
 
       badRequest();
