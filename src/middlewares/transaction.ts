@@ -77,7 +77,7 @@ export async function txValidateMiddleware(ctx: Router.RouterContext, next: Next
     }
 
     for (const field of requiredFields) {
-      if (!body[field]) {
+      if (body[field] === undefined) {
         // log error to console for debugging
         console.error({
           error: 'Validation Error',
@@ -207,7 +207,7 @@ export async function txValidateMiddleware(ctx: Router.RouterContext, next: Next
         validationErrors.push(`"target" should match regex: /[a-z0-9-_]{43}/i`);
       }
 
-      if (body.target === sha256B64Url(Buffer.from(body.owner))) {
+      if (body.target === sha256B64Url(b64UrlToBuffer(body.owner) as Buffer)) {
         validationErrors.push(`"target" cannot be transaction owner address`);
       }
     }
