@@ -27,7 +27,7 @@ import {
   deleteTxRoute,
   txDataRoute,
 } from './routes/transaction';
-import { txAccessMiddleware } from './middlewares/transaction';
+import { txAccessMiddleware, txValidateMiddleware } from './middlewares/transaction';
 import { Utils } from './utils/utils';
 import { NetworkInterface } from './faces/network';
 import Logging from './utils/logging';
@@ -148,7 +148,7 @@ export default class ArLocal {
     this.router.get('/tx/:txid/:file', txFileRoute);
     this.router.get('/tx/:txid', txRoute);
     this.router.delete('/tx/:txid', deleteTxRoute);
-    this.router.post('/tx', txPostRoute);
+    this.router.post('/tx', txValidateMiddleware, txPostRoute);
 
     this.router.post('/chunk', postChunkRoute);
     this.router.get('/chunk/:offset', getChunkOffsetRoute);
