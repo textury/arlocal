@@ -196,7 +196,11 @@ export default class ArLocal {
         },
       }),
     );
-    this.app.use(bodyParser());
+    this.app.use(
+      bodyParser({
+        jsonLimit: '15mb',
+      }),
+    );
     this.app.use(this.router.routes()).use(this.router.allowedMethods());
 
     this.server = this.app.listen(this.port, () => {
