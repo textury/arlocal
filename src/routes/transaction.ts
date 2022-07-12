@@ -183,9 +183,12 @@ export async function txPostRoute(ctx: Router.RouterContext) {
         (async () => {
           let lastOffset = 0;
           let chunks;
-          while (+data.data_size - 1 !== lastOffset) {
+          while (+data.data_size !== lastOffset) {
             chunks = await chunkDB.getRoot(data.data_root);
-            lastOffset = +chunks[chunks.length - 1]?.offset || 0;
+            const firstChunkOffset = +chunks[0]?.offset || 0;
+            const lastChunk = chunks[chunks.length - 1];
+            const lastChunkLength = lastChunk ? b64UrlToBuffer(lastChunk.chunk) : 0;
+            lastOffset = +chunks[chunks.length - 1]?.offset - firstChunkOffset + lastChunkLength || 0;
           }
 
           const chunk = chunks.map((ch) => Buffer.from(b64UrlToBuffer(ch.chunk)));
