@@ -201,7 +201,7 @@ export async function txPostRoute(ctx: Router.RouterContext) {
 
     // for tx without chunk
     // create the chunk, to prevent offset error on tx/:offset endpoint
-    if (data.data) {
+    if (data.data && !ctx.txInBundle) {
       // create tx chunks if not exists
       const chunk = await chunkDB.getByRootAndSize(data.data_root, +data.data_size);
 
