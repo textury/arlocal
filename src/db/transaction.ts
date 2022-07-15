@@ -116,6 +116,10 @@ export class TransactionDB {
     return (await this.connection('transactions').where({ block: '' })).map(({ id }) => id);
   }
 
+  async getUnminedTxsRaw() {
+    return await this.connection('transactions').where({ block: '' });
+  }
+
   async deleteById(id: string) {
     return this.connection('transactions').where({ id }).del();
   }
