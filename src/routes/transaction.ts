@@ -188,7 +188,7 @@ export async function txPostRoute(ctx: Router.RouterContext) {
             const firstChunkOffset = +chunks[0]?.offset || 0;
             const lastChunk = chunks[chunks.length - 1];
             const lastChunkLength = lastChunk ? b64UrlToBuffer(lastChunk.chunk).byteLength : 0;
-            lastOffset = +chunks[chunks.length - 1].offset - firstChunkOffset + lastChunkLength || 0;
+            lastOffset = +chunks[chunks.length - 1]?.offset - firstChunkOffset + lastChunkLength || 0;
           }
 
           const chunk = chunks.map((ch) => Buffer.from(b64UrlToBuffer(ch.chunk)));
