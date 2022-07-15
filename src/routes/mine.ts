@@ -55,7 +55,7 @@ export async function mineRoute(ctx: Router.RouterContext) {
           if (matches.includes(id)) continue;
 
           // build tx body
-          let $tx = {
+          const $tx = {
             id,
             bundledIn: tx.id,
             ...item.toJSON(),
