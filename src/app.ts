@@ -53,6 +53,7 @@ declare module 'koa' {
     logging: Logging;
     fails: number;
     timestamp: number;
+    txInBundle?: boolean;
   }
 }
 
