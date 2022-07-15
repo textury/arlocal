@@ -11,6 +11,7 @@ import { ChunkDB } from '../db/chunks';
 import { Next } from 'koa';
 import Transaction from 'arweave/node/lib/transaction';
 import { generateTransactionChunks } from '../utils/merkle';
+import { Chunk } from '../faces/chunk';
 
 export const pathRegex = /^\/?([a-z0-9-_]{43})/i;
 
@@ -170,7 +171,6 @@ export async function txPostRoute(ctx: Router.RouterContext) {
                 ...item.toJSON(),
               },
             },
-            // @ts-ignore
             txInBundle: true,
           });
         }
@@ -182,12 +182,12 @@ export async function txPostRoute(ctx: Router.RouterContext) {
       } else {
         (async () => {
           let lastOffset = 0;
-          let chunks;
+          let chunks: Chunk[];
           while (+data.data_size !== lastOffset) {
             chunks = await chunkDB.getRoot(data.data_root);
             const firstChunkOffset = +chunks[0]?.offset || 0;
             const lastChunk = chunks[chunks.length - 1];
-            const lastChunkLength = lastChunk ? b64UrlToBuffer(lastChunk.chunk) : 0;
+            const lastChunkLength = lastChunk ? b64UrlToBuffer(lastChunk.chunk).byteLength : 0;
             lastOffset = +chunks[chunks.length - 1]?.offset - firstChunkOffset + lastChunkLength || 0;
           }
 
