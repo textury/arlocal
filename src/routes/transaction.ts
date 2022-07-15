@@ -11,7 +11,7 @@ import { ChunkDB } from '../db/chunks';
 import { Next } from 'koa';
 import Transaction from 'arweave/node/lib/transaction';
 import { generateTransactionChunks } from '../utils/merkle';
-import { Chunk } from 'faces/chunk';
+import { Chunk } from '../faces/chunk';
 
 export const pathRegex = /^\/?([a-z0-9-_]{43})/i;
 
