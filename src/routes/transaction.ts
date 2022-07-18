@@ -126,7 +126,7 @@ export async function txPostRoute(ctx: Router.RouterContext) {
     const owner = bufferTob64Url(await hash(b64UrlToBuffer(data.owner)));
 
     const wallet = await walletDB.getWallet(owner);
-    const calculatedReward = +(data.data_size || '0') * 1965132;
+    const calculatedReward = Math.round((+(data.data_size || '0') / 1000) * 65595508);
 
     if (!wallet || wallet.balance < calculatedReward) {
       ctx.status = 410;
