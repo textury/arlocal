@@ -226,6 +226,7 @@ export default class ArLocal {
         introspection: true,
         playground: true,
       } as any,
+      this.app.context,
       this.connection,
     );
 
