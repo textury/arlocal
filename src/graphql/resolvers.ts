@@ -100,7 +100,6 @@ export const resolvers = {
       }
     },
     blocks: async (_, queryParams: QueryBlocksArgs, { connection, network }) => {
-      console.log(connection, network);
       const { timestamp, offset } = parseCursor(queryParams.after || newCursor());
       const pageSize = Math.min(queryParams.first || DEFAULT_PAGE_SIZE, MAX_PAGE_SIZE);
 
