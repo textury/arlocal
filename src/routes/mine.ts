@@ -122,9 +122,15 @@ export async function mineRoute(ctx: Router.RouterContext) {
     const inc = +(ctx.params?.qty || 1);
 
     txs = await transactionDB.getUnminedTxs();
-    ctx.network.current = await blockDB.mine(ctx.network.blocks, ctx.network.current, txs);
-    ctx.network.height = ctx.network.height + inc;
-    ctx.network.blocks = ctx.network.blocks + inc;
+    for (let i = 1; i <= inc; i++) {
+      let $txs = [];
+      if (i === inc) {
+        $txs = txs; // add the transactions to the last block
+      }
+      ctx.network.current = await blockDB.mine(ctx.network.blocks, ctx.network.current, $txs);
+      ctx.network.height = ctx.network.height + 1;
+      ctx.network.blocks = ctx.network.blocks + 1;
+    }
 
     await transactionDB.mineTxs(ctx.network.current);
 
