@@ -99,13 +99,13 @@ export const resolvers = {
         return null;
       }
     },
-    blocks: async (_, queryParams: QueryBlocksArgs, { connection }) => {
+    blocks: async (_, queryParams: QueryBlocksArgs, { connection, network }) => {
       const { timestamp, offset } = parseCursor(queryParams.after || newCursor());
       const pageSize = Math.min(queryParams.first || DEFAULT_PAGE_SIZE, MAX_PAGE_SIZE);
 
       let ids: string[] = [];
       let minHeight = 0;
-      let maxHeight = MAX_PAGE_SIZE;
+      let maxHeight = network.height || MAX_PAGE_SIZE;
 
       if (queryParams.ids) {
         ids = queryParams.ids;
