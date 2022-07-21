@@ -227,6 +227,7 @@ export default class ArLocal {
         playground: true,
       } as any,
       this.app.context,
+      this.connection,
     );
 
     await this.apollo.start();
