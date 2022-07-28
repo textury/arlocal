@@ -112,3 +112,6 @@ bin
 .idea
 .db
 .vscode
+
+.env
+.env.*
