@@ -3,7 +3,7 @@ import { appendFileSync, existsSync, unlinkSync } from 'fs';
 export default class Logging {
   _log: boolean = false;
 
-  constructor(showLogs: boolean = true, persist: boolean) {
+  constructor(showLogs: boolean, persist: boolean) {
     this._log = showLogs;
     if (!persist) {
       if (existsSync('./logs')) unlinkSync('./logs');
