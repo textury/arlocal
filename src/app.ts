@@ -43,6 +43,7 @@ import { getChunkOffsetRoute, postChunkRoute } from './routes/chunk';
 import { peersRoute } from './routes/peer';
 import { WalletDB } from './db/wallet';
 import { BlockDB } from './db/block';
+import { logsRoute } from './routes/logs';
 
 declare module 'koa' {
   interface BaseContext {
@@ -80,7 +81,7 @@ export default class ArLocal {
 
     this.persist = persist;
     this.fails = fails;
-    this.log = new Logging(showLogs);
+    this.log = new Logging(showLogs, this.persist);
 
     this.connection = connect(dbPath);
 
@@ -129,6 +130,7 @@ export default class ArLocal {
       await next();
     });
 
+    this.router.get('/logs', logsRoute);
     this.router.get('/', statusRoute);
     this.router.get('/info', statusRoute);
     this.router.get('/peers', peersRoute);
@@ -195,8 +197,9 @@ export default class ArLocal {
     this.app.use(json());
     this.app.use(
       logger({
-        transporter: (str) => {
+        transporter: (str, args) => {
           this.log.log(str);
+          this.log.logInFile(args);
         },
       }),
     );
