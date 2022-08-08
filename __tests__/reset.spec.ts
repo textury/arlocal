@@ -1,4 +1,5 @@
-import { blockweave } from '../src/test-setup';
+import { blockweave, port } from '../src/test-setup';
+import Arweave from 'arweave';
 
 describe('RESET', () => {
   it('resets the network info', async () => {
@@ -40,5 +41,17 @@ describe('RESET', () => {
     b = await blockweave.api.get(`/wallet/${wallet}/balance`);
     balance = b.data;
     expect(balance).toEqual(0);
+  });
+  it('Gets current block', async () => {
+    const arweave = Arweave.init({
+      host: 'localhost',
+      port,
+      protocol: 'http',
+    });
+    let result = await arweave.blocks.getCurrent();
+    expect(result).toBeDefined();
+    await blockweave.api.get('/reset');
+    result = await arweave.blocks.getCurrent();
+    expect(result).toBeDefined();
   });
 });
