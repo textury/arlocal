@@ -37,7 +37,6 @@ export async function mineRoute(ctx: Router.RouterContext) {
     // unbundle ans-104 bundles that were posted via /chunks
     for (const tx of txs) {
       if (tx.data) continue;
-
       // implementation of unbundling similar to line 153 of routes/transaction.ts
       // but directly to database
       const createTxsFromItems = async (buffer: Buffer) => {
@@ -111,10 +110,16 @@ export async function mineRoute(ctx: Router.RouterContext) {
           const chunksHash = Array.from(new Set(chunks.map((c) => sha256Hex(c.chunk))));
           chunks = chunksHash.map((h) => chunks.find((c) => sha256Hex(c.chunk) === h));
           chunks.sort((a, b) => a.offset - b.offset);
-          // parse chunk(s) to buffer
-          const chunk = chunks.map((ch) => Buffer.from(b64UrlToBuffer(ch.chunk)));
-          const buffer = Buffer.concat(chunk);
-          await createTxsFromItems(buffer);
+
+          const estimatedChunkCount = Math.round(parseInt(tx.data_size, 10) / (256 * 1000));
+          if (chunks.length >= estimatedChunkCount) {
+            // parse chunk(s) to buffer
+            const chunk = chunks.map((ch) => Buffer.from(b64UrlToBuffer(ch.chunk)));
+            const buffer = Buffer.concat(chunk);
+            try {
+              await createTxsFromItems(buffer);
+            } catch {}
+          }
         }
       }
     }
