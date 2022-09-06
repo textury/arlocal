@@ -33,6 +33,7 @@ export async function mineRoute(ctx: Router.RouterContext) {
     }
 
     let txs = await transactionDB.getUnminedTxsRaw();
+    const txQueue: string[] = [];
 
     // unbundle ans-104 bundles that were posted via /chunks
     for (const tx of txs) {
@@ -113,12 +114,17 @@ export async function mineRoute(ctx: Router.RouterContext) {
 
           const estimatedChunkCount = Math.round(parseInt(tx.data_size, 10) / (256 * 1000));
           if (chunks.length >= estimatedChunkCount) {
+            console.log('unbundled', tx.id);
             // parse chunk(s) to buffer
             const chunk = chunks.map((ch) => Buffer.from(b64UrlToBuffer(ch.chunk)));
             const buffer = Buffer.concat(chunk);
             try {
               await createTxsFromItems(buffer);
             } catch {}
+          } else {
+            console.log('queued', tx.id);
+            // queue the tx for next mine call
+            txQueue.push(tx.id);
           }
         }
       }
@@ -127,6 +133,8 @@ export async function mineRoute(ctx: Router.RouterContext) {
     const inc = +(ctx.params?.qty || 1);
 
     txs = await transactionDB.getUnminedTxs();
+    txs = txs.filter((tx) => !txQueue.includes(tx));
+
     for (let i = 1; i <= inc; i++) {
       let $txs = [];
       if (i === inc) {
@@ -137,7 +145,7 @@ export async function mineRoute(ctx: Router.RouterContext) {
       ctx.network.blocks = ctx.network.blocks + 1;
     }
 
-    await transactionDB.mineTxs(ctx.network.current);
+    await transactionDB.mineTxs(ctx.network.current, txs);
 
     ctx.body = ctx.network;
   } catch (error) {

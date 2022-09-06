@@ -124,7 +124,7 @@ export class TransactionDB {
     return this.connection('transactions').where({ id }).del();
   }
 
-  async mineTxs(block: string) {
-    return await this.connection('transactions').where({ block: '' }).update({ block });
+  async mineTxs(block: string, txIds: string[] = []) {
+    return await this.connection('transactions').whereIn('id', txIds).andWhere({ block: '' }).update({ block });
   }
 }

@@ -2,9 +2,20 @@ import { ChunkDB } from '../db/chunks';
 import { Chunk } from 'faces/chunk';
 import Router from 'koa-router';
 import { b64UrlToBuffer } from '../utils/encoding';
+import http from 'node:http';
+import https from 'node:https';
+import { promisify } from 'util';
 
 let chunkDB: ChunkDB;
 let oldDbPath: string;
+
+async function requester(url: URL) {
+  if (url.protocol === 'https:') {
+    return await promisify(https.get)(url as unknown as string);
+  } else {
+    return await promisify(http.get)(url as unknown as string);
+  }
+}
 
 export async function postChunkRoute(ctx: Router.RouterContext) {
   try {
@@ -22,6 +33,12 @@ export async function postChunkRoute(ctx: Router.RouterContext) {
     }
 
     await chunkDB.create(chunk);
+
+    const mineURL = ctx.request.URL;
+    mineURL.pathname = '/mine';
+    try {
+      await requester(mineURL);
+    } catch {}
 
     ctx.body = {};
   } catch (error) {
