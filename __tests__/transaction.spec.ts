@@ -2,6 +2,7 @@ import request from 'supertest';
 import { createData, bundleAndSignData, signers } from 'arbundles';
 import { blockweave, server, wallet } from '../src/test-setup';
 import { createTransaction, mine } from '../src/utils/tests';
+import { readFile } from 'fs/promises';
 
 jest.setTimeout(20000);
 
@@ -168,12 +169,12 @@ describe('', () => {
     it('should return "not found"', async () => {
       const signer = new signers.ArweaveSigner(wallet);
 
-      const dataItems = [createData("hello", signer), createData("world", signer)];
+      const dataItems = [createData('hello', signer), createData('world', signer)];
       const bundle = await bundleAndSignData(dataItems, signer);
       const tx = await bundle.toTransaction({}, blockweave as any, wallet);
       // get the zero item
       const txid = bundle.getIdBy(0);
-      
+
       await blockweave.transactions.sign(tx as any, wallet);
       await blockweave.transactions.post(tx);
 
@@ -197,5 +198,41 @@ describe('', () => {
       expect(res.statusCode).toEqual(404);
       expect(res.text).toEqual('Not Found');
     });
-  })
+
+    it('desnt unbundle until full bundle posted', async () => {
+      const signer = new signers.ArweaveSigner(wallet);
+
+      const data = await readFile(`${process.cwd()}/__tests__/data/wallpaper.jpg`);
+
+      const dataItems = [createData(data, signer), createData('world', signer)];
+      const bundle = await bundleAndSignData(dataItems, signer);
+
+      const wallerPaperId = bundle.get(0).id;
+
+      const tx = await blockweave.createTransaction({ data: bundle.getRaw() }, wallet);
+      tx.addTag('Bundle-Format', 'binary');
+      tx.addTag('Bundle-Version', '2.0.0');
+      tx.addTag('Content-Type', 'application/octet-stream');
+
+      await blockweave.transactions.sign(tx, wallet);
+      const uploader = await blockweave.transactions.getUploader(tx);
+
+      await uploader.uploadChunk();
+      await uploader.uploadChunk();
+
+      await mine(blockweave);
+
+      let res = await request(server).get(`/${wallerPaperId}`);
+      expect(res.statusCode).toEqual(404);
+
+      while (!uploader.isComplete) {
+        await uploader.uploadChunk();
+        console.log(`${uploader.pctComplete}% complete, ${uploader.uploadedChunks}/${uploader.totalChunks}`);
+      }
+      await mine(blockweave);
+
+      res = await request(server).get(`/${wallerPaperId}`);
+      expect(res.statusCode).toEqual(200);
+    });
+  });
 });
