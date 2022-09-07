@@ -33,6 +33,7 @@ export async function mineRoute(ctx: Router.RouterContext) {
     }
 
     let txs = await transactionDB.getUnminedTxsRaw();
+    const unverifiedBundleTxs: string[] = [];
 
     // unbundle ans-104 bundles that were posted via /chunks
     for (const tx of txs) {
@@ -40,9 +41,11 @@ export async function mineRoute(ctx: Router.RouterContext) {
 
       // implementation of unbundling similar to line 153 of routes/transaction.ts
       // but directly to database
-      const createTxsFromItems = async (buffer: Buffer) => {
+      const createTxsFromItems = async (buffer: Buffer): Promise<boolean> => {
         const bundle = new Bundle(buffer);
 
+        const verified = await bundle.verify();
+        if (!verified) return false;
         const items = bundle.items;
 
         // verify if bundles haven't been unbundled already
@@ -88,6 +91,7 @@ export async function mineRoute(ctx: Router.RouterContext) {
             index++;
           }
         }
+        return true;
       };
 
       let tags: Tag[] = [];
@@ -114,7 +118,8 @@ export async function mineRoute(ctx: Router.RouterContext) {
           // parse chunk(s) to buffer
           const chunk = chunks.map((ch) => Buffer.from(b64UrlToBuffer(ch.chunk)));
           const buffer = Buffer.concat(chunk);
-          await createTxsFromItems(buffer);
+          const done = await createTxsFromItems(buffer);
+          if (!done) unverifiedBundleTxs.push(tx.id);
         }
       }
     }
@@ -132,7 +137,7 @@ export async function mineRoute(ctx: Router.RouterContext) {
       ctx.network.blocks = ctx.network.blocks + 1;
     }
 
-    await transactionDB.mineTxs(ctx.network.current);
+    await transactionDB.mineTxs(ctx.network.current, unverifiedBundleTxs);
 
     ctx.body = ctx.network;
   } catch (error) {
@@ -166,7 +171,7 @@ export async function mineWithFailsRoute(ctx: Router.RouterContext) {
     ctx.network.height = ctx.network.height + inc;
     ctx.network.blocks = ctx.network.blocks + inc;
 
-    await transactionDB.mineTxs(ctx.network.current);
+    await transactionDB.mineTxs(ctx.network.current, []);
 
     ctx.body = ctx.network;
   } catch (error) {
