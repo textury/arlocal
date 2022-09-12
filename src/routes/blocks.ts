@@ -18,7 +18,7 @@ export async function blocksRoute(ctx: Router.RouterContext) {
       previous_block,
       // return block height instead of current height
       height,
-      txs: txs.split(','),
+      txs: txs ? txs.split(',') : [],
     };
   } catch (error) {
     console.error({ error });
@@ -33,33 +33,14 @@ export async function blocksRouteViaHeight(ctx: Router.RouterContext) {
 
     const h = parseInt(ctx.params.height, 10) || 0;
     const block = await blockDB.getByHeight(h);
-    if (h === 0 && !block) {
-      // return genesis block
-      // hash = genesis block hash
-      let hash = ctx.network.current;
-      if (ctx.network.height > 0) {
-        // find the previous block of the height 1 block
-        const blk = await blockDB.getByHeight(1);
-        ({ previous_block: hash } = blk);
-      }
-
-      ctx.body = {
-        indep_hash: hash,
-        timestamp: Math.round(ctx.timestamp / 1000),
-        previous_block: '',
-        height: h,
-        txs: [''],
-      };
-      return;
-    }
-
     const { id, mined_at: timestamp, previous_block, txs, height } = block;
+
     ctx.body = {
       indep_hash: id,
       timestamp: Math.round(new Date(timestamp).getTime() / 1000),
       previous_block,
       height,
-      txs: txs.split(','),
+      txs: txs ? txs.split(',') : [],
     };
   } catch (error) {
     console.error({ error });
