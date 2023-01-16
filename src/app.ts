@@ -131,7 +131,7 @@ export default class ArLocal {
     this.router.get('/tx_anchor', txAnchorRoute);
     this.router.get(
       '/price/:bytes/:addy?',
-      async (ctx) => (ctx.body = Math.round((+ctx.params.bytes / 1000) * 65595508)),
+      async (ctx) => (ctx.body = Math.round((+ctx.params.bytes / 1000) * 65595508).toString()),
     );
 
     // tx filter endpoint to restrict ans-104 txs
