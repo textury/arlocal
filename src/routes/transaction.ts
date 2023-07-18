@@ -142,7 +142,6 @@ export async function txPostRoute(ctx: Router.RouterContext) {
     for (const tag of data.tags) {
       const name = Utils.atob(tag.name);
       const value = Utils.atob(tag.value);
-
       if (name === 'Bundle-Format') bundleFormat = value;
       if (name === 'Bundle-Version') bundleVersion = value;
     }
