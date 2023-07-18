@@ -104,11 +104,15 @@ export class TransactionDB {
     const tx = (
       await this.connection.queryBuilder().select('*').from('transactions').where('id', '=', txId).limit(1)
     )[0];
-
     try {
       tx.tags = JSON.parse(tx.tags);
+      if (tx.data_size) {
+        tx.data_size = tx.data_size.toString();
+      }
+      if (!tx.data) {
+        tx.data = "";
+      }
     } catch (e) {}
-
     return tx;
   }
 
