@@ -116,7 +116,7 @@ describe('', () => {
       const tx = await blockweave.transactions.get(txid);
       await mine(blockweave);
       const { text: dataSize } = await request(server).get(`/tx/${txid}/data_size`);
-      expect(+dataSize).toEqual(tx.data_size);
+      expect(+dataSize).toEqual(+tx.data_size);
     });
 
     it('returns the reward field', async () => {
