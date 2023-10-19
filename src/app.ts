@@ -226,7 +226,7 @@ export default class ArLocal {
 
     await this.apollo.start();
     this.apollo.applyMiddleware({ app: this.app, path: '/graphql' });
-    if (!existsSync(join(this.dbPath, 'db.sqlite'))) await up(this.connection);
+    if (this.dbPath !== ':memory:' && !existsSync(join(this.dbPath, 'db.sqlite'))) await up(this.connection);
   }
 
   async stop() {

@@ -11,7 +11,11 @@ const showLogs = argv.hidelogs ? false : true;
 const persist = argv.persist;
 const fails = argv.fails || 0;
 
-const dbPath = argv.dbpath ? join(process.cwd(), argv.dbpath) : appData('arlocal', '.db');
+const dbPath = argv.dbpath
+  ? argv.dbpath === ':memory:'
+    ? argv.dbpath
+    : join(process.cwd(), argv.dbpath)
+  : appData('arlocal', '.db');
 
 let app: ArLocal;
 

@@ -110,7 +110,7 @@ export class TransactionDB {
         tx.data_size = tx.data_size.toString();
       }
       if (!tx.data) {
-        tx.data = "";
+        tx.data = '';
       }
     } catch (e) {}
     return tx;
