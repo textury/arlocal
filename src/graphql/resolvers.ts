@@ -55,16 +55,16 @@ export const resolvers = {
       const params: QueryParams = {
         limit: pageSize + 1,
         offset,
-        ids: queryParams.ids || undefined,
-        to: queryParams.recipients || undefined,
-        from: queryParams.owners || undefined,
-        tags: queryParams.tags || undefined,
+        ids: queryParams.ids,
+        to: queryParams.recipients,
+        from: queryParams.owners,
+        tags: queryParams.tags,
         blocks: true,
         since: timestamp,
         select: fieldMap,
-        minHeight: queryParams.block?.min || undefined,
-        maxHeight: queryParams.block?.max || undefined,
-        sortOrder: queryParams.sort || undefined,
+        minHeight: queryParams.block?.min,
+        maxHeight: queryParams.block?.max,
+        sortOrder: queryParams.sort,
       };
 
       const results = (await generateQuery(params, connection)) as TransactionHeader[];
