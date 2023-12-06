@@ -165,7 +165,7 @@ export async function txPostRoute(ctx: Router.RouterContext) {
             request: {
               ...ctx.request,
               body: {
-                id: bundle.getIdBy(i),
+                id: bundle.get(i).id,
                 bundledIn: data.id,
                 ...item.toJSON(),
               },
