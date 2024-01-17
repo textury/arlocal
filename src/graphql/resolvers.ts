@@ -62,8 +62,8 @@ export const resolvers = {
         blocks: true,
         since: timestamp,
         select: fieldMap,
-        minHeight: queryParams.block?.min,
-        maxHeight: queryParams.block?.max,
+        minHeight: queryParams.block?.min || undefined,
+        maxHeight: queryParams.block?.max || undefined,
         sortOrder: queryParams.sort,
       };
 
