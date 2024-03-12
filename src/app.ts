@@ -26,6 +26,7 @@ import {
   txRawDataRoute,
   deleteTxRoute,
   txDataRoute,
+  txPendingRoute,
 } from './routes/transaction';
 import { txAccessMiddleware, txValidateMiddleware } from './middlewares/transaction';
 import { Utils } from './utils/utils';
@@ -133,6 +134,8 @@ export default class ArLocal {
       '/price/:bytes/:addy?',
       async (ctx) => (ctx.body = Math.round((+ctx.params.bytes / 1000) * 65595508).toString()),
     );
+
+    this.router.get('/tx/pending', txPendingRoute);
 
     // tx filter endpoint to restrict ans-104 txs
     this.router.get(/^\/tx(?:\/|$)/, txAccessMiddleware);

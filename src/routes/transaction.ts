@@ -506,6 +506,29 @@ export async function txDataRoute(ctx: Router.RouterContext, next: Next) {
   }
 }
 
+export async function txPendingRoute(ctx: Router.RouterContext) {
+  try {
+    if (
+      oldDbPath !== ctx.dbPath ||
+      !transactionDB ||
+      connectionSettings !== ctx.connection.client.connectionSettings.filename
+    ) {
+      transactionDB = new TransactionDB(ctx.connection);
+      oldDbPath = ctx.dbPath;
+      connectionSettings = ctx.connection.client.connectionSettings.filename;
+    }
+
+    const txIds = await transactionDB.getUnminedTxs();
+
+    ctx.status = 200
+    ctx.body = txIds
+  } catch (error) {
+    console.error({ error })
+    ctx.status = 500;
+    ctx.body = { error: error.message };
+  }
+}
+
 export async function deleteTxRoute(ctx: Router.RouterContext) {
   try {
     if (
