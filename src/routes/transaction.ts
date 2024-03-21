@@ -520,10 +520,10 @@ export async function txPendingRoute(ctx: Router.RouterContext) {
 
     const txIds = await transactionDB.getUnminedTxs();
 
-    ctx.status = 200
-    ctx.body = txIds
+    ctx.status = 200;
+    ctx.body = txIds;
   } catch (error) {
-    console.error({ error })
+    console.error({ error });
     ctx.status = 500;
     ctx.body = { error: error.message };
   }
