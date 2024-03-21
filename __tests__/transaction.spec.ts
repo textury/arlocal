@@ -28,6 +28,15 @@ describe('', () => {
       expect(res.text).toEqual('Pending');
     });
 
+    it('returns the list of pending tx ids', async () => {
+      const txId1 = await createTransaction(blockweave, 'test1');
+      const txId2 = await createTransaction(blockweave, 'test2');
+
+      const res = await request(server).get(`/tx/pending`);
+
+      expect(res.body.sort()).toEqual([ txId1, txId2 ].sort());
+    });
+
     it('returns the height of the block', async () => {
       const txid = await createTransaction(blockweave, 'test');
       await mine(blockweave);
