@@ -16,8 +16,8 @@
   },
   "scripts": {
     "start": "node ./bin",
-    "build": "rimraf bin && tsc && copyfiles -u 1 \"./src/**/*.graphql\" bin",
-    "dev": "tsc-watch --onSuccess \"node bin\"",
+    "build": "tscx --remove --copyfiles",
+    "dev": "tscx --watch --copyfiles --exec bin",
     "cmd": "yarn build && yarn start",
     "test": "jest --detectOpenHandles --silent",
     "format": "prettier --write \"src/**/*.ts\"",
@@ -51,11 +51,11 @@
     "moment": "^2.29.1",
     "rfc4648": "^1.5.1",
     "smartweave": "^0.4.46",
-    "sqlite3": "^5.0.3",
-    "tsc-watch": "^4.6.0"
+    "sqlite3": "^5.0.3"
   },
   "devDependencies": {
     "@assemblyscript/loader": "^0.19.23",
+    "@rnm/tscx": "^0.1.3",
     "@types/bytes": "^3.1.1",
     "@types/jest": "^27.4.0",
     "@types/koa": "^2.13.4",
@@ -73,12 +73,10 @@
     "arkb": "^1.1.48",
     "arweave": "^1.10.23",
     "blockweave": "^1.0.17",
-    "copyfiles": "^2.4.1",
     "jest": "^27.4.7",
     "prettier": "^2.5.1",
     "redstone-smartweave": "^0.4.47",
     "redstone-wasm-metering": "^1.0.1",
-    "rimraf": "^3.0.2",
     "supertest": "^6.2.2",
     "ts-jest": "^27.1.3",
     "tslint": "^6.1.3",
