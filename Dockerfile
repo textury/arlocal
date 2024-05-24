@@ -1,11 +1,11 @@
-FROM node:16-alpine as build
+FROM node:20-alpine as build
 
 WORKDIR /app
 COPY . .
 RUN apk add git
 RUN yarn
 
-FROM node:16-alpine 
+FROM node:20-alpine 
 USER node
 WORKDIR /arlocal
 
