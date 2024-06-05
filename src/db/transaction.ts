@@ -106,7 +106,7 @@ export class TransactionDB {
     )[0];
     try {
       tx.tags = JSON.parse(tx.tags);
-      if (tx.data_size) {
+      if (tx.data_size !== undefined) {
         tx.data_size = tx.data_size.toString();
       }
       if (!tx.data) {
